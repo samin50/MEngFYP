@@ -1,6 +1,6 @@
 ---
 created: 2023-11-07T21:32:13.543Z
-updated: 2023-11-07T21:58:03.777Z
+updated: 2023-11-07T22:03:14.826Z
 assigned: ""
 progress: 0
 tags:

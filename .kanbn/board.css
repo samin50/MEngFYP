@@ -12,3 +12,7 @@
     background-color: rgb(182, 85, 172);
     color: rgb(245, 245, 245);
 }
+
+.kanbn-column-blocked .kanbn-column-task-list {
+    border-color: rgb(255, 0, 0);
+}
