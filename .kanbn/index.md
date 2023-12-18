@@ -23,4 +23,8 @@ completedColumns:
 
 ## In Progress
 
+- [interim-report](tasks/interim-report.md)
+
 ## Done
+
+- [design-camera-mount](tasks/design-camera-mount.md)
