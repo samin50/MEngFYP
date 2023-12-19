@@ -8,7 +8,7 @@ def button_callback():
 app = customtkinter.CTk()
 app.title("my app")
 app.attributes("-fullscreen", True)
-app.config(cursor="none")
+# app.config(cursor="none")
 app.geometry("1024x600")
 
 button = customtkinter.CTkButton(app, text="my button", command=button_callback)

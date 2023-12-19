@@ -3,6 +3,7 @@ Code for handing 7 inch DFROBOT display and touch screen
 """
 import pygame
 import os
+os.environ["XDG_RUNTIME_DIR"] = "/run/user/1000"
 os.environ["SDL_FBDEV"] = "/dev/fb0"
 # pylint: disable=no-member
 class Display():

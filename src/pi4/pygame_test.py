@@ -4,10 +4,13 @@ import time
 # pylint: disable=all
 os.environ['XDG_RUNTIME_DIR'] = '/run/user/1000'
 os.environ["DISPLAY"] = ":0"
+pygame.init()
 class pyscope:
     screen = None
     def __init__(self):
-        self.screen = pygame.display.set_mode((100, 100), pygame.FULLSCREEN)
+        info = pygame.display.Info()
+        screen_width, screen_height = info.current_w, info.current_h
+        self.screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
         # Clear the screen to start
         self.screen.fill((0, 0, 0))        
         # Initialise font support
@@ -25,4 +28,4 @@ class pyscope:
 # Create an instance of the PyScope class
 scope = pyscope()
 scope.test()
-time.sleep(5)
+time.sleep(10)
