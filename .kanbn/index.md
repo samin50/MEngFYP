@@ -24,6 +24,7 @@ completedColumns:
 ## In Progress
 
 - [interim-report](tasks/interim-report.md)
+- [build-stage-1-system](tasks/build-stage-1-system.md)
 
 ## Done
 
