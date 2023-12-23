@@ -1,7 +1,50 @@
-\documentclass{report}
+\documentclass[12pt, a4paper, twocolumn]{article}
 
+% Packages
+\usepackage{xurl}
+\usepackage{abstract}
+\usepackage{lipsum}
+\usepackage{sectsty}
+\usepackage{hyperref}
+\usepackage[super,comma,sort&compress]{natbib}
+\usepackage[a4paper, margin=2cm]{geometry}
+
+% Configuration - https://tex.stackexchange.com/questions/110406/two-column-article-templates
+\renewcommand{\abstractnamefont}{\normalfont\bfseries}
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape}
+\hypersetup{colorlinks=false, urlcolor=blue, linkcolor=blue, citecolor=blue}
+\sectionfont{\large}
+
+% Abstract
+\newcommand{\abstractText}{
+    \lipsum[1]
+}
+
+% Title
+\title{Interim Report}
+\author{Shaheen Amin, 01866464}
+\date{December 2023}
 \begin{document}
-Hello world!
+\twocolumn[
+  \begin{@twocolumnfalse}
+    \maketitle
+    \begin{abstract}
+        \abstractText
+        \vspace{0.5cm}
+    \end{abstract}
+  \end{@twocolumnfalse}
+]
 
+% Contents page
+\tableofcontents
+
+% Project Specification
+\include{Project Specification}
+
+% References
+\section{References}
+\nocite{*}
+\bibliographystyle{plain}
+% \bibliography{References}
 
 \end{document}
