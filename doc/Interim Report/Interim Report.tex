@@ -6,17 +6,25 @@
 \usepackage{lipsum}
 \usepackage{sectsty}
 \usepackage{hyperref}
+\usepackage{newclude}
+\usepackage{tocloft}
 \usepackage[super,comma,sort&compress]{natbib}
 \usepackage[a4paper, margin=2cm]{geometry}
 
 % Configuration - https://tex.stackexchange.com/questions/110406/two-column-article-templates
 \renewcommand{\abstractnamefont}{\normalfont\bfseries}
 \renewcommand{\abstracttextfont}{\normalfont\small\itshape}
+\renewcommand{\cftdotsep}{1}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
 \hypersetup{colorlinks=false, urlcolor=blue, linkcolor=blue, citecolor=blue}
 \sectionfont{\large}
 
 % Abstract
 \newcommand{\abstractText}{
+    \lipsum[1]
+}
+
+\newcommand{\plagarismText}{
     \lipsum[1]
 }
 
@@ -28,23 +36,37 @@
 \twocolumn[
   \begin{@twocolumnfalse}
     \maketitle
+    \vspace{-1cm}
     \begin{abstract}
+        \vspace{-1em}
         \abstractText
-        \vspace{0.5cm}
     \end{abstract}
+    \renewcommand*\abstractname{Plagirism Declaration}
+    \begin{abstract}
+        \vspace{-1em}
+        \plagarismText
+    \end{abstract}
+    \vspace{1em}
   \end{@twocolumnfalse}
 ]
 
 % Contents page
 \tableofcontents
+\newpage
 
-% Project Specification
-\include{Project Specification}
+% Sections
+\include*{Project Specification}
+\include*{Background}
+\include*{Implementation}
+\include*{Project Plan}
+\include*{Evaluation Plan}
+\include*{Ethical Plan}
 
 % References
 \section{References}
 \nocite{*}
 \bibliographystyle{plain}
 % \bibliography{References}
+
 
 \end{document}
