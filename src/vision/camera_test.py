@@ -1,4 +1,5 @@
 import cv2
+# pylint: disable=all
 
 # Initialize the camera
 camera = cv2.VideoCapture(0)  # 0 is the default camera
