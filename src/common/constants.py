@@ -10,3 +10,5 @@ FONT = ("Roboto", 12)
 STYLE = "light"
 GRIDPADDING = 3
 THEMEJSON = "./src/common/theme.json"
+# GPIO Parameters
+FRAMERATE = 15
