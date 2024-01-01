@@ -6,42 +6,46 @@ import psutil
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIHorizontalSlider, UILabel
-from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR
+from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, LED_BRIGHTNESS
 from src.common.helper_functions import start_ui
 from src.pi4.display_feed_pygame import CameraFeed
 
 class LCD_UI:
-    def __init__(self, clock=pygame.time.Clock) -> None:
+    def __init__(self, clock:pygame.time.Clock, ledcallback:callable=lambda x:None) -> None:
         # Setup UI
         self.display = pygame.display.set_mode(LCD_RESOLUTION)
         self.cameraSurface = pygame.Surface(CAMERA_DISPLAY_SIZE)
         self.clock = clock
         self.cameraFeed = CameraFeed(CAMERA_DISPLAY_SIZE, clock, self.cameraSurface)
-        self.manager = pygame_gui.UIManager(LCD_RESOLUTION)
+        self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON)
         self.UIElements = dict()
         # Setup Event
         self.statUpdateEvent = pygame.USEREVENT + 100
         pygame.time.set_timer(self.statUpdateEvent, STAT_REFRESH_INTERVAL)
         self.init_ui_widgets()
+        # Callback functions
+        self.brightnessCallback = ledcallback
 
     def init_ui_widgets(self) -> None:
         """
         Draw the UI widgets
         """
-        # LED Ring Power
-        labelLength = 160
+        # Widget Parameters
+        labelLength = 180
         sliderHeight = 30
         yOffset = 15
         offsetIncrement = 35
+        buttonHeight = 50
+        # LED Ring Power
         self.UIElements["led_ring_power_label"] = UILabel(
             relative_rect=pygame.Rect((WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (labelLength, sliderHeight)),
-            text="LED Ring Power: 50%",
+            text=f"LED Power: {LED_BRIGHTNESS}%",
             manager=self.manager
         )
         self.UIElements["led_ring_power"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
-            start_value=50,
+            start_value=LED_BRIGHTNESS,
             manager=self.manager
         )
         # CPU Usage
@@ -54,7 +58,7 @@ class LCD_UI:
         self.UIElements["cpu_usage"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
-            start_value=50,
+            start_value=0,
             manager=self.manager
         )
         self.UIElements["cpu_usage"].disable()
@@ -68,10 +72,17 @@ class LCD_UI:
         self.UIElements["ram_usage"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
-            start_value=50,
+            start_value=0,
             manager=self.manager
         )
         self.UIElements["ram_usage"].disable()
+        # Exit Button
+        yOffset += offsetIncrement
+        self.UIElements["exit_button"] = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((WIDGET_PADDING, LCD_RESOLUTION[1]-WIDGET_PADDING-buttonHeight), (CAMERA_DISPLAY_SIZE[0], buttonHeight)),
+            text="Exit",
+            manager=self.manager
+        )
 
     def handle_events(self, event:pygame.event) -> None:
         """
@@ -79,7 +90,8 @@ class LCD_UI:
         """
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             if event.ui_element == self.UIElements["led_ring_power"]:
-                self.UIElements["led_ring_power_label"].set_text(f"LED Ring Power: {event.value}%")
+                self.UIElements["led_ring_power_label"].set_text(f"LED Power: {event.value}%")
+                self.brightnessCallback(event.value)
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
@@ -88,6 +100,12 @@ class LCD_UI:
             self.UIElements["cpu_usage_label"].set_text(f"CPU Usage: {cpuUsage}%")
             self.UIElements["ram_usage"].set_current_value(ramUsage)
             self.UIElements["ram_usage_label"].set_text(f"RAM Usage: {ramUsage}%")
+        # Exit Button
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.UIElements["exit_button"]:
+                self.cameraFeed.destroy()
+                pygame.quit()
+                exit()
 
     def draw(self) -> None:
         """

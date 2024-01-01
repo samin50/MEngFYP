@@ -13,7 +13,7 @@ GPIO.setup(MOSFET_CONTROL_PIN, GPIO.OUT)
 pwm = GPIO.PWM(MOSFET_CONTROL_PIN, 2000)
 
 # Start PWM with 50% duty cycle
-pwm.start(0)
+pwm.start(20)
 camera = cv2.VideoCapture(0)  # 0 is the default camera
 
 try:
