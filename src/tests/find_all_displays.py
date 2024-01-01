@@ -1,6 +1,3 @@
-"""
-Main entry point for the application.
-"""
 # pylint: disable=all
 print("Hello World!")
 import os

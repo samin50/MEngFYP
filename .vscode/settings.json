@@ -1,3 +1,8 @@
 {
-    "julia.environmentPath": "c:\\Users\\Shaheen\\OneDrive - Imperial College London\\Uni\\CW Labs\\Year 4\\FYP"
+    "python.terminal.executeInFileDir": false,
+    "python.envFile": "${workspaceFolder}/.vscode/.env",
+    "launches": {
+        "RunMain": "Run Main (MEngFYP)",
+        "DynamicLaunch": "Dynamic Launch (MEngFYP)"
+    }
 }

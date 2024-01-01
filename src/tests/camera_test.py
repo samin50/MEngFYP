@@ -1,7 +1,19 @@
 import cv2
+import RPi.GPIO as GPIO
+
+# Use GPIO numbers not pin numbers
+GPIO.setmode(GPIO.BCM)
 # pylint: disable=all
 
 # Initialize the camera
+MOSFET_CONTROL_PIN = 18
+GPIO.setup(MOSFET_CONTROL_PIN, GPIO.OUT)
+
+# Set up PWM instance with frequency
+pwm = GPIO.PWM(MOSFET_CONTROL_PIN, 2000)
+
+# Start PWM with 50% duty cycle
+pwm.start(0)
 camera = cv2.VideoCapture(0)  # 0 is the default camera
 
 try:
@@ -21,3 +33,5 @@ finally:
     # When everything is done, release the capture
     camera.release()
     cv2.destroyAllWindows()
+    pwm.stop()
+    GPIO.cleanup()
