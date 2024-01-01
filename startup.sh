@@ -1,9 +1,11 @@
 #!/bin/bash
 
 startx & 
-sleep 5
 xset s off
 xset s noblank
 xset -dpms
-sleep 5
-# python3 /home/dietpi/MEngFYP/src/pi4/ctk_test.py
+# Check if the X server is responsive
+while ! xset q &>/dev/null; do
+    sleep 1
+done
+python3 /home/dietpi/MEngFYP/main.py & 

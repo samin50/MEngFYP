@@ -2,7 +2,7 @@
     "python.terminal.executeInFileDir": false,
     "python.envFile": "${workspaceFolder}/.vscode/.env",
     "launches": {
-        "RunMain": "Run Main (MEngFYP)",
-        "DynamicLaunch": "Dynamic Launch (MEngFYP)"
+        "RunMain": "Run Main",
+        "DynamicLaunch": "Dynamic Launch"
     }
 }
