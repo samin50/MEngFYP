@@ -6,5 +6,16 @@
         "font": {
             "size": 20
         }
+    },
+    "button": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "shadow_width": 0
+        }
     }
 }

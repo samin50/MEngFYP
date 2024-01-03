@@ -11,9 +11,10 @@ from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMER
 from src.common.helper_functions import start_ui
 
 class CameraFeed:
-    def __init__(self, size:tuple, clock:pygame.time.Clock, cameraDisplay:pygame.display) -> None:
+    def __init__(self, size:tuple, clock:pygame.time.Clock, cameraDisplay:pygame.display, trainingMode:bool=False) -> None:
         self.cameraDisplay = cameraDisplay
         self.size = size
+        self.trainingMode = trainingMode
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
         self.resizedFrame = pygame.Surface(self.size)
         # FPS
@@ -28,6 +29,9 @@ class CameraFeed:
         self.stopThread = False
         self.frameThread = threading.Thread(target=self.run, daemon=True)
         self.frameThread.start()
+        # Draw FPS event
+        self.drawFPSEvent = pygame.USEREVENT + 100
+        pygame.time.set_timer(self.drawFPSEvent, 1000)
 
     def run(self) -> None:
         """
@@ -44,13 +48,27 @@ class CameraFeed:
         """
         if self.cam.query_image():
             self.currentFrame = self.cam.get_image(self.currentFrame)
-        self.resizedFrame = pygame.transform.scale(self.currentFrame, self.size)
         # Draw FPS in the bottom right corner
-        self.fps = self.fpsFont.render(f"FPS: {self.clock.get_fps():.0f}", True, (255,255,255))
-        self.resizedFrame.blit(self.fps, (self.size[0]-(self.fps.get_width()+5), self.size[1]-(self.fps.get_height())))
+        if not self.trainingMode:
+            self.resizedFrame = pygame.transform.scale(self.currentFrame, self.size)
+            self.resizedFrame.blit(self.fps, (self.size[0]-(self.fps.get_width()+5), self.size[1]-(self.fps.get_height())))
+        else:
+            padding = 10
+            self.resizedFrame = pygame.transform.scale(self.currentFrame, (self.size[0]-padding, self.size[1]-padding))
+            backgroundFrame = pygame.Surface(self.size)
+            backgroundFrame.fill((255, 0, 255))
+            backgroundFrame.blit(self.resizedFrame, (padding//2, padding//2))
+            self.resizedFrame = backgroundFrame
         # Draw the frame
         self.cameraDisplay.blit(self.resizedFrame, (0,0))
         return self.currentFrame
+
+    def event_handler(self, event:pygame.event.Event) -> None:
+        """
+        Handle pygame events
+        """
+        if event.type == self.drawFPSEvent:
+            self.fps = self.fpsFont.render(f"FPS: {self.clock.get_fps():.0f}", True, (255,255,255))
 
     def destroy(self):
         """
@@ -61,8 +79,14 @@ class CameraFeed:
         self.cam.stop()
 
 if __name__ == '__main__':
+    TRAINING_MODE = False
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
-    camera = CameraFeed(CAMERA_RESOLUTION, clk, display)
-    start_ui([], [camera.destroy], clock=clk)
+    camera = CameraFeed(CAMERA_RESOLUTION, clk, display, TRAINING_MODE)
+    start_ui(
+        loopFunction=[],
+        eventFunction=[camera.event_handler],
+        exitFunction=[camera.destroy],
+        clock=clk
+        )

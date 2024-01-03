@@ -20,6 +20,6 @@
             "console": "integratedTerminal",
             "envFile": "${workspaceFolder}/.vscode/.env",
             "justMyCode": true,
-        }
+        },
     ]
 }
