@@ -3,6 +3,11 @@
     "python.envFile": "${workspaceFolder}/.vscode/.env",
     "launches": {
         "RunMain": "Run Main",
-        "DynamicLaunch": "Dynamic Launch"
+        "DynamicLaunch": "Dynamic Launch",
+        "DynamicLaunchWin" : "Dynamic Launch Win"
+    },
+    "julia.environmentPath": "c:\\Users\\Shaheen\\OneDrive - Imperial College London\\Uni\\CW Labs\\Year 4\\FYP",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none"
     }
 }

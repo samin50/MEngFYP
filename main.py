@@ -2,7 +2,11 @@
 Main entry point for the application.
 """
 import pygame
-import RPi.GPIO as GPIO
+# Allow development on non-Raspberry Pi devices
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    import src.common.simulate_gpio as GPIO
 from src.pi4.lcd_ui import LCD_UI
 from src.common.helper_functions import start_ui
 from src.common.constants import GPIO_PINS, MOSFET_FREQ, LED_BRIGHTNESS

@@ -1,3 +1,4 @@
+.env
 doc/Interim Report/out/*
 !doc/Interim Report/out/*.pdf
 *.FCStd1
