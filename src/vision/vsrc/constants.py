@@ -11,18 +11,21 @@ REALVNC_WINDOW_NAME = "DietPi (DietPi)"
 LOWER_THRESHOLD = numpy.array([148, 250, 250], numpy.uint8)
 UPPER_THRESHOLD = numpy.array([152, 255, 255], numpy.uint8)
 BORDER_WIDTH = 6
+RECT_WIDTH = 2
+RECT_COLOUR = "#FFFF00"
 CAMERA_BORDER = 5
 BORDER_COLOUR = "#00FF00"
 BORDER_COLOUR_FAILED = "#FF0000"
 IMG_SIZE = (480, 360)
 MAX_ROWS = 5
 RESISTOR_BODY_COLOUR = "#00CCFF"
+PRECISION = 2
 # Dataset
 DATASET_PATH = "./src/vision/dataset"
 DATA = {
     "resistors": {
-        "path": DATASET_PATH + "/resistors",
         "label": "resistor",
+        "num_label" : 0,
         "shortcut" : "r",
         "values" : {
             # (shortcut, value, colour, tolerance)
@@ -41,48 +44,48 @@ DATA = {
         },
     },
     "capacitors": {
-        "path": DATASET_PATH + "/capacitors",
         "label": "capacitor",
+        "num_label" : 1,
         "shortcut" : "c",
     },
     "ceramic_cap": {
-        "path": DATASET_PATH + "/ceramic_capacitors",
         "label": "ceramic_capacitor",
+        "num_label" : 2,
         "shortcut" : "e",
     },
     "inductors": {
-        "path": DATASET_PATH + "/inductors",
         "label": "inductor",
+        "num_label" : 3,
         "shortcut" : "i",
     },
     "diodes": {
-        "path": DATASET_PATH + "/diodes",
         "label": "diode",
+        "num_label" : 4,
         "shortcut" : "d",
     },
     "mosfets": {
-        "path": DATASET_PATH + "/mosfets",
         "label": "mosfet",
+        "num_label" : 5,
         "shortcut" : "m",
     },
     "transistors": {
-        "path": DATASET_PATH + "/transistors",
         "label": "transistor",
+        "num_label" : 6,
         "shortcut" : "t",
     },
     "leds": {
-        "path": DATASET_PATH + "/leds",
         "label": "led",
+        "num_label" : 7,
         "shortcut" : "l",
     },
     "wires" : {
-        "path": DATASET_PATH + "/wires",
         "label": "wire",
+        "num_label" : 8,
         "shortcut" : "w",
     },
     "ics": {
-        "path": DATASET_PATH + "/ics",
         "label": "ic",
+        "num_label" : 9,
         "shortcut" : "s",
     },
 }

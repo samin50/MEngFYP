@@ -11,7 +11,7 @@ from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMER
 from src.common.helper_functions import start_ui
 
 class CameraFeed:
-    def __init__(self, size:tuple, clock:pygame.time.Clock, cameraDisplay:pygame.display, trainingMode:bool=False) -> None:
+    def __init__(self, size:tuple, cameraDisplay:pygame.display, trainingMode:bool=False) -> None:
         self.cameraDisplay = cameraDisplay
         self.size = size
         self.trainingMode = trainingMode
@@ -20,7 +20,7 @@ class CameraFeed:
         # FPS
         self.fpsFont = pygame.font.SysFont("Roboto", FPS_FONT_SIZE)
         self.fps = self.fpsFont.render("FPS: 0", True, (255,255,255))
-        self.clock = clock
+        self.cameraclock = pygame.time.Clock()
         self.framePeriod = float(1) / CAMERA_FRAMERATE
         # Grab the available camera and start it
         pycam.init()
@@ -31,7 +31,7 @@ class CameraFeed:
         self.frameThread.start()
         # Draw FPS event
         self.drawFPSEvent = pygame.USEREVENT + 100
-        pygame.time.set_timer(self.drawFPSEvent, 1000)
+        pygame.time.set_timer(self.drawFPSEvent, 1000 // CAMERA_FRAMERATE)
 
     def run(self) -> None:
         """
@@ -46,6 +46,7 @@ class CameraFeed:
         """
         Obtain the current frame from the camera, if available
         """
+        _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
         if self.cam.query_image():
             self.currentFrame = self.cam.get_image(self.currentFrame)
         # Draw FPS in the bottom right corner
@@ -68,7 +69,7 @@ class CameraFeed:
         Handle pygame events
         """
         if event.type == self.drawFPSEvent:
-            self.fps = self.fpsFont.render(f"FPS: {self.clock.get_fps():.0f}", True, (255,255,255))
+            self.fps = self.fpsFont.render(f"FPS: {self.cameraclock.get_fps():.0f}", True, (255,255,255))
 
     def destroy(self):
         """
@@ -83,10 +84,10 @@ if __name__ == '__main__':
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
-    camera = CameraFeed(CAMERA_RESOLUTION, clk, display, TRAINING_MODE)
+    camera = CameraFeed(CAMERA_RESOLUTION, display, TRAINING_MODE)
     start_ui(
         loopFunction=[],
         eventFunction=[camera.event_handler],
         exitFunction=[camera.destroy],
-        clock=clk
+        clock=clk,
         )

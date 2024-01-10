@@ -19,10 +19,10 @@ class LCD_UI:
         self.clock = clock
         if trainingMode:
             self.cameraSurface = pygame.Surface(TRAINING_MODE_CAMERA_SIZE)
-            self.cameraFeed = CameraFeed(TRAINING_MODE_CAMERA_SIZE, clock, self.cameraSurface, trainingMode)
+            self.cameraFeed = CameraFeed(TRAINING_MODE_CAMERA_SIZE, self.cameraSurface, trainingMode)
         else:
             self.cameraSurface = pygame.Surface(CAMERA_DISPLAY_SIZE)
-            self.cameraFeed = CameraFeed(CAMERA_DISPLAY_SIZE, clock, self.cameraSurface, trainingMode)
+            self.cameraFeed = CameraFeed(CAMERA_DISPLAY_SIZE, self.cameraSurface, trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
