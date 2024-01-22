@@ -168,8 +168,13 @@ class RPIDatasetBuilder:
             classNum = DATA[self.currentComponent]["num_label"]
             x1, y1 = self.rectangleStartBounds[0] / IMG_SIZE[0], self.rectangleStartBounds[1] / IMG_SIZE[1]
             x2, y2 = self.rectangleEndBounds[0] / IMG_SIZE[0], self.rectangleEndBounds[1] / IMG_SIZE[1]
+            # Calculate center coordinates, width and height
+            xCenter = (x1 + x2) / 2
+            yCenter = (y1 + y2) / 2
+            width = x2 - x1
+            height = y2 - y1
             with open(os.path.join(DATASET_PATH, foldername, 'labels', f"{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
-                f.write(f"{classNum} {round(x1, PRECISION)} {round(y1, PRECISION)} {round(x2, PRECISION)} {round(y2, PRECISION)}")
+                f.write(f"{classNum} {round(xCenter, PRECISION)} {round(yCenter, PRECISION)} {round(width, PRECISION)} {round(height, PRECISION)}")
             # Update the save counter
             self.saveNum.set(self.saveNum.get() + 1)
             self.saveStr.set(f"Saved! x{self.saveNum.get()}")
@@ -193,14 +198,21 @@ class RPIDatasetBuilder:
         self.filename.set(self.dataSet[self.dataIndex])
         self.update_image()
         # If label in the label file, draw the rectangle
-        filename = self.dataSet[self.dataIndex].split(".")[0]
+        filename = os.path.basename(self.dataSet[self.dataIndex])
+        filename = os.path.splitext(filename)[0]
         labelpath = os.path.join(self.labelPath, f"{filename}.txt")
         if os.path.isfile(labelpath):
             with open(labelpath, "r", encoding='utf-8') as f:
                 label = f.readline().split(" ")
-                x1, y1, x2, y2 = float(label[1]), float(label[2]), float(label[3]), float(label[4])
-                self.rectangleStartBounds = (x1 * IMG_SIZE[0], y1 * IMG_SIZE[1])
-                self.rectangleEndBounds = (x2 * IMG_SIZE[0], y2 * IMG_SIZE[1])
+                xCenter, yCenter, width, height = float(label[1]), float(label[2]), float(label[3]), float(label[4])
+                # Convert center coordinates back to top-left and bottom-right coordinates
+                x1 = (xCenter - width / 2) * IMG_SIZE[0]
+                y1 = (yCenter - height / 2) * IMG_SIZE[1]
+                x2 = (xCenter + width / 2) * IMG_SIZE[0]
+                y2 = (yCenter + height / 2) * IMG_SIZE[1]
+                self.rectangleStartBounds = (x1, y1)
+                self.rectangleEndBounds = (x2, y2)
+                print(self.rectangleStartBounds, self.rectangleEndBounds)
                 self.imgDisplay.coords(self.rectangle, self.rectangleStartBounds[0], self.rectangleStartBounds[1], self.rectangleEndBounds[0], self.rectangleEndBounds[1])
                 self.imgDisplay.config(scrollregion=self.imgDisplay.bbox(ALL))
                 self.imgDisplay.tag_raise(self.rectangle)
@@ -261,7 +273,7 @@ class RPIDatasetBuilder:
             value = int(valueDisplay) * 10**int(resistorData[self.selectedResistors[2]][1])
             valueDisplay += "E" + resistorData[self.selectedResistors[2]][1]
             tolerance = str(resistorData[self.selectedResistors[3]][3])
-            valueDisplay += "_" + tolerance
+            valueDisplay += "-" + tolerance
         # If 5 band resistor or more
         elif len(self.selectedResistors) >= 5:
             valueDisplay += resistorData[self.selectedResistors[0]][1]
@@ -270,7 +282,7 @@ class RPIDatasetBuilder:
             value = int(valueDisplay) * 10**int(resistorData[self.selectedResistors[3]][1])
             valueDisplay += "E" + resistorData[self.selectedResistors[3]][1]
             tolerance = str(resistorData[self.selectedResistors[4]][3])
-            valueDisplay += "_" + tolerance
+            valueDisplay += "-" + tolerance
         # Draw resistor
         self.resistorBody = CTkLabel(self.resistorSelection, text="", bg_color=RESISTOR_BODY_COLOUR)
         self.resistorBody.grid(row=MAX_ROWS, column=3, padx=PADDING, pady=PADDING*2, sticky="nsew")
