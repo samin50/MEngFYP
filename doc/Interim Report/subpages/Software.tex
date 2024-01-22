@@ -1,0 +1,13 @@
+\subsection{Software}
+The entire system is controlled by a Raspberry Pi 4B running a very light weight Linux distribution called DietPi.
+I aim for the entire system to run locally on the Pi, and so the Pi will be responsible for running the Computer Vision system,
+controlling the hardware, and running the user interface. In order to achieve this, I have identified the following software components:
+\begin{mylist}
+  \item The user interface
+  \item The Computer Vision system
+  \item The hardware control system
+  \item The system coordinator
+\end{mylist}
+The system's software is written in Python, as it is a language I am familiar with and is well suited for the project, given the 
+availability of libraries for Computer Vision and hardware control. Again, the concept of modularity underpins the design of the software,
+and so each component is designed to be independent of the others, and can be developed in parallel.

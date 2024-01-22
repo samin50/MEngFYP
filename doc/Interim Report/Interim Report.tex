@@ -12,6 +12,7 @@
 \usepackage{titlesec}
 \usepackage{dblfloatfix}
 \usepackage{enumitem}
+\usepackage{silence}
 \usepackage[hypcap=false, justification=centering]{caption}
 \usepackage[none]{hyphenat}
 \usepackage[super, comma, sort&compress]{natbib}
@@ -23,6 +24,7 @@
 \renewcommand{\abstractnamefont}{\normalfont\bfseries}
 \renewcommand{\abstracttextfont}{\normalfont\small\itshape}
 \renewcommand{\cftdotsep}{1}
+\WarningFilter{latex}{Suppressing link}
 \renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
 \hypersetup{colorlinks=false, urlcolor=blue, linkcolor=blue, citecolor=blue}
 \sectionfont{\large}
