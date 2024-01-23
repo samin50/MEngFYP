@@ -14,19 +14,51 @@ the development of the various systems can be done independently, in parallel, a
 is modular and easily extensible.
 I have identified four systems that compromise the project:
 \begin{mylist}
-  \item The Hardware, Mechanics and Design
+  \item The Hardware, Mechanics and Electronics
   \item The software that coordinates the various components
   \item The Computer Vision system
   \item The tools used to develop the system
 \end{mylist}
+
 % Hardware
-\include*{subpages/HMD}
+\include*{subpages/Hardware}
+
+\begin{figure*}
+  \begin{minipage}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/wiring.jpg}
+    \caption{Wiring Schematic} \label{fig:wiringschematic}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/software/realvnc.jpg}
+      \caption{Main UI}
+      \label{fig:mainui}
+  \end{minipage}
+\end{figure*}
 
 % 3D Printed Frame
-\include*{subpages/Printed Frame}
+\include*{subpages/Mechanics}
+
+% Figures for Software
+\begin{figure*}
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/software/realvnc.jpg}
+    \caption{Main UI}
+  \end{minipage}
+  \hfill
+\end{figure*}
+
+% Electronics
+\include*{subpages/Electronics}
 
 % Software
 \include*{subpages/Software}
+
+% Computer Vision
+\include*{subpages/CV}
 
 % Design Problems
 \include*{subpages/Design Problems}

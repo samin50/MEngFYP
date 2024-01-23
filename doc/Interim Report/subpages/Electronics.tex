@@ -1,0 +1,38 @@
+\subsubsection{Electronics (and Safety)}
+As my project is a physical system, there are several electronic components that are required to make the system work.
+
+\noindent
+\textbf{Power Supply} \\
+As mentioned in Sections \ref*{sec:hardware} and \ref*{sec:mechanics}, the system is powered by a 24V, 6.25A, 150W power supply, and must
+be stepped down to 5V for the Pi and 12V for the LED strip. This is achieved using a XL4015 Step Down Converter\cite{xl4015}, a variable
+step down converter that can output up to 75W.
+The high power rating of the step down converter allows for a large overhead, which is useful for future stages of the project where 
+additional components may be added to the system.
+
+For powering the system, I have chosen a standard IEC C14 power connector and a RS Pro Snap-In Fused Rocker Switch\cite{rsproc14switch}.
+As the power supply is a 6.25A power supply, I have chosen a 6A fuse for the switch, which is the closest fuse rating to the power supply's
+current rating. This ensures that the fuse will blow before the power supply is damaged, should there be a short circuit in the system.
+
+For wiring the power supply and connecting the step down converters, I have chosen 18AWG wire, which is rated for 17A\cite{18awgwire}, 
+more than enough for the system's power consumption. The wire is securely crimped to the power supply using a crimping tool.
+
+\noindent
+\textbf{Raspberry Pi 4} \\
+To power the Raspberry Pi, I have chosen a standard USB-A to USB-C cable and connected it to a female USB-A breakout board connected to the
+5V step down converter. This allows for easy removal of the Pi should I need to make changes to the system, and prevents the unnecessary
+cutting of cables.
+
+As the Pi is mounted to the LCD display, a USB-A to Micro USB cable is used to connect the Pi to the display, which is then connected to the
+Pi's HDMI port, using a supplied HDMI adapter board.
+
+\noindent
+\textbf{LED Lighting} \\
+As mentioned in Section \ref*{sec:hardware}, initially, a 12V LED Light Ring was used and was changed to be a WS2812B 5V LED strip, for issues described 
+later. As shown in Figure \ref*{fig:wiringschematic}, the LED Ring was connected to a 12V supply (achieved using the 12V step down converter) and
+parallel to a 100$\mu$F capacitor, which is used to smooth out the voltage spikes.
+
+The LED Ring was then connected to an N-channel MOSFET IRLZ44N\cite{irlz44n}, which is controlled by a PWM-enabled GPIO pin on the Pi.
+This GPIO pin is connected to a 1k$\Omega$ resistor, which prevents potential overcurrent from damaging the Pi. The MOSFET is then connected to ground, completing the circuit.
+
+The IRFZ44N is a logic level MOSFET, meaning it can be fully turned on with a 3.3V gate voltage, which is the voltage of the Pi's GPIO pins, and the high
+switching speed (up to 1mHz) of the MOSFET allows for the LED Ring to be PWM controlled, allowing for the brightness of the LED Ring to be controlled.

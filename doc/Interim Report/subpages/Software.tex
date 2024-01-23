@@ -3,11 +3,35 @@ The entire system is controlled by a Raspberry Pi 4B running a very light weight
 I aim for the entire system to run locally on the Pi, and so the Pi will be responsible for running the Computer Vision system,
 controlling the hardware, and running the user interface. In order to achieve this, I have identified the following software components:
 \begin{mylist}
-  \item The user interface
+  \item The User Interface
   \item The Computer Vision system
-  \item The hardware control system
-  \item The system coordinator
+  \item The Hardware Control system
 \end{mylist}
-The system's software is written in Python, as it is a language I am familiar with and is well suited for the project, given the 
+The system's software is written in Python\cite{python}, as it is a language I am very competent with and is well suited for the project, given the 
 availability of libraries for Computer Vision and hardware control. Again, the concept of modularity underpins the design of the software,
 and so each component is designed to be independent of the others, and can be developed in parallel.
+
+All written Python code adheres to a style defined in a .pylintrc file, which is a configuration file for the pylint\cite{pylint} linter. This ensures
+that the code is consistent and readable, and also helps to identify potential bugs and errors. The code is also documented using docstrings for 
+readability and maintainability. Each software component is designed to be self-contained so they can be run independently for testing purposes.
+
+All software constants are defined in a constants.py file, which is imported by all other Python files, allowing for easy modification of constants
+that modify the behaviour of the system which is useful for testing and debugging.
+% User Interface
+\noindent
+\textbf{The User Interface} \\
+As the system is intended to be self-contained, it is important to have a user interface that displays all relevant information to the user
+and allows them to interact with the system. The UI is displayed on the 7" touchscreen display, and is written using Pygame\cite{pygamedoc};
+
+This design decision was made after experimentation with other UI libraries like Tkinter\cite{tkinterdoc}, however it was found that Pygame was the most
+viable for several reasons; it contains a module for camera streaming, which is used to display the camera feed on the UI, and can also be used to
+feed the camera frames to the Computer Vision system; there is a very large amount of control provided by Pygame over the UI, especially in terms of 
+performance. This is crucial as the UI is only there to provide information to the user, and so it is important that it does not interfere with the
+Computer Vision system or the hardware control system. With an additional library named pygame\_gui\cite{pygamegui}, it is possible to create a UI with 
+GUI elements like buttons, text boxes, and drop down menus, making for a fully comprehensive UI library.
+
+In Figure \ref*{fig:mainui}, the current version of the UI is shown. On the left, the camera feed and camera frame rate is displayed, with system
+CPU and RAM usage displayed, for monitoring purposes. There is a slider to adjust the power of the connected LED Ring light, as well as two buttons
+related to the Computer Vision system.
+
+The right side is blank for now, but will be used to display information about the Computer Vision system and the hardware control system.

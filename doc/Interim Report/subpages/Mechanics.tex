@@ -1,0 +1,35 @@
+% 3D Printed Frame
+To house the components, a 3D printed housing was designed. It features a modular design, allowing for an iterative design process
+where I am able to work on different components of the system independently. It also allows for easy replacement of components
+should my design prove to be inadequate. The housing was designed in FreeCAD\cite{freecad}, a free and open source parametric CAD software 
+that I have personal experience with. \\
+The parametric design allows for easy modification of the design should I need to make changes -
+with good design practices, I can ensure that changes can be done as I please by simply modifying a few numerical parameters.
+The design was then printed using my own personal 3D printer, a heavily modified Voxelab Aquila C2. For this stage on the project,
+I must design 3 major components for the housing:
+
+\noindent
+\textbf{PSU Housing} \\
+The PSU housing contains the power supply and ensures that all high voltage components are safely enclosed.
+It also houses the power switch, the power socket and the terminals. As I will require step down converters for the Pi and LED strip,
+the PSU housing also contains mounting points for the step down converters, as well as a mounting plate to ensure that the step down converters
+are mounted flat to the PSU housing.
+
+\noindent
+\textbf{Camera Housing} \\
+The camera housing contains the camera and the LED strip. It also contains the mounting points for the camera and LED strip.
+The camera housing will also mount an acrylic plate above the camera, so components can be placed on the plate and be imaged by the camera. \\
+From bottom to top in Figure \ref*{fig:camerahousing}, is the bottom casing, LED Ring mount, camera mount, light diffuser, middle casing and
+top casing. \\
+
+\noindent
+\textbf{LCD Display Housing} \\
+The LCD display housing contains the LCD display and the Raspberry Pi. As the 7" DFRobot LCD display has a Raspberry Pi 4 mount on its back,
+an explicit mount for the Pi is not required. The mount will position the LCD display at an angle, so it can be viewed from above. The LCD display
+simply slides into the mount, allowing for easy removal and also contains mounting points to secure the LCD display to the camera housing. \\
+The LCD housing is split into two parts; the LCD cover, where the LCD display slides into, and a base plate, which mounts to the camera housing.
+The LCD cover is then mounted onto the base plate, securing the LCD display in place.
+
+The components are secured using brass M3 heat-set inserts and M3 screws. The heat-set inserts are inserted into the 3D printed parts using a soldering iron,
+and the components are then screwed into the inserts. This allows for easy removal of components should I need to make changes to the design, following
+my modular design principle.

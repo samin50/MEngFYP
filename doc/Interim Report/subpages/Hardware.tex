@@ -1,32 +1,3 @@
-\subsection{Hardware, Mechanics and Design}
-The hardware, mechanics and design (HMD) of the system are the physical components that make up the system.
-It is necassary to first consider the HMD of the system as they are the foundation upon which the rest of the system is built;
-for example, when designing the Computer Vision system, it should utilise training data that was collected using the HMD 
-that the system will be deployed on, ensuring that the system is robust to the conditions it will be used in. As such,
-the main focus of this stage has been the HMD.
-\subsubsection{Hardware}
-For the initial stage of the project, the main components of the HMD are:
-\begin{mylist}
-  \item Raspberry Pi 4 Model B 2GB
-  \item 7" Touchscreen Display
-  \item 24V dc, 6.25A, 150W Power Supply
-  \item Okdo Adjustable Focus OV5647 Camera
-  \item LED Light Strip
-  \item 3D Printed Frame
-\end{mylist}
-% Pi
-\textbf{Raspberry Pi 4 Model B 2GB} \\
-The Raspberry Pi 4 Model B is the main component of the system, and is the central hub that all other components are connected to.
-This model was chosen as it is regarded as a reliable SoC and is widely used in the industry. It has a large amount of software
-and driver support, so I can be confident that I will be able to find a solution to any issues that may arise. Additionally, 
-it has GPIO pins that can be used to control other components which will be necassary in future stages. It also has a 
-dedicated camera port which allows for a camera to be connected directly to the SoC, which is necassary for the Computer Vision system.
-
-It also has WiFi support for SSH and remote development, as well as HDMI port for the display.
-Originally, the 4GB model was ordered however an issue with the EE Stores resulted in receiving the 2GB model instead.
-This was not an issue as the 2GB model is sufficient for the initial stage of the project, however if it is found to be a bottleneck
-in future stages, a more powerful model may be used. The decision to not return the 2GB model is because the EEStores are not
-available over the Christmas break.
 % Figures for Pi, Screen and Power Consumption
 \begin{figure*}
   \begin{minipage}[t]{0.22\textwidth}
@@ -52,6 +23,58 @@ available over the Christmas break.
     \includegraphics[width=\textwidth]{imgs/okdo_camera.jpg}
     \caption{Okdo Adjustable Focus OV5647 Camera\cite{okdocamera}}
   \end{minipage}
+\end{figure*}
+
+\subsection{Hardware, Mechanics and Electronics}
+The hardware, mechanics and electronics (HME) of the system are the physical components that make up the system.
+It is necassary to first consider the HME of the system as they are the foundation upon which the rest of the system is built;
+for example, when designing the Computer Vision system, it should utilise training data that was collected using the HME 
+that the system will be deployed on, ensuring that the system is robust to the conditions it will be used in. As such,
+the main focus of this stage has been the HME.
+\subsubsection{Hardware} \label{sec:hardware}
+For the initial stage of the project, the main hardware components of the HME are:
+\begin{mylist}
+  \item Raspberry Pi 4 Model B 2GB
+  \item 7" Touchscreen Display
+  \item 24V dc, 6.25A, 150W Power Supply
+  \item Okdo Adjustable Focus OV5647 Camera
+  \item LED Light Strip
+\end{mylist}
+% Pi
+\textbf{Raspberry Pi 4 Model B 2GB} \\
+The Raspberry Pi 4 Model B is the main component of the system, and is the central hub that all other components are connected to.
+This model was chosen as it is regarded as a reliable SoC and is widely used in the industry. It has a large amount of software
+and driver support, so I can be confident that I will be able to find a solution to any issues that may arise. Additionally, 
+it has GPIO pins that can be used to control other components which will be necassary in future stages. It also has a 
+dedicated camera port which allows for a camera to be connected directly to the SoC, which is necassary for the Computer Vision system.
+
+It also has WiFi support for SSH and remote development, as well as HDMI port for the display.
+Originally, the 4GB model was ordered however an issue with the EE Stores resulted in receiving the 2GB model instead.
+This was not an issue as the 2GB model is sufficient for the initial stage of the project, however if it is found to be a bottleneck
+in future stages, a more powerful model may be used. The decision to not return the 2GB model is because the EEStores are not
+available over the Christmas break.
+
+% Figures for 3D Printed Frame
+\subsubsection{Mechanics} \label{sec:mechanics}
+\begin{figure*}
+    \begin{minipage}[t]{0.32\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/freecad/psu_mount.jpg}
+      \caption{PSU Housing}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/freecad/camera_case.jpg}
+      \caption{Camera Housing}
+      \label{fig:camerahousing}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/freecad/lcd_mount.jpg}
+      \caption{LCD Display Housing}
+    \end{minipage}
 \end{figure*}
 
 % Screen
