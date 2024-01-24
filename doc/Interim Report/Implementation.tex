@@ -1,17 +1,4 @@
 \section{Implementation}
-% Introduction
-The project is to be executed in three stages:
-\begin{mylist}
-  \item Initial development of a Computer Vision system for component identification
-  \item Integration of a semi-automated sorting mechanism
-  \item Potentially, full automation of the sorting process or additional features like IC testing
-\end{mylist}
-This approach was taken to allow me to set defined goals to ensure that the project is always working towards a deliverable product.
-Each stage extends the previous stage, and so the project can be considered as a series of smaller projects. 
-
-For this initial stage in the project, the focus is on developing the foundation for the system to be built upon so that
-the development of the various systems can be done independently, in parallel, and in such a way that each system
-is modular and easily extensible.
 I have identified four systems that compromise the project:
 \begin{mylist}
   \item The Hardware, Mechanics and Electronics
@@ -22,7 +9,30 @@ I have identified four systems that compromise the project:
 
 % Hardware
 \include*{subpages/Hardware}
+% Figures for 3D Printed Frame
+\begin{figure*}
+  \begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/freecad/psu_mount.jpg}
+    \caption{PSU Housing}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/freecad/camera_case.jpg}
+    \caption{Camera Housing}
+    \label{fig:camerahousing}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/freecad/lcd_mount.jpg}
+    \caption{LCD Display Housing}
+  \end{minipage}
+\end{figure*}
 
+% 3D Printed Frame
+\include*{subpages/Mechanics}
 \begin{figure*}
   \begin{minipage}[t]{0.49\textwidth}
     \centering
@@ -36,19 +46,6 @@ I have identified four systems that compromise the project:
       \caption{Main UI}
       \label{fig:mainui}
   \end{minipage}
-\end{figure*}
-
-% 3D Printed Frame
-\include*{subpages/Mechanics}
-
-% Figures for Software
-\begin{figure*}
-  \begin{minipage}[t]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imgs/software/realvnc.jpg}
-    \caption{Main UI}
-  \end{minipage}
-  \hfill
 \end{figure*}
 
 % Electronics

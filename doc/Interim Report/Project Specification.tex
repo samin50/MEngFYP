@@ -1,3 +1,19 @@
+% Project Specification
+\begin{figure*}[t]
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/articles/feeder.jpg}
+    \caption{VBF \citet{nam2019design}}
+    \label{fig:feeder}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/articles/conveyer.jpg}
+      \caption{Conveyer Belt \citet{Dhenge2013MechanicalNS}}
+      \label{fig:conveyer}
+      \end{minipage}
+\end{figure*}
 \section{Project Specification}
 This project aims to solve the problem of electronic waste and cluttered workspaces in the Level 1 Labs
 by developing an automated system for identifying and sorting electronic components.
@@ -10,3 +26,15 @@ and then sort them into designated bins. The project's deliverables are as follo
   \item A semi-automated sorting mechanism
   \item Potentially, full automation of the sorting process or additional features like IC testing
 \end{mylist}
+
+\noindent
+For this initial stage in the project, the focus is on developing the foundation for the system to be built upon so that
+the development of the various systems can be done independently, in parallel, and in such a way that each system
+is modular and easily extensible. For this reason, the project is split into three stages:
+\begin{mylist}
+  \item Initial development of a Computer Vision system for component identification
+  \item Integration of a semi-automated sorting mechanism
+  \item Potentially, full automation of the sorting process or additional features like IC testing
+\end{mylist}
+This approach was taken to allow me to set defined goals to ensure that the project is always working towards a deliverable product.
+Each stage extends the previous stage, and so the project can be considered as a series of smaller projects. 
