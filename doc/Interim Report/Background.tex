@@ -1,10 +1,12 @@
 \section{Background}
+\label{sec:background}
 For the background of this project, it is necessary to consider literature related to the following:
 \begin{mylist}
   \item Mechanical design of existing sorting machines
   \item Existing Computer Vision systems for component identification
   \item Real-time Computer Vision architectures
 \end{mylist}
+
 \subsection{Mechanical Design}
 \noindent
 \textbf{Bowl Feeders} \\
@@ -25,16 +27,6 @@ The paper by \citet{zhang2019design} outlines a sorting system for vials, and do
 by using a design that is specific to the geometry of the vials, and so is not applicable to this project, however it does provide a good insight into the design of a sorting system.
 
 It seems conclusive that a VBF is the most viable option for the feeding mechanism of the sorting system, and so the design of the VBF will be based on the research outlined above.
-
-\begin{figure*}[t]
-  \begin{minipage}[t]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imgs/articles/resistordata.jpg}
-    \caption{Resistor Test Set \cite{8939034}}
-    \label{fig:resistordata}
-  \end{minipage}
-\end{figure*}
-
 \noindent
 \textbf{Transport Mechanisms} \\
 The paper by \citet{Dhenge2013MechanicalNS} depicts a conveyer belt system that transports Nuts and Bolts to a computer vision system for identification, which aligns with the goals of the project. 
@@ -82,7 +74,7 @@ and will inform the design of the Computer Vision system.
 
 
 \subsection{Real-time Computer Vision Architectures}
-For the problem of component identification, the Computer Vision system must be able to identify components in real-time, as the components will be moving on a conveyer belt, captured using
+For the problem of component identification, the Computer Vision system must be able to identify components in real-time, as the components may eventually be moving on a conveyer belt, captured using
 a camera facing down at the components. This means that the Computer Vision system must be able to identify components in a single frame, and not require multiple frames to identify a component.
 As I envision the system to be self-contained, it must also be able to run on the Raspberry Pi 4, which has a 1.5GHz quad-core 64-bit ARM Cortex-A72 CPU, and 2GB of RAM. 
 The system will also display a camera feed to the user, and so the Computer Vision system must be able to run in real-time alongside the camera feed.
@@ -101,8 +93,26 @@ with an IoU (Intersection over Union) accuracy of 86.7\%, which is very low.
 However, efforts made by Neural Magic \cite{neuralmagic} in the optimisation of YOLOv5 and YOLOv8 show performance improvements of up to 10x on CPUs, through their open-source 
 optimisation toolkit SparseML \cite{sparseml} and CPU inferencing runtime, DeepSparse \cite{deepsparse}; a very promising result.
 
+\subsection{Training Methods}
+When training a neural network, it is important to have training data. For a Computer Vision system, this means having a dataset of images that are representative of the conditions that the system will be used in, and
+that are well labelled with bounding boxes and class labels. This is a time consuming process, and it is important to have a large dataset to ensure that the model is robust and generalises well.
+
+To solve this problem, a paper by \citet{Yang_2023} proposes many different training techniques, the most promising of which is semi-supervised learning. In this approach, the model is trained on a small labelled dataset, and then
+used to label a large unlabelled dataset, which is reviewed and corrected by a human.
+
+This process is repeated until the model is sufficiently accurate, and then the model is trained on the large labelled dataset. This approach
+is very promising, as it allows for the training of a robust model with a large dataset, without the time consuming process of manually labelling the entire dataset.
+
+\subsection{Key Takeaways}
+After reviewing the literature, I have determined the following;
+
+A VBF is the most viable approach to the feeding mechanism of the sorting system, and so the design of the VBF will be based on the research outlined above.
+
+A down-facing camera is the most viable approach for the future of the project, as it allows for a conveyer belt system solving the problem of component transportation, and so the design of the Computer Vision system will be based on the research outlined above.
+
+The most viable approach to the problem of component identification is to use a CNN, specifically the YOLOv8 architecture, as they have been shown to be very effective at identifying electronic components, and with the ability to
+to optimise the model using SparseML and DeepSparse adds much promise, as it may allow me to optimise the model for the Raspberry Pi 4, which will be used in the project. 
 Additionally, the YOLO architecture is one that I will likely come across in my modules Deep Learning COMP70010 and Machine Learning COMP70014, which will serve
 to deepen my understanding of the architecture and allow me to make more informed design decisions.
-
-As such, the purposes of this project, I will be using the YOLOv8 architecture.
+As such, for the purposes of this project, I will be using the YOLOv8 architecture, making use of the SparseML and DeepSparse optimisation tools and employing semi-supervised learning to train the model.
 

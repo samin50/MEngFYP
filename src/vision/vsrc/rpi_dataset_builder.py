@@ -113,8 +113,14 @@ class RPIDatasetBuilder:
             realVNCWindow.activate()
             pygetwindow.getWindowsWithTitle("RPi Dataset Builder")[0].activate()
         except:
-            self.imgBorder.configure(bg_color=BORDER_COLOUR_FAILED)
-            return
+            try:
+                realVNCWindow = pygetwindow.getWindowsWithTitle("Component Sorter")[0]
+                realVNCWindow.activate()
+                pygetwindow.getWindowsWithTitle("RPi Dataset Builder")[0].activate()
+            except:
+                self.imgBorder.configure(bg_color=BORDER_COLOUR_FAILED)
+                print("No Window Found")
+                return
         # Capture the image
         screenshotPil = pyautogui.screenshot(region=(realVNCWindow.left, realVNCWindow.top, realVNCWindow.width, realVNCWindow.height))
         # Convert to OpenCV format

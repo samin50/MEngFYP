@@ -4,11 +4,12 @@ Contains helper functions for the project.
 import pygame
 from src.common.constants import UI_FRAMERATE
 
-def start_ui(loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None) -> None:
+def start_ui(loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None, resolution:tuple=(0, 1)) -> None:
     """
     Provide an event loop for standalone UIs
     """
     active = True
+    aspectRatio = resolution[0] / resolution[1]
     while active:
         events = pygame.event.get()
         delta = clock.tick(UI_FRAMERATE) / 1000.0
@@ -20,6 +21,14 @@ def start_ui(loopFunction:list, eventFunction:list=None, exitFunction:list=None,
                     for func in exitFunction:
                         func()
                 active = False
+            # Resize event
+            if e.type == pygame.VIDEORESIZE:
+                newWidth, newHeight = e.w, e.h
+                if newWidth / newHeight > aspectRatio:
+                    newWidth = int(newHeight * aspectRatio)
+                else:
+                    newHeight = int(newWidth / aspectRatio)
+                screen = pygame.transform.scale(screen, (newWidth, newHeight))
             # Update the UI Manager
             if manager:
                 manager.process_events(e)

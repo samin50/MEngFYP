@@ -18,6 +18,7 @@ completedColumns:
 ## Todo
 
 - [gather-components-training-data](tasks/gather-components-training-data.md)
+- [redesign-camera-housing](tasks/redesign-camera-housing.md)
 
 ## In Progress
 

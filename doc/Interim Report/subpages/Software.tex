@@ -1,3 +1,13 @@
+\begin{figure*}
+  \begin{minipage}[t]{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{imgs/software/tools.png}
+      \caption{Dataset Labeller Tool}
+      \label{fig:customtool}
+  \end{minipage}
+  \hfill
+\end{figure*}
+
 \subsection{Software}
 The entire system is controlled by a Raspberry Pi 4B running a very light weight Linux distribution called DietPi.
 I aim for the entire system to run locally on the Pi, and so the Pi will be responsible for running the Computer Vision system,
@@ -17,6 +27,20 @@ readability and maintainability. Each software component is designed to be self-
 
 All software constants are defined in a constants.py file, which is imported by all other Python files, allowing for easy modification of constants
 that modify the behaviour of the system which is useful for testing and debugging.
+
+Additionally, a lot of thought went into streamlining the development process to ensure that the system is easy to develop and maintain. For example,
+I use Visual Studio Code's\cite{vscode} Remote SSH extension to develop the system remotely, as it allows me to develop the system on my laptop, while
+using the familiar VSCode environment with any extensions that I am accustomed to.
+
+The Pi uses Git\cite{git} for version control, and the repository is hosted on GitHub\cite{github}, with its own dedicated branch for the Pi that is regularly
+updated with the main branch. The vision system and my laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring 
+that all systems are running the same code. This is crucial as it allows me to develop the system on my laptop, and then push the changes to the Pi, without
+having to manually copy the files over.
+
+During development, the Pi connects to my laptop's WiFi hotspot, and is configured to be discoverable with the Pi's hostname, allowing me to connect using
+SSH and a VNC Viewer without needing the Pi's IP address, which is dynamic and may change. The Pi also makes use of SSH keys, allowing me to connect
+to the Pi without needing to enter a password, ensuring quick and easy access.
+
 % User Interface
 \noindent
 \textbf{User Interface} \\

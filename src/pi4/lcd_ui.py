@@ -13,16 +13,14 @@ from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.display_feed_pygame import CameraFeed
 
 class LCD_UI:
-    def __init__(self, clock:pygame.time.Clock, callbacks:dict={}, trainingMode:bool=False) -> None:
+    def __init__(self, clock:pygame.time.Clock, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False) -> None:
         # Setup UI
-        self.display = pygame.display.set_mode(LCD_RESOLUTION)
+        self.display = pygame.display.set_mode(LCD_RESOLUTION, resizeable and (pygame.RESIZABLE | pygame.SCALED))
+        pygame.display.set_caption("Component Sorter")
         self.clock = clock
-        if trainingMode:
-            self.cameraSurface = pygame.Surface(TRAINING_MODE_CAMERA_SIZE)
-            self.cameraFeed = CameraFeed(TRAINING_MODE_CAMERA_SIZE, self.cameraSurface, trainingMode)
-        else:
-            self.cameraSurface = pygame.Surface(CAMERA_DISPLAY_SIZE)
-            self.cameraFeed = CameraFeed(CAMERA_DISPLAY_SIZE, self.cameraSurface, trainingMode)
+        self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
+        self.cameraSurface = pygame.Surface(self.resolution)
+        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event

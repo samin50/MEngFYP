@@ -1,0 +1,41 @@
+\subsection{Tools}
+\label{sec:tools}
+To streamline the process of developing the system, I developed tools to aid in the development process of the Computer Vision system.
+
+A Jupyter Notebook\cite{jupyter} was developed to aid in developing the Computer Vision system. This is common practice as it
+allows code to be run and the data associated with it to be inspected, which is very helpful for debugging purposes. It 
+has the capability of training every model that will be used in the Computer Vision system, and contains features like
+data augmentation, checkpointing, and model evaluation.
+
+The data augmentation feature is very useful as it allows me to 
+retain the original data should I need to add more labels or modify the data in any way. The checkpointing feature allows
+me to save the model at any point during training, which serves as a backup but also allows me to resume training and helps 
+to protect against overfitting. The model evaluation feature allows me to evaluate the model on a test set, and provides
+useful metrics like precision, recall, and mAP. This is useful for evaluating the model's performance, and also for
+comparing the performance of different models.
+
+Additionally, a customtkinter\cite{customtkinter} script was developed to aid in the development of Computer Vision system.
+This script works in conjuction with the UI, seen in Figure \ref*{fig:mainui}, the Raspberry Pi (made possible using \citet{realvnc})
+and allows me to label images with bounding boxes and class labels.
+
+The script has support for multiple components, including:
+\begin{multicols}{2}
+    \begin{mylist}
+        \item Resistors
+        \item Capacitors
+        \item Ceramic Capacitors
+        \item Inductors
+        \item Diodes
+        \item MOSFETs
+        \item Transistors
+        \item LEDs
+        \item Wires
+        \item ICs
+    \end{mylist}
+\end{multicols}
+
+The script makes use of shortcut keys to quickly label images, and also allows me to save the labels in a format that is
+compatible with the YOLOv8 model. Given that this is my own script, I can easily add or remove features as needed - it is likely
+that I will need to add more features such as component orientation, so having my own script is very useful.
+
+A screenshot of the script can be seen in Figure \ref*{fig:customtool}.
