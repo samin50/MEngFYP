@@ -24,9 +24,11 @@ completedColumns:
 
 - [interim-report](tasks/interim-report.md)
 - [create-vision-trainer](tasks/create-vision-trainer.md)
+- [build-stage-1-system](tasks/build-stage-1-system.md)
 
 ## Done
 
+- [design-psu-mount](tasks/design-psu-mount.md)
 - [design-camera-mount](tasks/design-camera-mount.md)
-- [build-stage-1-system](tasks/build-stage-1-system.md)
+- [design-lcd-mount](tasks/design-lcd-mount.md)
 - [determine-necessary-components](tasks/determine-necessary-components.md)

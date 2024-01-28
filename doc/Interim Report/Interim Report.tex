@@ -14,6 +14,7 @@
 \usepackage{enumitem}
 \usepackage{silence}
 \usepackage{multicol}
+\usepackage{tabularx}
 \usepackage[hypcap=false, justification=centering]{caption}
 \usepackage[none]{hyphenat}
 \usepackage[numbers, super, comma, sort&compress]{natbib}
@@ -47,6 +48,10 @@
 \titlespacing*{\section}{0pt}{1em}{0.5em}
 \titlespacing*{\subsection}{0pt}{1em}{0.5em}
 \titlespacing*{\subsubsection}{0pt}{1em}{0.5em}
+
+% Adjusting contents space
+\setlength{\cftbeforesecskip}{1pt}
+\setlength{\cftbeforesubsecskip}{1pt}
 
 % Abstract
 \newcommand{\abstractText}{
