@@ -1,26 +1,26 @@
 \subsection{Computer Vision}
-As the Computer Vision system should be trained on data that is representative of the conditions it will be used in, and because
-of the previously mentioned issues with the mehcanical design of the system, the Computer Vision system was not developed in this stage.
-The data collection process is manual and time consuming, and so it is far more efficient to ensure that the mechanical design is
-finalised, and the foundation of the project is robust and reliable. As will be discussed in the Section \ref*{sec:projectplan} (Project Plan), 
-the mechanical design will be overhauled in the next stage, so if I had collected data for the Computer Vision system in this stage,
+The computer vision system should be trained on data that is representative of the conditions it will be used in, and because
+of the previously mentioned issues with the mechanical design of the system, the computer vision system was not developed at this stage.
+The data collection process is manual and time-consuming, so it is far more efficient to ensure that the mechanical design is
+finalised and that the foundation of the project is robust and reliable. As will be discussed in Section \ref*{sec:projectplan} (Project Plan), 
+the mechanical design will be overhauled in the next stage, so if I had collected data for the computer vision system in this stage,
 it may have been rendered useless in the next stage.
 
-However, this does not mean that no work was done on the Computer Vision system. As per Section \ref*{sec:background} {Background},
-I have determined that YOLOv8 is the most suitable model for the Computer Vision system. As such, I have developed a number
-of tools to aid in the development of the Computer Vision system.
+However, this does not mean that no work was done on the computer vision system. As per Section \ref*{sec:background} {Background},
+I have determined that YOLOv8 is the most suitable model for the computer vision system. As such, I have developed several
+tools to aid in the development of the computer vision system.
 
 Additionally, careful consideration of the Computer Vision system pipeline was done in this stage. 
 
 \subsubsection{Data Collection}
-For the task of component identification, the Computer Vision system must be trained on data that is representative of the conditions
-it will be used in. As such, the data collection process is manual and time consuming. For this reason, I have developed a customtkinter\cite{customtkinter} script to aid in the data collection process.
+For the task of component identification, the computer vision system must be trained on data that is representative of the conditions
+it will be used in. As such, the data collection process is manual and time-consuming. For this reason, I have developed a customtkinter\cite{customtkinter} script to aid in the data collection process.
 The script allows me to label images with bounding boxes and class labels, and save the labels in a format that is compatible with
 the YOLOv8 model. The script also allows me to quickly label images using shortcut keys, and sorts each image into a folder based on
-the class label, making it easy to manage the data. Given that this is my own script, I can easily add or remove features as needed - it is likely
-that I will need to add more features such as component orientation, so having my own script is very useful.
+the class label, making it easy to manage the data. Given that this is my script, I can easily add or remove features as needed - I will likely
+need to add more features such as component orientation, so having my own script is very useful.
 
-This script works in conjuction with the UI, seen in Figure \ref*{fig:mainui}, the Raspberry Pi (made possible using \citet{realvnc})
+This script works in conjunction with the UI, seen in Figure \ref*{fig:mainui}, the Raspberry Pi (made possible using \citet{realvnc}, a remote desktop application),
 and allows me to label images with bounding boxes and class labels.
 
 The script has support for multiple components, including:
@@ -39,17 +39,18 @@ The script has support for multiple components, including:
     \end{mylist}
 \end{multicols}
 
+\noindent
 A screenshot of the script can be seen in Figure \ref*{fig:customtool}.
 
 A Jupyter Notebook\cite{jupyter} was also developed to aid in developing the Computer Vision system. This is common practice as it
 allows code to be run and the data associated with it to be inspected, which is very helpful for debugging purposes. It 
-has the capability of training every model that will be used in the Computer Vision system, and contains features like
+has the capability of training every model that will be used in the computer vision system and contains features like
 data augmentation, checkpointing, and model evaluation.
 
 The data augmentation feature is very useful as it allows me to 
 retain the original data should I need to add more labels or modify the data in any way. The checkpointing feature allows
 me to save the model at any point during training, which serves as a backup but also allows me to resume training and helps 
-to protect against overfitting. The model evaluation feature allows me to evaluate the model on a test set, and provides
+to protect against overfitting. The model evaluation feature allows me to evaluate the model on a test set and provides
 useful metrics like precision, recall, and mAP. This is useful for evaluating the model's performance, and also for
 comparing the performance of different models.
 
@@ -59,21 +60,21 @@ The Computer Vision system pipeline is the sequence of steps that the Computer V
 The system pipeline is as follows:
 \begin{mylist}
     \item \textbf{Preprocessing} \\
-    The image is preprocessed to improve the quality of the image, and to make it easier for the model to identify components, ensuring
+    The image is preprocessed to improve the quality of the image and to make it easier for the model to identify components, ensuring
     uniformity and consistency in the data.
     \item \textbf{Component Detection} \\
     The image is fed to the model, which outputs a class, confidence score, bounding box, and orientation for each component.
     \item \textbf{Component Value Identification} \\
-    The value of the component is identified from the subimage within the bounding box, and is used to further classify the component.
+    The value of the component is identified from the sub-image within the bounding box and is used to further classify the component.
 \end{mylist}
 
-While a single model can be used to identify components, it is necassary to use two models to identify the value of the component.
+While a single model can be used to identify components, it is necessary to use two models to identify the value of the component.
 This is because the value of the component may differ depending on the type of component. For example, the value of a resistor
 is read from the colour bands, whereas the value of a capacitor is read from the text printed on the component. As such, each
 component may require a different model to identify its value.
 
 This is not an issue as it conforms to the modular design of the system, and allows for easy extensibility. For example, if
 a new component is added to the system, it is easy to add a new/reuse an existing model to identify the value of the component; however the 
-Component Detection model will need to be retrained as the dimensionality of the output layer will change due to the addition
+component detection model will need to be retrained as the dimensionality of the output layer will change due to the addition
 of a new class. The Jupyter Notebook developed for the Computer Vision system makes this process very easy, as it would simply
 require me to add the new component to the list of components, and the Notebook will handle the rest. 

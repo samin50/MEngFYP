@@ -2,40 +2,41 @@
 \begin{figure*}[t]
   \begin{minipage}[t]{0.33\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{imgs/articles/feeder.jpg}
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/feeder.jpg}
     \caption{VBF\cite{nam2019design}}
     \label{fig:feeder}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.33\textwidth}
       \centering
-      \includegraphics[width=\textwidth]{imgs/articles/conveyer.jpg}
-      \caption{Conveyer Belt\cite{Dhenge2013MechanicalNS}}
-      \label{fig:conveyer}
+      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/conveyor.jpg}
+      \caption{Conveyor Belt\cite{Dhenge2013MechanicalNS}}
+      \label{fig:conveyor}
       \end{minipage}
   \hfill
   \begin{minipage}[t]{0.33\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{imgs/articles/resistordata.jpg}
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/resistordata.jpg}
     \caption{Resistor Test Set\cite{8939034}}
     \label{fig:resistordata}
   \end{minipage}
 \end{figure*}
 
 \section{Project Specification}
+\label{sec:project-specification}
 This project aims to solve the problem of electronic waste and cluttered workspaces in the Level 1 Labs
 by developing an automated system for identifying and sorting electronic components.
 
-It aims to do so by employing state of the art Computer Vision techniques to classify various electronic components,
+It aims to do so by employing state-of-the-art computer vision techniques to classify various electronic components,
 and then sort them into designated bins. The project's deliverables are as follows:
 \begin{mylist}
-  \item A Computer Vision system for component identification
+  \item A computer vision system for component identification
   \item An interface from which to observe and control the system's state
   \item A semi-automated sorting mechanism
   \item Potentially, full automation of the sorting process or additional features like IC testing
 \end{mylist}
 \noindent
-After initial consultation with my supervisor Dr. Stott and a visit to the Level 1 Labs to discuss the project, I received a sample
+After an initial consultation with my supervisor Dr. Stott and a visit to the Level 1 Labs to discuss the project, I received a sample
 of the different electrical components that were commonly used, which are the following:
 \begin{multicols}{2}
   \begin{mylist}
@@ -53,13 +54,13 @@ of the different electrical components that were commonly used, which are the fo
 \end{multicols}
 
 \noindent
-For this initial stage in the project, the focus is on developing the foundation for the system to be built upon so that
-the development of the various systems can be done independently, in parallel, and in such a way that each system
+For this initial stage of the project, the focus is on developing the foundation of the system that the project
+will be built upon so that the development of the various systems can be done independently, in parallel, and in such a way that each system
 is modular and easily extensible. For this reason, the project is split into three stages:
 \begin{mylist}
-  \item Initial development of a Computer Vision system for component identification
+  \item Initial development of a computer vision system for component identification
   \item Integration of a semi-automated sorting mechanism
   \item Potentially, full automation of the sorting process or additional features like IC testing
 \end{mylist}
 This approach was taken to allow me to set defined goals to ensure that the project is always working towards a deliverable product.
-Each stage extends the previous stage, and so the project can be considered as a series of smaller projects. 
+Each stage extends the previous stage, so the project can be considered as a series of smaller projects. 
