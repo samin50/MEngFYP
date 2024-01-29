@@ -52,6 +52,7 @@
 % Adjusting contents space
 \setlength{\cftbeforesecskip}{1pt}
 \setlength{\cftbeforesubsecskip}{1pt}
+\setlength{\cftaftertoctitleskip}{4pt}
 
 % Abstract
 \newcommand{\abstractText}{
@@ -71,7 +72,7 @@
 \twocolumn[
   \begin{@twocolumnfalse}
     \maketitle
-    \vspace{-1cm}
+    \vspace{-3em}
     \renewcommand*\abstractname{Abstract \& Plagiarism Declaration}
     \begin{abstract}
         \vspace{-1em}
@@ -82,6 +83,7 @@
 ]
 
 % Contents page
+\vspace{1em}
 \tableofcontents
 \newpage
 % Sections and Figures
@@ -100,5 +102,8 @@
 \section{References}
 \bibliographystyle{plainnat}
 \bibliography{References}
+
+% Appendices
+\include*{Appendix}
 
 \end{document}
