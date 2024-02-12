@@ -1,11 +1,12 @@
 ---
 created: 2023-11-07T21:42:18.879Z
-updated: 2024-01-02T19:09:20.929Z
+updated: 2024-02-12T05:59:04.979Z
 assigned: ""
-progress: 0
+progress: 0.2
 tags:
-  - 'STAGE 1'
-  - VISION
+  - 'Stage 2'
+  - Vision
+  - Large
 started: 2023-11-07T00:00:00.000Z
 ---
 

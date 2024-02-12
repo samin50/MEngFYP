@@ -1,5 +1,11 @@
+/* Tags */
 .kanbn-task-tag-stage-1 {
     background-color: rgb(109, 85, 182);
+    color: rgb(245, 245, 245);
+}
+
+.kanbn-task-tag-stage-2 {
+    background-color: rgb(85, 182, 151);
     color: rgb(245, 245, 245);
 }
 
@@ -18,6 +24,86 @@
     color: rgb(245, 245, 245);
 }
 
+/* Difficulty Tags */
+
+.kanbn-task-tag-trivial {
+    background-color: #66BBFF;
+    color: rgb(245, 245, 245);
+}
+
+.kanbn-task-tag-tiny {
+    background-color: #3366DD;
+    color: rgb(245, 245, 245);
+}
+.kanbn-task-tag-small {
+    background-color: #109944;
+    color: rgb(245, 245, 245);
+}
+
+.kanbn-task-tag-medium {
+    background-color: #d6a810;
+    color: rgb(245, 245, 245);
+}
+
+.kanbn-task-tag-large {
+    background-color: #EE8833;
+    color: rgb(245, 245, 245);
+}
+
+.kanbn-task-tag-huge {
+    background-color: #FF4422;
+    color: rgb(245, 245, 245);
+}
+
+/* Column styling */
+
 .kanbn-column-blocked .kanbn-column-task-list {
     border-color: rgb(255, 0, 0);
+}
+
+.kanbn-column-done {
+    flex: 1.5; /* Gives the Done column more weight */
+}
+
+.kanbn-column-done .kanbn-column-task-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Creates two columns of equal width */
+    gap: 4px; /* Adjust the gap between columns as necessary */
+}
+
+/* Task styling */
+
+.kanbn-task-data-created {
+    display: none;
+}
+
+.kanbn-task-data-due {
+    display: block;
+    color: rgb(255, 109, 109);
+}
+
+.kanbn-task-data-completed {
+    display: inline-block;
+    color: rgb(0, 255, 0);
+}
+
+.kanbn-task-data-started {
+    display: inline-block;
+    color: rgb(147, 253, 255);
+}
+
+.kanbn-task-data-relation {
+    display: block;
+}
+
+.kanbn-task-data-label {
+    display: inline-block;
+}
+
+.kanbn-task-data-workload {
+    display: block;
+}
+
+.kanbn-task-data-sub-tasks {
+    display: block;
 }

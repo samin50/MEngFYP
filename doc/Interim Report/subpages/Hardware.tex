@@ -46,17 +46,35 @@ For the initial stage of the project, the main hardware components of the HME ar
 \end{mylist}
 % Pi
 \textbf{Raspberry Pi 4 Model B 2GB} \\
-The Raspberry Pi 4 Model B is the main component of the system and is the central hub that all other components are connected to.
-This model was chosen as it is regarded as a reliable SoC and is widely used in the industry. It has a large amount of software
+The Raspberry Pi 4 Model B was chosen as the main component of the system and is the central hub that all other components are connected to.
+This model was chosen as it is regarded as a reliable SoC and is widely used in the industry, and I have experience with
+them through personal projects and ELEC96018 Embedded Systems. It has a large amount of software
 and driver support, so I can be confident that I will be able to find a solution to any issues that may arise. Additionally, 
 it has GPIO pins that can be used to control other components which will be necessary in future stages. It also has a 
-dedicated camera port which allows for a camera to be connected directly to the SoC, which is necessary for the computer vision system.
+dedicated CSI camera port which allows for a camera to be connected directly to the SoC, which is necessary for the computer vision system.
 
 It also has WiFi support so I can utilise SSH and remote development software, as well as an HDMI port for the display.
 Originally, the 4GB model was ordered however an issue with the EE Stores resulted in receiving the 2GB model instead.
 This was not an issue as the 2GB model is sufficient for the initial stage of the project, however, if it is found to be a bottleneck
 in future stages, a more powerful model may be used. The decision to not return the 2GB model is because the EEStore was not
 available over the Christmas break when the bulk of the work was done for this report.
+
+An alternative to the Pi family of SoCs could be an Arduino, but while they are capable of controlling the components of the system,
+and potentially drive an LCD, their microcontrollers are not powerful enough to run the computer vision system and stream video from the camera,
+so they cannot be used as a replacement for the Pi. However, in the future stages of the project, the Pi may delegate control of the components to an Arduino
+to free up processing power for the computer vision system, if it is found to be a bottleneck.
+
+A viable alternative to the Pi could be a Nvidia Jetson Nano\cite{jetsonnano}, as it is designed for computer vision applications and has a dedicated GPU. The dedicated GPU
+would reduce the likelihood of the computer vision system being a bottleneck, and it has a CSI port for the camera; in terms of CPU performance, the Nano is weaker than the Pi,
+having a quad-core ARM Cortex-A57, whereas the Pi has a quad-core ARM Cortex-A72\cite{pi4}. However, the worse CPU performance is offset by the dedicated GPU, and the Nano has 4GB of RAM, 
+making the Nano a very attractive alternative to the Pi. The Nano's drawback is that it is significantly more expensive than the Pi (up to 3x from retailers), and
+given the ability to optimise the computer vision system as discussed in Section \ref*{sec:background} (Background), the Pi is still
+a viable choice for the computer vision system.
+
+To address the lack of a dedicated GPU for inference, an article from Medium\cite{benchmarks} benchmarked the Pi's performance on various computer vision tasks with 
+various accelerators like the Intel Neural Compute Stick 2 and the Google Coral USB Accelerator against other SoCs like the Jetson Nano and the Coral Dev Board. 
+It was found that the Coral Dev Board was the best performing, however the Pi using optimisation libraries like TensorFlow Lite showed  promising results, which
+helps to strengthen the argument for using the Pi for the computer vision system, especially with the SparseML and DeepSparse libraries that were discussed in Section \ref*{sec:background} (Background).
 
 % Screen
 \vspace{1em}

@@ -1,11 +1,12 @@
 ---
 created: 2023-11-07T21:32:13.543Z
-updated: 2023-11-07T22:03:14.826Z
+updated: 2024-02-12T05:18:26.292Z
 assigned: ""
 progress: 0
 tags:
-  - 'STAGE 1'
-  - VISION
+  - 'Stage 2'
+  - Vision
+  - Medium
 started: 2023-11-07T00:00:00.000Z
 ---
 
@@ -19,3 +20,7 @@ Gather images of training data for the following components:
 - [ ] Capacitors
 - [ ] Mosfets
 - [ ] ICs
+
+## Relations
+
+- [Requires design-new-camera-mount](design-new-camera-mount.md)
