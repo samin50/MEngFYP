@@ -82,17 +82,17 @@ The approaches taken here are similar to industrial sorting systems seen in vide
 how to transport the components to the computer vision system; how to transport the components from the computer vision System to the sorting system; and the placement of the camera.
 
 Other approaches include vibratory feeders\cite{s21217280}, which use precise vibrations to orientate and transport components, and pneumatic systems \cite{ASEC2023-16267}, which use air pressure in tubes to transport components.
-These approaches require more complex hardware, and lack the easily acheivable precision of the conveyor belt system, for example in the case of the pneumatic system, a complex network of tubes and valves and an air compressor
+These approaches require more complex hardware, and lack the easily achievable precision of the conveyor belt system, for example in the case of the pneumatic system, a complex network of tubes and valves and an air compressor
 is required, which is not practical for the project. Robotic arms are commonly used in the industry for sorting, however, this is not viable as this would either require an expensive robotic arm, or a complex system of motors and actuators to move the components.
 
 From the approaches above, it seems that a conveyor belt with a down-facing camera is the most viable approach to transporting the components. Initially, the aim was for the system to be semi-autonomous, with a design allowing the camera to face upwards.
-This configuration would enable the user to place the component on an acrylic plate directly above the camera for immediate identification, enabling easy user interactionas the view of the component is not obstructed. 
+This configuration would enable the user to place the component on an acrylic plate directly above the camera for immediate identification, enabling easy user interaction as the view of the component is not obstructed. 
 Having the camera face-down would block the user's view of the component, which would be an inconvenience, and as such, the current design of the system features an up-facing camera. However, 
 this will be changed to reflect the research outlined above, in the next stage of the project.
 
 \noindent
 \textbf{Bowl Feeders} \\
-While researching for this project, and especially in videos, it seems most industrial sorting machines use a Vibratory Bowl Feeder (VBF) to help feed components into the sorting system;
+While researching for this project, and especially in videos\cite{videobowlfeeder}, it seems most industrial sorting machines use a Vibratory Bowl Feeder (VBF) to help feed components into the sorting system;
 as shown in Figure \ref*{fig:feeder}, the VBF consists of a bowl that vibrates coupled with a spring and electromagnet.
 The paper by \citet{nam2019design} explores the optimal design of a VBF for USB keycaps, by attempting to identify the ideal parameters for the structure of the bowl,
 sorting track, mounting adapter, and suspension system. The paper also uses modal analysis to determine the natural frequencies of the system and uses this to
@@ -108,15 +108,14 @@ provides a good overview of the forces involved in the operation of a VBF, stren
 The paper by \citet{zhang2019design} outlines a sorting system for vials and does not make use of a VBF, instead opting for a turntable design that mechanically orientates the vials. It primarily operates
 by using a design that is specific to the geometry of the vials, and so does not apply to this project, however, it does provide a good insight into the design of a sorting system.
 
-An alternative to the VBF could be a robotic arm; fine control over movement would be necessary as the components are small and may be tangled, which would require its own set of sensors and camera systems. The 
-vibrations of the VBF would help to untangle the components, so it seems that a VBF is the most viable approach to the feeding mechanism of the sorting system, if the system is to be fully autonomous.
-
+An alternative to the VBF could be a robotic arm; fine control over movement would be necessary as the components are small and may be tangled, however, as mentioned before would require its own set of sensors and camera systems.
+As the components can be tangled, there are not many viable alternatives to the VBF or a robotic arm, so between these two solutions, it seems that the VBF is the most viable approach if the system is to be fully autonomous, as the vibrations of the VBF would help to untangle the components.
 \subsection{Key Takeaways}
 After reviewing the literature, the following key takeaways were made:
 
-The most viable approach to the problem of component identification is to use a CNN, specifically the YOLOv8 architecture, as they are very effective at identifying electronic components, and with the ability to
-to optimise the model using SparseML and DeepSparse adds much promise, as it may allow me to optimise the model to run on the Raspberry Pi 4, which will be used in the project. 
-Additionally, the YOLO architecture is one that may be covered in the modules Deep Learning COMP70010 and Machine Learning COMP70014, enriching the understanding of this architecture.
+The most viable approach to the problem of component identification is to use a CNN, specifically the YOLOv8 architecture, as they are very effective at classification tasks, which translates to being able to identify electronic components. Whenith the ability to
+to optimise the model using SparseML and DeepSparse, the model may be able to run on the Raspberry Pi 4 in real-time, which is a key requirement of the project.
+Additionally, the YOLO architecture may be covered in the modules Deep Learning COMP70010 and Machine Learning COMP70014, enriching the understanding of this architecture.
 
 A down-facing camera is the most viable approach for the future of the project, as it allows for a conveyor belt system to solve the problem of component transportation, and so the design of the computer vision system will be based on the research outlined above in the next stage of the project.
 

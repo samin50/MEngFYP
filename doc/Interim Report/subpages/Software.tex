@@ -1,14 +1,14 @@
 \subsection{Software}
 The entire system is controlled by a Raspberry Pi 4B running a very lightweight Linux distribution called DietPi\cite{dietpi}.
-I aim for the entire system to run locally on the Pi, so the Pi will be responsible for running the computer vision system,
-controlling the hardware, and running the user interface. In order to achieve this, I have identified the following software components:
+The goal for the entire system is to be run locally on the Pi, so the Pi will be responsible for running the computer vision system,
+controlling the hardware, and running the user interface. In order to achieve this, the following software components are required:
 \begin{mylist}
   \item The User Interface
   \item The Computer Vision system
   \item The Hardware Control system
 \end{mylist}
 \noindent
-The system's software is written in Python\cite{python}, as it is a language I am very competent with and is well suited for the project, given the 
+The system's software is written in Python\cite{python}, which is well suited for the project given the 
 availability of libraries for computer vision and hardware control. Again, the concept of modularity underpins the design of the software,
 and so each component is designed to be independent of the others and can be developed in parallel.
 
@@ -20,17 +20,20 @@ All software constants are defined in a constants.py file, which is imported by 
 that define the behaviour of the system which is useful for testing and debugging.
 
 Additionally, a lot of thought went into streamlining the development process to ensure that the system is easy to develop and maintain. For example,
-I use Visual Studio Code's\cite{vscode} Remote SSH extension to develop the system remotely, as it allows me to develop the system on my laptop, while
-using the familiar VSCode environment with any extensions that I am accustomed to.
+Visual Studio Code's\cite{vscode} Remote SSH extension is used to develop the system remotely, as it allows developing the system on a much more powerful laptop, while
+using the familiar VSCode environment with any extensions that help streamline the development process. This is crucial as the Pi is not very powerful, so
+compiling and running the system on the Pi may be slow and cumbersome.
 
 The Pi uses Git\cite{git} for version control, and the repository is hosted on GitHub\cite{github}, with a dedicated branch for the Pi that is regularly
-updated with the main branch. The vision system and my laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring 
-that all systems are running the same code. This is crucial as it allows me to develop the system on my laptop, and then push the changes to the Pi, without
-having to manually copy the files over.
+updated with the main branch. The vision system and the laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring 
+that all systems are running the same code. This is crucial as it enables development on a more powerful laptop, and then synchronises the changes to the Pi, without
+having to manually copy any files over.
 
-During development, the Pi connects to my laptop's WiFi hotspot and is configured to be discoverable with the Pi's hostname, allowing me to connect using
-SSH and a VNC Viewer without needing the Pi's IP address, which is dynamic. The Pi also makes use of SSH keys, allowing me to connect
-to the Pi without needing to enter a password, ensuring quick and easy access.
+During development, the Pi connects to the laptop's WiFi hotspot and is configured to be discoverable with the Pi's hostname, facilitating easy access to the Pi through
+SSH and a VNC Viewer without needing the Pi's IP address, which is dynamic. The Pi also makes use of SSH keys, allowing connection 
+to the Pi without needing to enter a password every time, ensuring quick and easy access.
+
+
 
 % User Interface
 \noindent
@@ -51,19 +54,12 @@ related to the Computer Vision system.
 
 The right side is blank for now but will be used to display information about the computer vision system and the hardware control system.
 
-\begin{figure*}
-  \begin{minipage}[t]{0.49\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=6cm,keepaspectratio]{imgs/software/tools.png}
-      \caption{Dataset Labeller Tool}
-      \label{fig:customtool}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.49\textwidth}
+\begin{figure*}[t]
+  \begin{minipage}[t]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=6cm,keepaspectratio]{imgs/design/allparts.jpeg}
-    \caption{Current System}
-    \label{fig:allparts}
-\end{minipage}
-\hfill
+    \includegraphics[width=\textwidth,height=10.5cm,keepaspectratio]{imgs/appendix/projectplan.jpg}
+    \caption{Project Plan}
+    \label{fig:projectplan}
+  \end{minipage}
+  \hfill 
 \end{figure*}

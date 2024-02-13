@@ -1,6 +1,6 @@
 ---
 created: 2023-11-07T21:32:41.515Z
-updated: 2024-02-12T16:56:47.419Z
+updated: 2024-02-12T19:54:57.903Z
 assigned: ""
 progress: 0.1
 tags:
@@ -20,3 +20,4 @@ Create and train the two stage vision system required by the project
 - [Requires create-component-value-identifier](create-component-value-identifier.md)
 - [Requires create-component-grouper](create-component-grouper.md)
 - [Requires design-new-camera-mount](design-new-camera-mount.md)
+- [Requires create-conveyor-belt](create-conveyor-belt.md)

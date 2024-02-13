@@ -1,58 +1,111 @@
-\section{Project Plan}
-\label{sec:projectplan}
-For the planning of the project, I decided to use my experience from my 6-month placement to use more traditional software development methodologies,
-making use of a Kanban board to track the progress of the project.
-
-In this Kanban board, I have made use of labels to categorise each task into different categories, allowing me to make use
-of the filter function to view tasks of a specific category.
-
 \begin{figure*}[t]
   \begin{minipage}[t]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=10cm,keepaspectratio]{imgs/software/projectplan.jpg}
-    \caption{Project Plan}
+    \includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{imgs/appendix/taskexample.jpg}
+    \caption{Example of Kanban Task}
+    \label{fig:kantask}
   \end{minipage}
   \hfill 
 \end{figure*}
 
-For the remainder of the project, I will be using this Kanban board to track the progress of the project. 
- \subsection{Stage 1}
-The Stage 1 system is not currently complete, however, I have made significant progress towards the completion of the system. The remaining
-tasks for the Stage 1 system are to redesign the camera mount so that it is down-facing, collect training data for the Stage 1 system, and
-train the component detection model. 
+\section{Project Plan}
+\label{sec:projectplan}
+For the planning of the project, the decision was made to leverage the experience gained from a 6-month placement by adopting more traditional software development methodologies.
+This approach included the utilisation of a Kanban board to monitor the project's progress effectively.
 
-While non-trivial, I believe that these tasks can be completed within the next 3 weeks due to the strong foundation of the project, allowing me to move onto the Stage 2 system.
-The current Stage 1 system is shown in Figure \ref*{fig:allparts}.
+In this Kanban board, labels were employed to categorise each task into different categories, such as
+which component of the system the task is related to, the priority of the task, and the stage of the project the task is related to.
+Each task had a description detailing what needed to be done, and some others had dependencies and checklists of sub-tasks that needed to be completed.
+Dates were also assigned to each task to ensure that the project was on track. An example of a task on the Kanban board is shown in Figure \ref*{fig:kantask},
+detailing the task of developing the conveyor belt. A description of the task is given, as well as difficulty, workload, and the stage of the project it is related to.
+There are also subtasks and dependencies listed, as well as the date the task was created and progress of the task.
+
+For the remainder of the project, this Kanban board will be used to track the progress of the project. 
+
+As mentioned previously, to keep track of the components of the system, a spreadsheet was maintained which is shown in Appendix \ref*{app:bom}.
+\subsection{Stage 1}
+The original plan for Stage 1 was to develop a system that could identify and classify components. However, the development 
+of the foundation and hardware, as well as software to control the hardware, took longer than expected. This was because
+the vision system needs to be trained on data that is representative of the conditions it will be used in, which 
+requires the mechanical design to be finalised, which can be seen from the dependencies listed on the Kanban board in Figure \ref*{fig:projectplan}.
+As such, Stage 1 was split into two stages, with the first stage focusing on the development of the foundation of the system, and the second stage focusing on the development of the computer vision system.
+
+While non-trivial, the strong foundation of the project instills confidence that they can be accomplished within the next 3 weeks.
+The current Stage 1 system is shown in Figure \ref*{fig:allparts} and the system diagram is shown in Figure \ref*{fig:sysdiagram}.
 
 \subsection{Stage 2}
-For the Stage 2 system, the system will become semi-autonomous, with the user having to manually place the components into the system, and the system
-automatically sorting the components into the correct bins after classifying and identifying the components. 
-
-For the Stage 2 system, the following tasks will need to be completed:
+For the Stage 2 system, the system will be able to identify and classify components. 
+The main tasks for this stage are as follows:
 \begin{mylist}
+    \item \textbf{Conveyor Belt System} \\
+    A conveyor belt system will be developed to move the components from the input to the vision system.
+    \item \textbf{Component Classification} \\
+    The system will need to be able to classify the components. This will be done using a YOLOv8 model, which will be trained on a dataset of components.
     \item \textbf{Component Value Identification} \\
     After the component has been classified, the system will need to identify the value of the component. This will be done by using
     a separate model to identify the value of the component. In particular, the model for the resistors will be the highest
     priority given their complexity, followed by text-based values for capacitors and inductors, and finally ICs and MOSFETs.
-    \item \textbf{Conveyor Belt System} \\
-    The system will need to be able to move the components from the camera to the sorting mechanism. This will be done using a conveyor belt system
-    that will be controlled by the Raspberry Pi.
-    \item \textbf{Sorting Mechanism} \\
-    The system will need to be able to sort the components into the correct bins. This will be done using a servo motor to move the components into the correct bin.
-    This not only requires the software to be developed but also the physical mechanism to be designed and built, including the bins themselves.
     \item \textbf{User Interface} \\
     The UI of the system will need to be updated to reflect the system's new functionality. This will be done using the Pygame library\cite{pygamedoc}.
 \end{mylist}
 
-\noindent
-In terms of time management, I am only taking 2 modules this term, as I decided to take 4 modules in the first term. Substantial work has already been completed
-during the Christmas break, so I am confident that I will be able to spend sufficient time on the project during this term.
+\begin{figure*}[t]
+  \begin{minipage}[t]{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth,height=6cm,keepaspectratio]{imgs/software/tools.png}
+      \caption{Dataset Labeller Tool}
+      \label{fig:customtool}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth,height=6cm,keepaspectratio]{imgs/design/allparts.jpeg}
+    \caption{Current System}
+    \label{fig:allparts}
+  \end{minipage}
+  \hfill
+\end{figure*}
 
 \subsection{Stage 3}
+For the Stage 3 system, the system will become semi-autonomous, with the user having to manually place the components into the system, and the system
+automatically sorting the components into the correct bins after classifying and identifying the components. 
+
+For the Stage 3 system, the following tasks will need to be completed:
+\begin{mylist}
+    \item \textbf{Sorting Mechanism} \\
+    The system will need to be able to sort the components into the correct bins. This will be done using a servo motor to move the components into the correct bin.
+    This not only requires the software to be developed but also the physical mechanism to be designed and built, including the bins themselves.
+    This is a non-trivial task, and so will be the main focus of this stage.
+    \item \textbf{User Interface} \\
+    The UI of the system will need to be updated to reflect the system's new functionality. This will be done using the Pygame library\cite{pygamedoc}.
+\end{mylist}
+
+\subsection{Stage 4}
 The final stage of the system will be to make the system fully autonomous, with the system being able to identify and sort components without any user input.
 The main task for this stage will be to develop a device that can automatically feed the components into the system, and as 
 discussed in Section \ref*{sec:background} (Background), this will likely be done with a vibratory bowl feeder (VBF).
 
 Ensuring system reliability will also be a key task for this stage, as at this point the system will contain many moving parts, and will need to be able to
-operate reliably for extended periods. I expect that this stage will most involve fine-tuning the system and doing logistics such as
-finalising the report and presentation.
+operate reliably for extended periods. This stage will mostly involve fine-tuning the system and logistics such as
+finalising the final report and presentation.
+
+\noindent
+In terms of time management, the decision to enroll in only two modules this term was made after opting to complete four modules in the first term. Substantial work has already been completed
+during the Christmas break, so there is confidence that sufficient time on the project can be spent during this Spring term.
+
+\begin{figure*}[t]
+  \begin{minipage}[t]{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth,height=7cm, keepaspectratio]{imgs/pattesting.jpeg}
+      \caption{PAT Testing Machine}
+      \label{fig:pat}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth,height=7cm, keepaspectratio]{imgs/diagrams/systemdiagram.png}
+      \caption{Stage 1 System Diagram}
+      \label{fig:sysdiagram}
+    \end{minipage}
+    \hfill
+\end{figure*}

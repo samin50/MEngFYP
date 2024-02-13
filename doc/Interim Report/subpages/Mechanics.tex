@@ -1,14 +1,13 @@
 \subsubsection{Mechanics} \label{sec:mechanics}
 % 3D Printed Frame
 To house the components, a 3D-printed housing was designed. It features a modular design, allowing for an iterative design process
-where I can work on different components of the system independently. It also allows for easy replacement of components
-should my design prove to be inadequate. The housing was designed in FreeCAD\cite{freecad}, a free and open-source parametric CAD software 
-that I have personal experience with. \\
-The parametric design allows for easy modification of the design should I need to make changes -
-with good design practices, I can ensure that changes can be made as I please by simply modifying a few numerical parameters.
-The design was then printed using my personal 3D printer, a heavily modified Voxelab Aquila C2. 
+where different components of the system can be worked on independently. It also allows for easy replacement of components
+should the design prove to be inadequate. The housing was designed in FreeCAD\cite{freecad}, a free and open-source parametric CAD software. \\
+The parametric design allows for easy modification of the design should changes need to be made -
+with good design practices, large systematic changes can be made by simply modifying a few numerical parameters.
+The design was then printed using a 3D printer, a heavily modified Voxelab Aquila C2. 
 
-All parts are printed in PLA (Polylactic Acid), a biodegradable thermoplastic that is commonly used in 3D printing. My design
+All parts are printed in PLA (Polylactic Acid), a biodegradable thermoplastic that is commonly used in 3D printing. The design
 at this stage does not require any special properties from the material, so PLA is sufficient.
 
 For this stage of the project, I must design 3 major components for the housing:
@@ -16,7 +15,7 @@ For this stage of the project, I must design 3 major components for the housing:
 \noindent
 \textbf{PSU Housing} \\
 The PSU housing contains the power supply and ensures that all high-voltage components are safely enclosed.
-It also houses the power switch, the power socket and the terminals. As I will require step-down converters for the Pi and LED Ring,
+It also houses the power switch, the power socket and the terminals. As step-down converters are required for the Pi and LED Ring,
 the PSU housing also contains mounting points for the step-down converters, as well as a mounting plate to ensure that the step-down converters
 are mounted flat to the PSU housing.
 
@@ -45,7 +44,7 @@ The design of the system at this stage is shown in the Appendix in Figure \ref*{
 \begin{figure*}
     \begin{minipage}[t]{0.49\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/wiring.jpg}
+      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/diagrams/wiring.jpg}
       \caption{Wiring Schematic for MOSFET, made with Fritzing\cite{fritzing}}
       \label{fig:wiringschematic}
     \end{minipage}

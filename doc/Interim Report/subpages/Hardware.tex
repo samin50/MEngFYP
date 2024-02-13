@@ -2,25 +2,25 @@
 \begin{figure*}[t]
   \begin{minipage}[t]{0.22\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/pi4_labelled.png}
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/pi4_labelled.png}
     \caption{Raspberry Pi 4 Model B 2GB\cite{pi4}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/dfrobot_screen.jpg}
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/dfrobot_screen.jpg}
     \caption{DFRobot 7" Touchscreen Display\cite{7inchdisplay}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/okdo_camera.jpg}
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/okdo_camera.jpg}
     \caption{Okdo Adjustable Focus OV5647 Camera\cite{okdocamera}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/powermeter.png}
+      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/powermeter.png}
       \caption{Power consumption of the system}
       \label{fig:powermeter}
   \end{minipage}
@@ -33,7 +33,7 @@ for example, when designing the computer vision system, it should utilise traini
 that the system will be deployed on, ensuring that the system is robust to the conditions it will be used in. As such,
 the main focus of this stage has been the HME.
 
-To keep track of the HME, I have created a spreadsheet that contains all the components of the system (otherwise known as the Bill of Materials or BOM),
+To keep track of the HME, a spreadsheet was created that contains all the components of the system (otherwise known as the Bill of Materials or BOM),
 as well as the cost of each component. A sample of this spreadsheet can be found in Appendix \ref*{app:bom}.
 \subsubsection{Hardware} \label{sec:hardware}
 For the initial stage of the project, the main hardware components of the HME are:
@@ -47,13 +47,12 @@ For the initial stage of the project, the main hardware components of the HME ar
 % Pi
 \textbf{Raspberry Pi 4 Model B 2GB} \\
 The Raspberry Pi 4 Model B was chosen as the main component of the system and is the central hub that all other components are connected to.
-This model was chosen as it is regarded as a reliable SoC and is widely used in the industry, and I have experience with
-them through personal projects and ELEC96018 Embedded Systems. It has a large amount of software
-and driver support, so I can be confident that I will be able to find a solution to any issues that may arise. Additionally, 
+This model was chosen as it is regarded as a reliable SoC and is widely used in the industry, and was used in the module ELEC96018 Embedded Systems.
+It has a large amount of software and driver support, ensuring confidence in finding solutions to any potential issues that may arise. Additionally, 
 it has GPIO pins that can be used to control other components which will be necessary in future stages. It also has a 
 dedicated CSI camera port which allows for a camera to be connected directly to the SoC, which is necessary for the computer vision system.
 
-It also has WiFi support so I can utilise SSH and remote development software, as well as an HDMI port for the display.
+It also has WiFi support, allowing for SSH and remote development software, as well as an HDMI port for the display.
 Originally, the 4GB model was ordered however an issue with the EE Stores resulted in receiving the 2GB model instead.
 This was not an issue as the 2GB model is sufficient for the initial stage of the project, however, if it is found to be a bottleneck
 in future stages, a more powerful model may be used. The decision to not return the 2GB model is because the EEStore was not
@@ -80,9 +79,10 @@ helps to strengthen the argument for using the Pi for the computer vision system
 \vspace{1em}
 \noindent
 \textbf{7" Touchscreen Display} \\
-The DFRobot 7" Touchscreen Display was chosen as it is a relatively cheap display that is compatible with the Raspberry Pi.
+The DFRobot 7" Touchscreen Display was chosen as it is a relatively cost-effective display that is compatible with the Raspberry Pi.
 It has touchscreen support and has a Raspberry Pi 4 mount on its back, as well as HDMI adapter boards to connect to the Pi.
-This means I do not have to design a physical mount for the Pi, and only need to design a mount for the display.
+This means that a physical mount for the Pi does not need to be designed, and only a mount for the display is required. The display is also powered by the Pi,
+so no additional power supply is required. 
 
 % Power Supply
 \vspace{1em}
@@ -99,7 +99,7 @@ Two parameters were taken into consideration when choosing a power supply: the p
   allowing a 50W overhead. In hindsight, this may be considered excessive.
   \item \textbf{Voltage Rating} \\
   The voltage of the power supply must be greater than or equal to the highest voltage of any component in the system; this is necessary
-  as I have only step-down converters available on hand, so choosing a higher voltage allows me to step down the voltage 
+  as there are only step-down converters available on hand, so choosing a higher voltage allows the stepping down of the higher voltage 
   to the required voltage for each component. 24V was chosen as it is a common voltage for stepper motors, which may be used in
   future stages of the project. It is also used for some LED strips, which are used in this stage. The Pi 4 uses 5V and the LED Ring
   uses 12V, which the 24V power supply can be stepped down to.

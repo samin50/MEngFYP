@@ -1,5 +1,5 @@
 \subsubsection{Electronics}
-As my project is a physical system, several electronic components are required to make the system work.
+As the project is a physical system, several electronic components are required to make the system work.
 
 \noindent
 \textbf{Power Supply} \\
@@ -11,8 +11,8 @@ additional components may be added to the system.
 
 \noindent
 \textbf{Raspberry Pi 4} \\
-To power the Raspberry Pi, I chose a standard USB-A to USB-C cable and connected it to a female USB-A breakout board connected to the
-5V step-down converter. This allows for easy removal of the Pi should I need to make changes to the system, and prevents the unnecessary
+To power the Raspberry Pi, a standard USB-A to USB-C cable was chosen and was connected to a female USB-A breakout board connected to the
+5V step-down converter. This allows for easy removal of the Pi should changes be made to the system, and prevents the unnecessary
 cutting of cables.
 
 As the Pi is mounted to the LCD, a USB-A to Micro USB cable is used to connect the Pi to the display, which is then connected to the
@@ -28,4 +28,4 @@ The LED Ring was then connected to an N-channel MOSFET IRLZ44N\cite{irlz44n}, wh
 This GPIO pin is connected to a 1k$\Omega$ resistor, which prevents potential overcurrent from damaging the Pi. The MOSFET is then connected to ground, completing the circuit.
 
 The IRFZ44N is a logic level MOSFET, meaning it can be fully turned on with a 3.3V gate voltage, which is the voltage of the Pi's GPIO pins, and the high
-switching speed (up to 1mHz) of the MOSFET allows for the LED Ring to be PWM controlled, allowing for the brightness of the LED Ring to be controlled.
+switching speed (up to 1 mHz) of the MOSFET allows for the LED Ring to be PWM controlled, allowing for the brightness of the LED Ring to be controlled.
