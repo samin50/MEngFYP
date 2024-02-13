@@ -1,6 +1,11 @@
 \section{Ethical, Legal, and Safety Plan}
-While the system has no legal or ethical considerations at this stage, it is important to consider the safety of the system,
-as it will be used in the Level 1 Labs. As the system is mechanical and electrical, many safety considerations need to be taken into account.
+While the system has no legal considerations at this stage, it is important to consider the ethical and safety implications of the system,
+as it will be used in the Level 1 Labs.
+
+The primary ethical concern for the system is the impact on the environment, as it is designed to reduce the amount of waste produced by the Labs. As such, the system should be designed to be as energy-efficient as possible, and the materials used should be recyclable where possible,
+which has been achieved through the use of 3D printed parts in bio-degradable PLA plastic, and low-power components, such as the Raspberry Pi.
+
+As the system is mechanical and electrical, many safety considerations need to be taken into account, which are discussed in the following sections.
 \subsection{Electrical Safety}
 As mentioned in Section \ref{sec:hardware} (Hardware), the system is powered by a 24V, 6.25A, 150W power supply, and must be stepped down to 5V for the Pi and 12V for the LED strip. This is achieved using an XL4015 Step Down Converter\cite{xl4015}, a variable step down converter that can output up to 75W.
 Due to the potential of high-current carrying wires, the PSU has been enclosed in a 3D printed case, which prevents accidental contact with the PSU's terminals.
@@ -16,7 +21,7 @@ In addition, the power supply has been PAT tested by technicians in the Level 1 
 PAT (Portable Appliance Testing) is a process by which electrical appliances are routinely checked for safety\cite{patwiki}\cite{patspec}.
 The following table describes the PAT testing results for my power supply as well as a description of the tests performed.
 
-\begin{table}[H]
+\begin{table}[t]
     \centering
     {\fontsize{8pt}{11pt}\selectfont
     \begin{tabularx}{\columnwidth}{|@{\hspace{3pt}}>{\raggedright\arraybackslash}p{2cm}|@{\hspace{3pt}}>{\raggedright\arraybackslash}p{1cm}|@{\hspace{3pt}}>{\raggedright\arraybackslash}p{1.4cm}|@{\hspace{3pt}}>{\raggedright\arraybackslash}X@{\hspace{3pt}}|}
