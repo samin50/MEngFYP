@@ -2,11 +2,11 @@
 The computer vision system should be trained on data that is representative of the conditions it will be used in, and because
 of the previously mentioned issues with the mechanical design of the system, the computer vision system was not developed at this stage.
 The data collection process is manual and time-consuming, so it is far more efficient to ensure that the mechanical design is
-finalised and that the foundation of the project is robust and reliable. As will be discussed in Section \ref*{sec:projectplan} (Project Plan), 
+finalised and that the foundation of the project is robust and reliable. As will be discussed in Section \ref{sec:projectplan} (Project Plan), 
 the mechanical design will be overhauled in the next stage, so if data was collected for the computer vision system in this stage,
 it may have been rendered useless in the next stage.
 
-However, this does not mean that no work was done on the computer vision system. As per Section \ref*{sec:background} {Background},
+However, this does not mean that no work was done on the computer vision system. As per Section \ref{sec:background} {Background},
 it was determined that YOLOv8 is the most suitable model for the computer vision system. As such, several tools were developed
  to aid in the development of the computer vision system.
 
@@ -20,7 +20,7 @@ the YOLOv8 model. The script also streamlines the labelling process using shortc
 the class label, making it easy to manage the data. Given that this is a custom script, features can be easily added or removed - it is likely
 that features such as component orientation will be added, so a custom script is very useful.
 
-This script works in conjunction with the UI, seen in Figure \ref*{fig:mainui}, running on the Raspberry Pi (made possible using \citet{realvnc}, a remote desktop application),
+This script works in conjunction with the UI, seen in Figure \ref{fig:mainui}, running on the Raspberry Pi (made possible using \citet{realvnc}, a remote desktop application),
 allowing for very easy labelling of images with bounding boxes and class labels.
 
 The script has support for multiple components, including:
@@ -35,12 +35,12 @@ The script has support for multiple components, including:
         \item Transistors
         \item LEDs
         \item Wires
-        \item ICs
+        \item Integrated Circuits
     \end{mylist}
 \end{multicols}
 
 \noindent
-A screenshot of the script at work can be seen in Figure \ref*{fig:customtool}.
+A screenshot of the script at work can be seen in Figure \ref{fig:customtool}.
 
 A Jupyter Notebook\cite{jupyter} was also developed to aid in developing the computer vision system. This is common practice as it
 allows code to be run and the data associated with it to be inspected, which is very helpful for debugging purposes. It 
@@ -48,9 +48,9 @@ has the capability of training every model that will be used in the computer vis
 data augmentation, checkpointing, and model evaluation.
 
 The data augmentation feature is very useful as it retains the original data, should more labels need to be added or modified in any way. The checkpointing feature allows
-facilitates saving the model at any point during training, which serves as a backup but also allows resuming training from a certain point and is useful
+facilitates saving the model at any point during training, which serves as a backup but also allows training to resume from specific points. This is useful as it helps
 to protect against overfitting. The model evaluation feature allows for the evaluation of the model on a test set and provides
-useful metrics like precision, recall, and mAP. This is useful for evaluating the model's performance, and also for
+useful metrics like precision, recall, and mAP (mean average precision). This is useful for evaluating the model's performance, and also for
 comparing the performance of different models.
 
 \subsubsection{Vision System Pipeline}
@@ -73,7 +73,7 @@ is read from the colour bands, whereas the value of a capacitor is read from the
 component may require a different model to identify its value.
 
 This is not an issue as it conforms to the modular design of the system, and allows for easy extensibility. For example, if
-a new component is added to the system, it is easy to add a new/reuse an existing model to identify the value of the component; however the 
+a new component is added to the system, it is easy to add a new, or reuse, an existing model to identify the value of the component; however the 
 component detection model will need to be retrained as the dimensionality of the output layer will change due to the addition
 of a new class. The Jupyter Notebook developed for the Computer Vision system makes this process very trivial, as it would simply
-require adding the new component to the list of components, and the Notebook will handle the rest. 
+require adding the new component to the list of components, and the Jupyter Notebook will handle the rest. 

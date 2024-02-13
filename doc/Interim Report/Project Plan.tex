@@ -16,7 +16,7 @@ This approach included the utilisation of a Kanban board to monitor the project'
 In this Kanban board, labels were employed to categorise each task into different categories, such as
 which component of the system the task is related to, the priority of the task, and the stage of the project the task is related to.
 Each task had a description detailing what needed to be done, and some others had dependencies and checklists of sub-tasks that needed to be completed.
-Dates were also assigned to each task to ensure that the project was on track. An example of a task on the Kanban board is shown in Figure \ref*{fig:kantask},
+Dates were also assigned to each task to ensure that the project was on track. An example of a task on the Kanban board is shown in Figure \ref{fig:kantask},
 detailing the task of developing the conveyor belt. A description of the task is given, as well as difficulty, workload, and the stage of the project it is related to.
 There are also subtasks and dependencies listed, as well as the date the task was created and progress of the task.
 
@@ -78,16 +78,16 @@ The main labels used in the Kanban board are as follows:
 
 For the remainder of the project, this Kanban board will be used to track the progress of the project. 
 
-As mentioned previously, to keep track of the components of the system, a spreadsheet was maintained which is shown in Appendix \ref*{app:bom}.
+As mentioned previously, to keep track of the components of the system, a spreadsheet was maintained which is shown in Appendix \ref{app:bom}.
 \subsection{Stage 1}
 The original plan for Stage 1 was to develop a system that could identify and classify components. However, the development 
 of the foundation and hardware, as well as software to control the hardware, took longer than expected. This was because
-the vision system needs to be trained on data that is representative of the conditions it will be used in, which 
-requires the mechanical design to be finalised, which can be seen from the dependencies listed on the Kanban board in Figure \ref*{fig:projectplan}.
+the vision system needed to be trained on data that is representative of the conditions it will be used in, which 
+required the mechanical design to be finalised, and can be seen from the dependencies listed on the Kanban board in Figure \ref{fig:projectplan}.
 As such, Stage 1 was split into two stages, with the first stage focusing on the development of the foundation of the system, and the second stage focusing on the development of the computer vision system.
 
 While non-trivial, the strong foundation of the project instills confidence that Stage 2 can be accomplished within the next 5-6 weeks.
-The current Stage 1 system is shown in Figure \ref*{fig:allparts} and the system diagram is shown in Figure \ref*{fig:sysdiagram}.
+The current Stage 1 system is shown in Figure \ref{fig:allparts} and the system diagram is shown in Figure \ref{fig:sysdiagram}.
 This diagram clearly shows the interdependency of all the components of the system, and how the development of the hardware is a prerequisite for the development of the software.
 This further reinforces the need to underpin the project with a strong, modular and parallel development approach.
 
@@ -124,7 +124,7 @@ For the Stage 3 system, the following tasks will need to be completed:
 \subsection{Stage 4}
 The final stage of the system will be to make the system fully autonomous, with the system being able to identify and sort components without any user input.
 The main task for this stage will be to develop a device that can automatically feed the components into the system, and as 
-discussed in Section \ref*{sec:background} (Background), this will likely be done with a vibratory bowl feeder (VBF).
+discussed in Section \ref{sec:background} (Background), this will likely be done with a vibratory bowl feeder (VBF).
 
 Ensuring system reliability will also be a key task for this stage, as at this point the system will contain many moving parts, and will need to be able to
 operate reliably for extended periods. This stage will mostly involve fine-tuning the system and logistics such as
@@ -150,3 +150,32 @@ during the Christmas break, so there is confidence that sufficient time on the p
     \end{minipage}
     \hfill
 \end{figure*}
+
+\subsection{Fallbacks and Extensions}
+Although extensive planning has been completed, it is important to consider potential fallbacks and extensions.
+
+A major fallback would be if the system is unable to identify and classify the components in real-time, thus making
+the system slower than the current manual process. This would be mitigated by a fully autonomous system, however
+depending on the degree of human intervention required, the system may not be viable for its intended purpose. The solution
+to this would be to develop a much more capable model deployed on a more powerful device, such as a cloud server, which would
+be able to process the video feed in real-time. This would only require retraining a higher capacity model, so would not be a cause for 
+concern, however, some additional time would be required to develop the cloud server and the communication between the server and the system.
+
+Another potential fallback is the low accuracy of the computer vision system. This would require retraining the model with a larger dataset, and 
+potentially employing more advanced computer vision techniques or by using a new model entirely. Depending on the extent of the issue, this could
+be a significant setback, however, the system has been designed in such a way that the computer vision system can be easily replaced, so this should be somewhat mitigated.
+
+Another potential fallback is the mechanical failure of any of the components of the system. This would be mitigated by having spares of the most critical components,
+and ensuring that the system is designed in such a way that the components can be easily replaced. This was considered in the design of the system, and so
+should not be a major issue if it occurs. The choice of using PLA for the 3D printed parts may be a potential issue, as it is known
+to be susceptible to warping and degradation over time, however, the parts are not under extreme mechanical stress, and so may not be an issue. Extensive
+stress testing will be conducted to ensure that the parts are reliable.
+
+An extension to the project would be to allow IC testing and sorting. This would require a new model to be developed to identify the ICs, and a new sorting mechanism to be developed to sort the ICs.
+This would be a large extension to the project, and so would require a significant amount of additional time to complete, however, it would be a valuable extension to the project, as it would reduce the amount of waste generated by the department.
+The autonomous implementation of this would likely involve the use of a robotic arm to pick up the ICs to test them, but a simpler approach could be to have the user place
+the ICs into a tester manually, and then the system would sort the ICs based on the results of the test.
+
+In the same vein, another extension to the project would be to allow the system to test the components. This requires much more fine-tuned control of the components, namely
+the ability to correctly orient the components and to apply the correct voltage and current to the component.
+This would be an incredible extension to the project, and so would require a significant amount of additional time to complete, however, it would be a valuable extension to the project, as it would allow the department to reuse components that are still functional, and would reduce the amount of waste generated by the department.
