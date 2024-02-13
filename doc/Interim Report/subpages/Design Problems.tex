@@ -3,7 +3,7 @@
 This further reinforces the need for a modular and parametric design, as it allows for easy modification of each component.
 After a few iterations with errors due to tolerances and slightly incorrect measurements, (not relevant to the technical content of this report)
 a design was produced that physically fit together and mounted the components as intended, however when combined with the software
-and electronics, a few problems were encountered that were overcome by making some design decisions.
+and electronics, a few problems were encountered that were overcome by making some design decisions that were discussed with the project's supervisor, Dr. Stott. \\
 
 \begin{figure*}
     \begin{minipage}[t]{0.49\textwidth}
@@ -87,7 +87,7 @@ However, in the end, none of these could be considered because of the electronic
 Attempting to dim the LED Ring resulted in very sporadic flickering, and it did not react with changes to the frequency of the PWM signal despite the MOSFET control circuit shown in Figure \ref*{fig:wiringschematic}.
 Originally, an issue with the MOSFET was considered as initially a MOSFET with a higher gate threshold voltage (IRF520N) was used, and so it was replaced with a MOSFET with a lower gate threshold voltage.
 However, this did not solve the issue, and a capacitor was added in parallel to the LED Ring to buffer the voltage, but to no avail.
-The LED Ring seemed to be a simple ring of LEDs, with no additional circuitry, so it was not clear it was not dimmable.Supervisor Dr. Stott was also unsure as to why it was not dimmable and proposed a different circuit with an inductor and diode but this requires
+The LED Ring seemed to be a simple ring of LEDs, with no additional circuitry, so it was not clear it was not dimmable. Supervisor Dr. Stott was also unsure as to why it was not dimmable and proposed a different circuit with an inductor and diode but this requires
 a much higher switching frequency than the Pi's PWM signal can provide, and so it was not viable. 
 
 For these reasons, and after reviewing the literature as discussed in Section \ref*{sec:background}, it was decided that the camera mount was to be redesigned to be down-facing (as a conveyor belt will also be used in the future)

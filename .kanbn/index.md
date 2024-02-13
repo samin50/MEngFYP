@@ -30,6 +30,7 @@ taskWorkloadTags:
 
 - [interim-report](tasks/interim-report.md)
 - [create-conveyor-belt](tasks/create-conveyor-belt.md)
+- [design-lcd-ui](tasks/design-lcd-ui.md)
 
 ## Done
 

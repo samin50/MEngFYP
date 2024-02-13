@@ -20,35 +20,6 @@ Dates were also assigned to each task to ensure that the project was on track. A
 detailing the task of developing the conveyor belt. A description of the task is given, as well as difficulty, workload, and the stage of the project it is related to.
 There are also subtasks and dependencies listed, as well as the date the task was created and progress of the task.
 
-For the remainder of the project, this Kanban board will be used to track the progress of the project. 
-
-As mentioned previously, to keep track of the components of the system, a spreadsheet was maintained which is shown in Appendix \ref*{app:bom}.
-\subsection{Stage 1}
-The original plan for Stage 1 was to develop a system that could identify and classify components. However, the development 
-of the foundation and hardware, as well as software to control the hardware, took longer than expected. This was because
-the vision system needs to be trained on data that is representative of the conditions it will be used in, which 
-requires the mechanical design to be finalised, which can be seen from the dependencies listed on the Kanban board in Figure \ref*{fig:projectplan}.
-As such, Stage 1 was split into two stages, with the first stage focusing on the development of the foundation of the system, and the second stage focusing on the development of the computer vision system.
-
-While non-trivial, the strong foundation of the project instills confidence that they can be accomplished within the next 3 weeks.
-The current Stage 1 system is shown in Figure \ref*{fig:allparts} and the system diagram is shown in Figure \ref*{fig:sysdiagram}.
-
-\subsection{Stage 2}
-For the Stage 2 system, the system will be able to identify and classify components. 
-The main tasks for this stage are as follows:
-\begin{mylist}
-    \item \textbf{Conveyor Belt System} \\
-    A conveyor belt system will be developed to move the components from the input to the vision system.
-    \item \textbf{Component Classification} \\
-    The system will need to be able to classify the components. This will be done using a YOLOv8 model, which will be trained on a dataset of components.
-    \item \textbf{Component Value Identification} \\
-    After the component has been classified, the system will need to identify the value of the component. This will be done by using
-    a separate model to identify the value of the component. In particular, the model for the resistors will be the highest
-    priority given their complexity, followed by text-based values for capacitors and inductors, and finally ICs and MOSFETs.
-    \item \textbf{User Interface} \\
-    The UI of the system will need to be updated to reflect the system's new functionality. This will be done using the Pygame library\cite{pygamedoc}.
-\end{mylist}
-
 \begin{figure*}[t]
   \begin{minipage}[t]{0.49\textwidth}
       \centering
@@ -65,6 +36,76 @@ The main tasks for this stage are as follows:
   \end{minipage}
   \hfill
 \end{figure*}
+
+\noindent
+The main labels used in the Kanban board are as follows:
+\begin{mylist}
+  \item \textbf{Stage} \\
+  This label is used to categorise the task into the stage of the project it is related to. The stages are as follows:
+  \begin{multicols}{2}
+    \vspace{-0.5em} 
+    \begin{mylist}
+      \item Stage 1
+      \item Stage 2
+      \item Stage 3
+      \item Stage 4
+    \end{mylist}
+    \vspace{-0.5em} 
+  \end{multicols}
+  \item \textbf{Component} \\
+  This label is used to categorise the task into the component of the system it is related to. The components are as follows:
+  \begin{mylist}
+    \item HME (Hardware, Mechanics, Electronics)
+    \item Vision
+    \item Logistics
+    \item Software
+  \end{mylist}
+  \item \textbf{Workload} \\
+  This label is used to categorise the task based on the expected workload. The workloads are as follows:
+  \begin{multicols}{2}
+    \vspace{-0.5em} 
+    \begin{mylist}
+      \item Trivial (0)
+      \item Tiny (1)
+      \item Small (2)
+      \item Medium (3)
+      \item Large (5)
+      \item Huge (8)
+    \end{mylist}
+    \vspace{-0.5em} 
+  \end{multicols}
+\end{mylist}
+
+For the remainder of the project, this Kanban board will be used to track the progress of the project. 
+
+As mentioned previously, to keep track of the components of the system, a spreadsheet was maintained which is shown in Appendix \ref*{app:bom}.
+\subsection{Stage 1}
+The original plan for Stage 1 was to develop a system that could identify and classify components. However, the development 
+of the foundation and hardware, as well as software to control the hardware, took longer than expected. This was because
+the vision system needs to be trained on data that is representative of the conditions it will be used in, which 
+requires the mechanical design to be finalised, which can be seen from the dependencies listed on the Kanban board in Figure \ref*{fig:projectplan}.
+As such, Stage 1 was split into two stages, with the first stage focusing on the development of the foundation of the system, and the second stage focusing on the development of the computer vision system.
+
+While non-trivial, the strong foundation of the project instills confidence that Stage 2 can be accomplished within the next 5-6 weeks.
+The current Stage 1 system is shown in Figure \ref*{fig:allparts} and the system diagram is shown in Figure \ref*{fig:sysdiagram}.
+This diagram clearly shows the interdependency of all the components of the system, and how the development of the hardware is a prerequisite for the development of the software.
+This further reinforces the need to underpin the project with a strong, modular and parallel development approach.
+
+\subsection{Stage 2}
+For the Stage 2 system, the system will be able to identify and classify components. 
+The main tasks for this stage are as follows:
+\begin{mylist}
+    \item \textbf{Conveyor Belt System} \\
+    A conveyor belt system will be developed to move the components from the input to the vision system.
+    \item \textbf{Component Classification} \\
+    The system will need to be able to classify the components. This will be done using a YOLOv8 model, which will be trained on a dataset of components.
+    \item \textbf{Component Value Identification} \\
+    After the component has been classified, the system will need to identify the value of the component. This will be done by using
+    a separate model to identify the value of the component. In particular, the model for the resistors will be the highest
+    priority given their complexity, followed by text-based values for capacitors and inductors, and finally ICs and MOSFETs.
+    \item \textbf{User Interface} \\
+    The UI of the system will need to be updated to reflect the system's new functionality. This will be done using the Pygame library\cite{pygamedoc}.
+\end{mylist}
 
 \subsection{Stage 3}
 For the Stage 3 system, the system will become semi-autonomous, with the user having to manually place the components into the system, and the system
