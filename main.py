@@ -4,10 +4,10 @@ Main entry point for the application.
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO # type: ignore
     RESIZEFLAG = False
 except ImportError:
-    import src.common.simulate_gpio as GPIO
+    import src.common.simulate as GPIO
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
 from src.common.helper_functions import start_ui
@@ -22,7 +22,7 @@ class Component_Sorter:
         # LCD Setup
         if enableInterface:
             callbacks = {
-                "brightnessCallback" : self.change_led_brightness
+                "brightness_callback" : self.change_led_brightness
             }
             self.clk = pygame.time.Clock()
             self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
@@ -47,7 +47,7 @@ class Component_Sorter:
 
 if __name__ == "__main__":
     ENABLE_INTERFACE = True
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     if ENABLE_INTERFACE:
         pygame.init()
         systemObj = Component_Sorter(ENABLE_INTERFACE, TRAINING_MODE)

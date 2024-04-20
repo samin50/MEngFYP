@@ -7,6 +7,7 @@ import threading
 import time
 import pygame
 import pygame.camera as pycam
+from src.common.simulate import FakeCamera
 from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMERATE
 from src.common.helper_functions import start_ui
 
@@ -25,7 +26,10 @@ class CameraFeed:
         # Grab the available camera and start it
         pycam.init()
         self.camlist = pycam.list_cameras()
-        self.cam = pycam.Camera(self.camlist[0])
+        if len(self.camlist) == 0:
+            self.cam = FakeCamera(0)
+        else:
+            self.cam = pycam.Camera(self.camlist[0])
         self.stopThread = False
         self.frameThread = threading.Thread(target=self.run, daemon=True)
         self.frameThread.start()

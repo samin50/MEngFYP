@@ -1,9 +1,9 @@
 # pylint: disable=all
 import time
 try:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO # type: ignore
 except ImportError:
-    import src.common.simulate_gpio as GPIO
+    import src.common.simulate as GPIO
 
 # Use GPIO numbers not pin numbers
 GPIO.setmode(GPIO.BCM)
