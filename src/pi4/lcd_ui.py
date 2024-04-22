@@ -3,6 +3,7 @@ Pygame Frontend for the Pi4
 Displays on the 7 inch Dfrobot LCD
 """
 import sys
+import subprocess
 import psutil
 import pygame
 import pygame_gui
@@ -109,10 +110,16 @@ class LCD_UI:
             object_id="#roi_toggle"
         )
         # Exit Button
-        yOffset += offsetIncrement
+        yOffset += offsetIncrement*1.5
         self.UIElements["exit_button"] = UIButton(
-            relative_rect=pygame.Rect((cornerOffset[0]+WIDGET_PADDING, LCD_RESOLUTION[1]-WIDGET_PADDING-buttonHeight), (CAMERA_DISPLAY_SIZE[0], buttonHeight)),
+            relative_rect=pygame.Rect((cornerOffset[0]+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]-WIDGET_PADDING)/2, buttonHeight)),
             text="Exit",
+            manager=self.manager
+        )
+        # Wifi Button
+        self.UIElements["wifi_button"] = UIButton(
+            relative_rect=pygame.Rect((cornerOffset[0]+(CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, buttonHeight)),
+            text="Wifi Restart",
             manager=self.manager
         )
 
@@ -142,6 +149,10 @@ class LCD_UI:
                 self.UIElements["heatmap_toggle"].toggle()
             if event.ui_element == self.UIElements["roi_toggle"]:
                 self.UIElements["roi_toggle"].toggle()
+            if event.ui_element == self.UIElements["wifi_button"]:
+                subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'down'], check=True)
+                # Bring the Wi-Fi interface back up
+                subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'up'], check=True)
 
     def draw(self) -> None:
         """
