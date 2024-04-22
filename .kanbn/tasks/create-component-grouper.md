@@ -1,11 +1,12 @@
 ---
 created: 2023-11-07T21:41:04.194Z
-updated: 2024-01-02T19:09:19.735Z
+updated: 2024-02-12T05:58:58.160Z
 assigned: ""
-progress: 0
+progress: 0.2
 tags:
-  - 'STAGE 1'
-  - VISION
+  - 'Stage 2'
+  - Vision
+  - Medium
 started: 2023-11-07T00:00:00.000Z
 ---
 

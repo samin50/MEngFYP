@@ -4,9 +4,11 @@ Main entry point for the application.
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO # type: ignore
+    RESIZEFLAG = False
 except ImportError:
-    import src.common.simulate_gpio as GPIO
+    import src.common.simulate as GPIO
+    RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
 from src.common.helper_functions import start_ui
 from src.common.constants import GPIO_PINS, MOSFET_FREQ, LED_BRIGHTNESS
@@ -20,10 +22,10 @@ class Component_Sorter:
         # LCD Setup
         if enableInterface:
             callbacks = {
-                "brightnessCallback" : self.change_led_brightness
+                "brightness_callback" : self.change_led_brightness
             }
             self.clk = pygame.time.Clock()
-            self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode)
+            self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
@@ -55,5 +57,6 @@ if __name__ == "__main__":
             exitFunction=[systemObj.lcdUI.cameraFeed.destroy, systemObj.close],
             clock=systemObj.clk,
             manager=systemObj.lcdUI.manager,
-            screen=systemObj.lcdUI.display
+            screen=systemObj.lcdUI.display,
+            resolution=systemObj.lcdUI.resolution
             )
