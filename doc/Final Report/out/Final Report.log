@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10) (preloaded format=pdflatex 2023.11.24)  25 APR 2024 20:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10) (preloaded format=pdflatex 2023.11.24)  25 APR 2024 21:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -675,160 +675,158 @@ File: ts1stix2.fd 2018/04/02 v2.0.0-latex stix2 TS1 font definitions
 
 
 {C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix2-type1/stix2-ts1.enc}]) (Background.tex
-<imgs/articles/sparseml-workflow.png, id=109, 2458.18375pt x 1255.69125pt>
+<imgs/articles/sparseml-workflow.png, id=119, 2458.18375pt x 1255.69125pt>
 File: imgs/articles/sparseml-workflow.png Graphic file (type png)
 <use imgs/articles/sparseml-workflow.png>
 Package pdftex.def Info: imgs/articles/sparseml-workflow.png  used on input line 14.
 (pdftex.def)             Requested size: 250.93398pt x 142.24593pt.
-<imgs/articles/yoloperf.jpg, id=113, 435.77089pt x 290.37053pt>
+<imgs/articles/yoloperf.jpg, id=123, 435.77089pt x 290.37053pt>
 File: imgs/articles/yoloperf.jpg Graphic file (type jpg)
 <use imgs/articles/yoloperf.jpg>
 Package pdftex.def Info: imgs/articles/yoloperf.jpg  used on input line 20.
 (pdftex.def)             Requested size: 250.95197pt x 142.26508pt.
-<imgs/articles/feeder.jpg, id=124, 199.60286pt x 132.06482pt>
+<imgs/articles/feeder.jpg, id=134, 199.60286pt x 132.06482pt>
 File: imgs/articles/feeder.jpg Graphic file (type jpg)
 <use imgs/articles/feeder.jpg>
 Package pdftex.def Info: imgs/articles/feeder.jpg  used on input line 44.
 (pdftex.def)             Requested size: 169.01753pt x 111.8284pt.
-<imgs/articles/conveyor.jpg, id=127, 213.36858pt x 149.27196pt>
+<imgs/articles/conveyor.jpg, id=137, 213.36858pt x 149.27196pt>
 File: imgs/articles/conveyor.jpg Graphic file (type jpg)
 <use imgs/articles/conveyor.jpg>
 Package pdftex.def Info: imgs/articles/conveyor.jpg  used on input line 51.
 (pdftex.def)             Requested size: 169.01512pt x 118.24242pt.
-<imgs/articles/resistordata.jpg, id=130, 286.92911pt x 209.92714pt>
+<imgs/articles/resistordata.jpg, id=140, 286.92911pt x 209.92714pt>
 File: imgs/articles/resistordata.jpg Graphic file (type jpg)
 <use imgs/articles/resistordata.jpg>
 Package pdftex.def Info: imgs/articles/resistordata.jpg  used on input line 58.
 (pdftex.def)             Requested size: 169.01088pt x 123.65411pt.
+ [2]
+Underfull \vbox (badness 1418) has occurred while \output is active []
 
-Underfull \vbox (badness 2027) has occurred while \output is active []
 
- [2] [3 <./imgs/articles/sparseml-workflow.png> <./imgs/articles/yoloperf.jpg>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 5203) has occurred while \output is active []
 
- [4 <./imgs/articles/feeder.jpg> <./imgs/articles/conveyor.jpg> <./imgs/articles/resistordata.jpg>]) (Implementation.tex (subpages/Hardware.tex
-<imgs/parts/pi4_labelled.png, id=189, 573.14125pt x 341.275pt>
+ [3 <./imgs/articles/sparseml-workflow.png> <./imgs/articles/yoloperf.jpg> <./imgs/articles/feeder.jpg> <./imgs/articles/conveyor.jpg> <./imgs/articles/resistordata.jpg>] [4]) (Implementation.tex (subpages/Hardware.tex
+<imgs/parts/pi4_labelled.png, id=202, 573.14125pt x 341.275pt>
 File: imgs/parts/pi4_labelled.png Graphic file (type png)
 <use imgs/parts/pi4_labelled.png>
 Package pdftex.def Info: imgs/parts/pi4_labelled.png  used on input line 5.
 (pdftex.def)             Requested size: 112.66724pt x 67.08731pt.
-<imgs/parts/dfrobot_screen.jpg, id=192, 360.1455pt x 287.8755pt>
+<imgs/parts/dfrobot_screen.jpg, id=205, 360.1455pt x 287.8755pt>
 File: imgs/parts/dfrobot_screen.jpg Graphic file (type jpg)
 <use imgs/parts/dfrobot_screen.jpg>
 Package pdftex.def Info: imgs/parts/dfrobot_screen.jpg  used on input line 11.
 (pdftex.def)             Requested size: 112.67157pt x 90.06189pt.
-<imgs/parts/okdo_camera.jpg, id=195, 280.47643pt x 210.35732pt>
+<imgs/parts/okdo_camera.jpg, id=208, 280.47643pt x 210.35732pt>
 File: imgs/parts/okdo_camera.jpg Graphic file (type jpg)
 <use imgs/parts/okdo_camera.jpg>
 Package pdftex.def Info: imgs/parts/okdo_camera.jpg  used on input line 17.
 (pdftex.def)             Requested size: 112.67218pt x 84.50414pt.
-<imgs/parts/powermeter.png, id=198, 639.5895pt x 424.58624pt>
+<imgs/parts/powermeter.png, id=211, 639.5895pt x 424.58624pt>
 File: imgs/parts/powermeter.png Graphic file (type png)
 <use imgs/parts/powermeter.png>
 Package pdftex.def Info: imgs/parts/powermeter.png  used on input line 23.
 (pdftex.def)             Requested size: 112.67154pt x 74.79608pt.
  [5] [6 <./imgs/parts/pi4_labelled.png> <./imgs/parts/dfrobot_screen.jpg> <./imgs/parts/okdo_camera.jpg> <./imgs/parts/powermeter.png>])
-<imgs/freecad/psu_mount.jpg, id=233, 336.39964pt x 300.69482pt>
+<imgs/freecad/psu_mount.jpg, id=244, 336.39964pt x 300.69482pt>
 File: imgs/freecad/psu_mount.jpg Graphic file (type jpg)
 <use imgs/freecad/psu_mount.jpg>
-Package pdftex.def Info: imgs/freecad/psu_mount.jpg  used on input line 24.
+Package pdftex.def Info: imgs/freecad/psu_mount.jpg  used on input line 27.
 (pdftex.def)             Requested size: 163.89278pt x 142.26257pt.
-<imgs/freecad/camera_case.jpg, id=234, 357.4784pt x 301.55518pt>
+<imgs/freecad/camera_case.jpg, id=245, 357.4784pt x 301.55518pt>
 File: imgs/freecad/camera_case.jpg Graphic file (type jpg)
 <use imgs/freecad/camera_case.jpg>
-Package pdftex.def Info: imgs/freecad/camera_case.jpg  used on input line 30.
+Package pdftex.def Info: imgs/freecad/camera_case.jpg  used on input line 33.
 (pdftex.def)             Requested size: 163.89113pt x 142.2647pt.
-<imgs/freecad/lcd_mount.jpg, id=235, 332.52803pt x 296.39304pt>
+<imgs/freecad/lcd_mount.jpg, id=246, 332.52803pt x 296.39304pt>
 File: imgs/freecad/lcd_mount.jpg Graphic file (type jpg)
 <use imgs/freecad/lcd_mount.jpg>
-Package pdftex.def Info: imgs/freecad/lcd_mount.jpg  used on input line 37.
+Package pdftex.def Info: imgs/freecad/lcd_mount.jpg  used on input line 40.
 (pdftex.def)             Requested size: 163.89406pt x 142.26251pt.
  (subpages/Mechanics.tex
 
 LaTeX Warning: Reference `sec:els' on page 7 undefined on input line 12.
 
 [7]
-Underfull \vbox (badness 1521) has occurred while \output is active []
-
-<imgs/diagrams/wiring.jpg, id=248, 360.48964pt x 248.64322pt>
+<imgs/diagrams/wiring.jpg, id=260, 360.48964pt x 248.64322pt>
 File: imgs/diagrams/wiring.jpg Graphic file (type jpg)
 <use imgs/diagrams/wiring.jpg>
 Package pdftex.def Info: imgs/diagrams/wiring.jpg  used on input line 48.
 (pdftex.def)             Requested size: 206.2568pt x 142.26305pt.
-<imgs/software/realvnc.jpg, id=251, 1093.08376pt x 640.53589pt>
+<imgs/software/realvnc.jpg, id=263, 1093.08376pt x 640.53589pt>
 File: imgs/software/realvnc.jpg Graphic file (type jpg)
 <use imgs/software/realvnc.jpg>
 Package pdftex.def Info: imgs/software/realvnc.jpg  used on input line 55.
 (pdftex.def)             Requested size: 242.7642pt x 142.25732pt.
-) (subpages/Electronics.tex [8 <./imgs/freecad/psu_mount.jpg> <./imgs/freecad/camera_case.jpg> <./imgs/freecad/lcd_mount.jpg>]) (subpages/Design Problems.tex
-<imgs/design/ringlight.jpg, id=270, 577.15625pt x 459.7175pt>
-File: imgs/design/ringlight.jpg Graphic file (type jpg)
-<use imgs/design/ringlight.jpg>
-Package pdftex.def Info: imgs/design/ringlight.jpg  used on input line 11.
-(pdftex.def)             Requested size: 250.04817pt x 199.1688pt.
-<imgs/design/diffusedlight.jpg, id=271, 253.80536pt x 212.9384pt>
-File: imgs/design/diffusedlight.jpg Graphic file (type jpg)
-<use imgs/design/diffusedlight.jpg>
-Package pdftex.def Info: imgs/design/diffusedlight.jpg  used on input line 18.
-(pdftex.def)             Requested size: 237.392pt x 199.16788pt.
+) (subpages/Electronics.tex) (subpages/Software.tex [8{C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix2-type1/stix2-mathit.enc}{C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix2-type1/stix2-mathrm.enc} <./imgs/freecad/psu_mount.jpg> <./imgs/freecad/camera_case.jpg> <./imgs/freecad/lcd_mount.jpg>]
+Underfull \vbox (badness 3612) has occurred while \output is active []
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [9{C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix2-type1/stix2-mathit.enc}{C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix2-type1/stix2-mathrm.enc} <./imgs/diagrams/wiring.jpg> <./imgs/software/realvnc.jpg>]
-<imgs/design/unbracedscreen.jpeg, id=295, 1541.76pt x 1811.76875pt>
-File: imgs/design/unbracedscreen.jpeg Graphic file (type jpg)
-<use imgs/design/unbracedscreen.jpeg>
-Package pdftex.def Info: imgs/design/unbracedscreen.jpeg  used on input line 56.
-(pdftex.def)             Requested size: 121.06136pt x 142.26286pt.
-<imgs/design/bracedscreen.jpeg, id=296, 1541.76pt x 1783.66376pt>
-File: imgs/design/bracedscreen.jpeg Graphic file (type jpg)
-<use imgs/design/bracedscreen.jpeg>
-Package pdftex.def Info: imgs/design/bracedscreen.jpeg  used on input line 63.
-(pdftex.def)             Requested size: 122.89633pt x 142.1789pt.
-<imgs/design/shortcamera.jpeg, id=297, 507.8975pt x 601.24625pt>
-File: imgs/design/shortcamera.jpeg Graphic file (type jpg)
-<use imgs/design/shortcamera.jpeg>
-Package pdftex.def Info: imgs/design/shortcamera.jpeg  used on input line 70.
-(pdftex.def)             Requested size: 120.17741pt x 142.26535pt.
-<imgs/design/tallcamera.jpeg, id=298, 784.9325pt x 902.37125pt>
-File: imgs/design/tallcamera.jpeg Graphic file (type jpg)
-<use imgs/design/tallcamera.jpeg>
-Package pdftex.def Info: imgs/design/tallcamera.jpeg  used on input line 77.
-(pdftex.def)             Requested size: 122.90889pt x 141.29808pt.
-) [10 <./imgs/design/ringlight.jpg> <./imgs/design/diffusedlight.jpg>] (subpages/Software.tex
-Underfull \vbox (badness 1521) has occurred while \output is active []
-
- [11 <./imgs/design/unbracedscreen.jpeg> <./imgs/design/bracedscreen.jpeg> <./imgs/design/shortcamera.jpeg> <./imgs/design/tallcamera.jpeg>]
-<imgs/appendix/projectplan.jpg, id=334, 804.8641pt x 362.21036pt>
+ [9 <./imgs/diagrams/wiring.jpg> <./imgs/software/realvnc.jpg>]
+<imgs/appendix/projectplan.jpg, id=309, 804.8641pt x 362.21036pt>
 File: imgs/appendix/projectplan.jpg Graphic file (type jpg)
 <use imgs/appendix/projectplan.jpg>
 Package pdftex.def Info: imgs/appendix/projectplan.jpg  used on input line 60.
 (pdftex.def)             Requested size: 512.17606pt x 230.4929pt.
 ) (subpages/Computer Vision.tex
 
-LaTeX Warning: Reference `sec:projectplan' on page 12 undefined on input line 5.
+LaTeX Warning: Reference `sec:projectplan' on page 10 undefined on input line 5.
 
 
-LaTeX Warning: Reference `fig:customtool' on page 12 undefined on input line 43.
+LaTeX Warning: Reference `fig:customtool' on page 10 undefined on input line 43.
 
-[12])) (c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.bbl
+[10])) (Problems and Changes.tex
+<imgs/design/ringlight.jpg, id=322, 577.15625pt x 459.7175pt>
+File: imgs/design/ringlight.jpg Graphic file (type jpg)
+<use imgs/design/ringlight.jpg>
+Package pdftex.def Info: imgs/design/ringlight.jpg  used on input line 11.
+(pdftex.def)             Requested size: 250.04817pt x 199.1688pt.
+<imgs/design/diffusedlight.jpg, id=323, 253.80536pt x 212.9384pt>
+File: imgs/design/diffusedlight.jpg Graphic file (type jpg)
+<use imgs/design/diffusedlight.jpg>
+Package pdftex.def Info: imgs/design/diffusedlight.jpg  used on input line 18.
+(pdftex.def)             Requested size: 237.392pt x 199.16788pt.
+
+Underfull \vbox (badness 1648) has occurred while \output is active []
+
+ [11 <./imgs/appendix/projectplan.jpg>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+<imgs/design/unbracedscreen.jpeg, id=339, 1541.76pt x 1811.76875pt>
+File: imgs/design/unbracedscreen.jpeg Graphic file (type jpg)
+<use imgs/design/unbracedscreen.jpeg>
+Package pdftex.def Info: imgs/design/unbracedscreen.jpeg  used on input line 56.
+(pdftex.def)             Requested size: 121.06136pt x 142.26286pt.
+<imgs/design/bracedscreen.jpeg, id=340, 1541.76pt x 1783.66376pt>
+File: imgs/design/bracedscreen.jpeg Graphic file (type jpg)
+<use imgs/design/bracedscreen.jpeg>
+Package pdftex.def Info: imgs/design/bracedscreen.jpeg  used on input line 63.
+(pdftex.def)             Requested size: 122.89633pt x 142.1789pt.
+<imgs/design/shortcamera.jpeg, id=341, 507.8975pt x 601.24625pt>
+File: imgs/design/shortcamera.jpeg Graphic file (type jpg)
+<use imgs/design/shortcamera.jpeg>
+Package pdftex.def Info: imgs/design/shortcamera.jpeg  used on input line 70.
+(pdftex.def)             Requested size: 120.17741pt x 142.26535pt.
+<imgs/design/tallcamera.jpeg, id=342, 784.9325pt x 902.37125pt>
+File: imgs/design/tallcamera.jpeg Graphic file (type jpg)
+<use imgs/design/tallcamera.jpeg>
+Package pdftex.def Info: imgs/design/tallcamera.jpeg  used on input line 77.
+(pdftex.def)             Requested size: 122.90889pt x 141.29808pt.
+ [12 <./imgs/design/ringlight.jpg> <./imgs/design/diffusedlight.jpg>]) (c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.bbl
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 16.
  (C:\Users\Shaheen\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
 File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
-) [13 <./imgs/appendix/projectplan.jpg>] [14] [15]) (Appendix.tex [16
-
-]
-<imgs/appendix/bom.jpg, id=457, 727.43196pt x 383.28911pt>
+) [13 <./imgs/design/unbracedscreen.jpeg> <./imgs/design/bracedscreen.jpeg> <./imgs/design/shortcamera.jpeg> <./imgs/design/tallcamera.jpeg>] [14]) (Appendix.tex [15]
+<imgs/appendix/bom.jpg, id=463, 727.43196pt x 383.28911pt>
 File: imgs/appendix/bom.jpg Graphic file (type jpg)
 <use imgs/appendix/bom.jpg>
 Package pdftex.def Info: imgs/appendix/bom.jpg  used on input line 7.
 (pdftex.def)             Requested size: 512.14963pt x 269.87378pt.
-<imgs/appendix/systemdesign.jpg, id=458, 825.94286pt x 443.08392pt>
+<imgs/appendix/systemdesign.jpg, id=464, 825.94286pt x 443.08392pt>
 File: imgs/appendix/systemdesign.jpg Graphic file (type jpg)
 <use imgs/appendix/systemdesign.jpg>
 Package pdftex.def Info: imgs/appendix/systemdesign.jpg  used on input line 14.
 (pdftex.def)             Requested size: 512.14963pt x 274.743pt.
-<imgs/articles/benchmarks.png, id=459, 1506.62875pt x 651.43375pt>
+<imgs/articles/benchmarks.png, id=465, 1506.62875pt x 651.43375pt>
 File: imgs/articles/benchmarks.png Graphic file (type png)
 <use imgs/articles/benchmarks.png>
 Package pdftex.def Info: imgs/articles/benchmarks.png  used on input line 22.
@@ -836,9 +834,9 @@ Package pdftex.def Info: imgs/articles/benchmarks.png  used on input line 22.
 )
 Underfull \vbox (badness 3690) has occurred while \output is active []
 
- [17
+ [16
 
- <./imgs/appendix/bom.jpg> <./imgs/appendix/systemdesign.jpg>] [18 <./imgs/articles/benchmarks.png>] (c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.aux)
+ <./imgs/appendix/bom.jpg> <./imgs/appendix/systemdesign.jpg>] [17 <./imgs/articles/benchmarks.png>] (c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-29>
@@ -848,20 +846,20 @@ L3 programming layer <2023-08-29>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `"Final Report".out' has not changed.
-(rerunfilecheck)             Checksum: CCB58960D57DF88754042C54ABEB5D59;2705.
+(rerunfilecheck)             Checksum: 312392A75FAD8E4B86407261975018D5;3064.
  ) 
 Here is how much of TeX's memory you used:
- 16549 strings out of 475247
- 266048 string characters out of 5756847
- 1959785 words of memory out of 5000000
- 37705 multiletter control sequences out of 15000+600000
+ 16552 strings out of 475247
+ 266058 string characters out of 5756847
+ 1960785 words of memory out of 5000000
+ 37707 multiletter control sequences out of 15000+600000
  681663 words of font info for 123 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 79i,11n,93p,495b,615s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,11n,93p,495b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Shaheen\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk><C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix2-type1/STIX2Math.pfb><C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix2-type1/STIX2Text-Bold.pfb><C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix2-type1/STIX2Text-Italic.pfb><C:/Users/Shaheen/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix2-type1/STIX2Text-Regular.pfb>
-Output written on "c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.pdf" (18 pages, 12345063 bytes).
+Output written on "c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.pdf" (17 pages, 12344183 bytes).
 PDF statistics:
- 585 PDF objects out of 1000 (max. 8388607)
- 105 named destinations out of 1000 (max. 500000)
- 273 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 591 PDF objects out of 1000 (max. 8388607)
+ 106 named destinations out of 1000 (max. 500000)
+ 289 words of extra memory for PDF output out of 10000 (max. 10000000)
 

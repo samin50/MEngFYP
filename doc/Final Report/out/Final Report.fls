@@ -405,56 +405,11 @@ INPUT .\imgs\software\realvnc.jpg
 INPUT .\subpages\Electronics.tex
 INPUT .\subpages\Electronics.tex
 INPUT subpages\Electronics.tex
-INPUT .\subpages\Design Problems.tex
-INPUT .\subpages\Design Problems.tex
-INPUT subpages\Design Problems.tex
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\ringlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT .\imgs\design\diffusedlight.jpg
-INPUT C:\Users\Shaheen\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\stix2-type1\stix2-mathit.enc
-INPUT C:\Users\Shaheen\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\stix2-type1\stix2-mathrm.enc
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\unbracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\bracedscreen.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\shortcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
-INPUT .\imgs\design\tallcamera.jpeg
 INPUT .\subpages\Software.tex
 INPUT .\subpages\Software.tex
 INPUT subpages\Software.tex
+INPUT C:\Users\Shaheen\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\stix2-type1\stix2-mathit.enc
+INPUT C:\Users\Shaheen\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\stix2-type1\stix2-mathrm.enc
 INPUT .\imgs\appendix\projectplan.jpg
 INPUT .\imgs\appendix\projectplan.jpg
 INPUT .\imgs\appendix\projectplan.jpg
@@ -465,6 +420,51 @@ INPUT .\imgs\appendix\projectplan.jpg
 INPUT .\subpages\Computer Vision.tex
 INPUT .\subpages\Computer Vision.tex
 INPUT subpages\Computer Vision.tex
+INPUT .\Problems and Changes.tex
+INPUT .\Problems and Changes.tex
+INPUT Problems and Changes.tex
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\ringlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\diffusedlight.jpg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\unbracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\bracedscreen.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\shortcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
+INPUT .\imgs\design\tallcamera.jpeg
 INPUT c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.bbl
 INPUT c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.bbl
 INPUT c:\Users\Shaheen\OneDrive - Imperial College London\Uni\CW Labs\Year 4\FYP\doc\Final Report\out\Final Report.bbl

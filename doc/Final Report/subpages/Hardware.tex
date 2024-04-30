@@ -30,40 +30,38 @@
 The hardware, mechanics and electronics (HME) of the system are the physical components that make up the system.
 It is necessary to first consider the HME of the system as they are the foundation upon which the rest of the system is built upon;
 for example, when designing the computer vision system, it should utilise training data that was collected using the HME 
-that the system will be deployed on, ensuring that the system is robust to the conditions it will be used in. As such,
-the main focus of this stage has been the HME.
+that the system will be deployed on, ensuring that the system is robust to the conditions it will be used in.
 
 To keep track of the HME, a spreadsheet was created that contains all the components of the system (otherwise known as the Bill of Materials or BOM),
 as well as the cost of each component. A sample of this spreadsheet can be found in Appendix Figure \ref{app:bom}.
 \subsubsection{Hardware} \label{sec:hardware}
-For the initial stage of the project, the main hardware components of the HME are:
+The following hardware components have been used in the system:
 \begin{mylist}
   \item Raspberry Pi 4 Model B 2GB\cite{pi4}
   \item 7" Touchscreen Display\cite{7inchdisplay}
   \item 24V dc, 6.25A, 150W Power Supply
   \item Okdo Adjustable Focus OV5647 Camera\cite{okdocamera}
   \item LED Light Ring
+  \item NEMA17 42-40 Stepper Motor + DRV8825 Driver
 \end{mylist}
 % Pi
 \textbf{Raspberry Pi 4 Model B 2GB} \\
 The Raspberry Pi 4 Model B was chosen as the main component of the system and is the central hub that all other components are connected to.
-This model was chosen as it is regarded as a reliable SoC (System on Chip) and is widely used in the industry, and was used in the module ELEC96018 Embedded Systems.
+This model was chosen as it is regarded as a reliable SoC (System on Chip), is widely used in the industry and was used in the module ELEC96018 Embedded Systems.
 It has a large amount of software and driver support, ensuring confidence in finding solutions to any potential issues that may arise. Additionally, 
-it has GPIO pins that can be used to control other components which will be necessary in future stages. It also has a 
+it has GPIO pins that can be used to control other components. It also has a 
 dedicated CSI camera port which allows for a camera to be connected directly to the SoC, which is necessary for the computer vision system.
 
 It also has WiFi support, allowing for SSH and remote development software, as well as an HDMI port for the display.
 Originally, the 4GB model was ordered however an issue with the EE Stores resulted in receiving the 2GB model instead.
-This was not an issue as the 2GB model is sufficient for the initial stage of the project, however, if it is found to be a bottleneck
-in future stages, a more powerful model may be used. The decision to not return the 2GB model is because the EEStore was 
-unavailable during the Christmas break when the bulk of the work was done for this report.
+This was not an issue as the 2GB model was sufficient for the project. The decision to not return the 2GB model is because it was not 
+possible to order a new Pi without returning the old one, halting the development of the system.
 
-An alternative to the Pi family of SoCs could be an Arduino, but while they are capable of controlling the components of the system,
-and potentially drive an LCD, their microcontrollers are not powerful enough to run the computer vision system and stream video from the camera,
-so they cannot be used as a replacement for the Pi. However, in the future stages of the project, the Pi may delegate control of the components to an Arduino
-to free up processing power for the computer vision system, if it is found to be a bottleneck.
+An alternative to the Pi family of SoCs are Arduinos, but while they are capable of controlling the components of the system,
+and potentially drive an LCD, the microcontrollers are typically not powerful enough to run the computer vision system and stream video from the camera,
+so they cannot be used as a replacement for the Pi.
 
-A viable alternative to the Pi could be a Nvidia Jetson Nano\cite{jetsonnano}, as it is designed for computer vision applications and has a dedicated GPU. The dedicated GPU
+A viable alternative to the Pi is a NVIDIA Jetson Nano\cite{jetsonnano}, as it is designed for computer vision applications and has a dedicated GPU. The dedicated GPU
 would reduce the likelihood of the computer vision system being a bottleneck, and it has a CSI port for the camera; in terms of CPU performance, the Nano is weaker than the Pi,
 having a quad-core ARM Cortex-A57, whereas the Pi has a quad-core ARM Cortex-A72\cite{pi4}. However, the worse CPU performance is offset by the dedicated GPU, and the Nano has 4GB of RAM, 
 making the Nano a very attractive alternative to the Pi. The Nano's drawback is that it is significantly more expensive than the Pi (up to 3x from retailers), and

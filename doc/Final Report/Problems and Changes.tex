@@ -1,4 +1,4 @@
-\subsubsection{Problems and Solutions}
+\section{Problems and Changes}
 3D printing is typically an iterative process, where the design is printed, tested, and then modified based on the results.
 This further reinforces the need for a modular and parametric design, as it allows for easy modification of each component.
 After a few iterations with errors due to tolerances and slightly incorrect measurements, (not relevant to the technical content of this report)
@@ -22,7 +22,7 @@ and electronics, a few problems were encountered that were overcome by making so
 \end{figure*}
 
 \noindent
-\textbf{Mechanical Design Problems} \\
+\subsection{Mechanical Design Problems}
 The first design problem was the initial design of the LCD mount. As mentioned in Section \ref{sec:lcdhousing},
 the LCD housing is split into two parts; the LCD cover, where the LCD slides into, and a base plate, which mounts to the camera housing.
 The initial design of the LCD cover was only mounted to the base plate using two M3 screws at the base as shown in Figure \ref{fig:unbracedscreen}, which made it unstable and prone to wobbling.
@@ -83,7 +83,7 @@ the entire image had incorrect colours and was partially obscured. To solve this
 \noindent
 However, in the end, none of these could be considered because of the electronics design problem discussed in the following section. \\
 \noindent
-\textbf{Electronics Design Problems} \\
+\subsection{Electronics Design Problems}
 Attempting to dim the LED Ring resulted in very sporadic flickering, and it did not react with changes to the frequency of the PWM signal despite the MOSFET control circuit shown in Figure \ref{fig:wiringschematic}.
 Originally, it was thought that the issue was due to the MOSFET, as initially a MOSFET with a higher gate threshold voltage (IRF520N) was used, and so it was replaced with one with a lower gate threshold voltage.
 However, this did not solve the issue, and a capacitor was added in parallel to the LED Ring to buffer the voltage, but to no avail.
