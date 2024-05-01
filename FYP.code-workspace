@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../../Documents/PlatformIO/Projects/motor_test"
+		}
+	],
+	"settings": {
+		"launches": {
+			"RunMain": "Run Main",
+			"DynamicLaunch": "Dynamic Launch",
+			"DynamicLaunchWin": "Dynamic Launch Win"
+		}
+	}
+}
