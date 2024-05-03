@@ -9,5 +9,8 @@
     "julia.environmentPath": "c:\\Users\\Shaheen\\OneDrive - Imperial College London\\Uni\\CW Labs\\Year 4\\FYP",
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingImports": "none"
-    }
+    },
+    "remote.extensionKind": {
+        "GitHub.copilot": ["ui"],
+      }
 }

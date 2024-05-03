@@ -22,6 +22,7 @@ class PWM:
     def stop(self) -> None: pass
     def start(self, _) -> None: pass
     def ChangeDutyCycle(self, _) -> None: pass
+    def ChangeFrequency(self, _) -> None: pass
 # Camera emulation
 class FakeCamera:
     def __init__(self, _) -> None:

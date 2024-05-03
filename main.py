@@ -10,6 +10,7 @@ except ImportError:
     import src.common.simulate as GPIO
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
+from src.pi4.mechanics_controller import Conveyor_Controller
 from src.common.helper_functions import start_ui
 from src.common.constants import GPIO_PINS, MOSFET_FREQ, LED_BRIGHTNESS
 
@@ -19,30 +20,28 @@ class Component_Sorter:
     """
     def __init__(self, enableInterface:bool=True, trainingMode:bool=False) -> None:
         self.lcdUI = None
-        # LCD Setup
-        if enableInterface:
-            callbacks = {
-                "brightness_callback" : self.change_led_brightness
-            }
-            self.clk = pygame.time.Clock()
-            self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
+        GPIO.cleanup()
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
-        self.cameraLed = GPIO.PWM(GPIO_PINS["MOSFET_CONTROL_PIN"], MOSFET_FREQ)
-        self.cameraLed.start(LED_BRIGHTNESS)
-
-    def change_led_brightness(self, brightness:int) -> None:
-        """
-        Change the LED brightness
-        """
-        self.cameraLed.ChangeDutyCycle(brightness)
+        # self.cameraLed = GPIO.PWM(GPIO_PINS["MOSFET_CONTROL_PIN"], MOSFET_FREQ)
+        # self.cameraLed.start(LED_BRIGHTNESS)
+        self.conveyorMotor = Conveyor_Controller()
+        # LCD Setup
+        if enableInterface:
+            callbacks = {
+                # "brightness_callback" : self.cameraLed.ChangeDutyCycle,
+                "conveyor_speed_callback"  : self.conveyorMotor.change_speed,
+            }
+            self.clk = pygame.time.Clock()
+            self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
 
     def close(self) -> None:
         """
         Close all the resources
         """
-        self.cameraLed.stop()
+        # self.cameraLed.stop()
+        self.conveyorMotor.stop()
         GPIO.cleanup()
 
 if __name__ == "__main__":
