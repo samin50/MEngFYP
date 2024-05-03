@@ -10,9 +10,9 @@ except ImportError:
     import src.common.simulate as GPIO
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
-from src.pi4.mechanics_controller import Conveyor_Controller
+from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller
 from src.common.helper_functions import start_ui
-from src.common.constants import GPIO_PINS, MOSFET_FREQ, LED_BRIGHTNESS
+from src.common.constants import GPIO_PINS
 
 class Component_Sorter:
     """
@@ -24,13 +24,12 @@ class Component_Sorter:
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
-        # self.cameraLed = GPIO.PWM(GPIO_PINS["MOSFET_CONTROL_PIN"], MOSFET_FREQ)
-        # self.cameraLed.start(LED_BRIGHTNESS)
+        self.cameraLed = WS2812B_Controller()
         self.conveyorMotor = Conveyor_Controller()
         # LCD Setup
         if enableInterface:
             callbacks = {
-                # "brightness_callback" : self.cameraLed.ChangeDutyCycle,
+                "brightness_callback" : self.cameraLed.change_brightness,
                 "conveyor_speed_callback"  : self.conveyorMotor.change_speed,
             }
             self.clk = pygame.time.Clock()

@@ -39,3 +39,12 @@ class FakeCamera:
         return frame
     def stop(self) -> None: pass
     def __del__(self) -> None: pass
+# Neopixel Emulation
+class NeoPixel_SPI:
+    def __init__(self, _, __) -> None: pass
+    def fill(self, _) -> None: pass
+    def show(self) -> None: pass
+    def __del__(self) -> None: pass
+class SPI:
+    def __init__(self) -> None: pass
+    def __del__(self) -> None: pass
