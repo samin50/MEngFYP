@@ -39,9 +39,13 @@ class CameraFeed:
 
     def run(self) -> None:
         """
-        Run threaded camera loop
+        Run threaded camera loop, updating the frame
+        Add failsafe for when the camera is not available
         """
-        self.cam.start()
+        try:
+            self.cam.start()
+        except SystemError:
+            self.cam = FakeCamera(0)
         while not self.stopThread:
             self.update_frame()
             time.sleep(self.framePeriod)

@@ -34,7 +34,7 @@ class LCD_UI:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
         # Callback functions
         self.brightnessCallback = callbacks.get("brightness_callback", lambda _: None)
-        self.motorSpeedCallback = callbacks.get("motor_speed_callback", lambda _: None)
+        self.conveyorSpeedCallback = callbacks.get("conveyor_speed_callback", lambda _: None)
 
     def init_ui_widgets(self, trainingMode) -> None:
         """
@@ -69,14 +69,14 @@ class LCD_UI:
         )
         # Motor Speed
         yOffset += offsetIncrement
-        self.UIElements["motor_speed_label"] = UILabel(
+        self.UIElements["conveyor_speed_label"] = UILabel(
             relative_rect=pygame.Rect((cornerOffset[0]+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (labelLength, sliderHeight)),
-            text="Motor Speed: 0%",
+            text="Conveyor Speed: 0",
             manager=self.manager
         )
-        self.UIElements["motor_speed"] = UIHorizontalSlider(
+        self.UIElements["conveyor_speed"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((cornerOffset[0]+2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
-            value_range=(0, 100),
+            value_range=(-5, 5),
             start_value=0,
             manager=self.manager
         )
@@ -139,8 +139,9 @@ class LCD_UI:
             if event.ui_element == self.UIElements["led_ring_power"]:
                 self.UIElements["led_ring_power_label"].set_text(f"LED Power: {event.value}%")
                 self.brightnessCallback(event.value)
-            if event.ui_element == self.UIElements["motor_speed"]:
-                self.UIElements["motor_speed_label"].set_text(f"Motor Speed: {event.value}%")
+            if event.ui_element == self.UIElements["conveyor_speed"]:
+                self.UIElements["conveyor_speed_label"].set_text(f"Conveyor Speed: {(event.value)}")
+                self.conveyorSpeedCallback(20 * event.value)
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
