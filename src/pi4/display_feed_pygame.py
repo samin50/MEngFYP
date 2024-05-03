@@ -26,6 +26,7 @@ class CameraFeed:
         # Grab the available camera and start it
         pycam.init()
         self.camlist = pycam.list_cameras()
+        self.cam = FakeCamera(0)
         if len(self.camlist) == 0:
             self.cam = FakeCamera(0)
         else:
@@ -51,6 +52,13 @@ class CameraFeed:
         Obtain the current frame from the camera, if available
         """
         _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
+        # # Check for camera availability
+        # if len(self.camlist) == 0:
+        #     self.cam = FakeCamera(0)
+        # else:
+        #     self.cam = pycam.Camera(self.camlist[0])
+        #     self.cam.start()
+        # Get the current frame
         if self.cam.query_image():
             self.currentFrame = self.cam.get_image(self.currentFrame)
         # Draw FPS in the bottom right corner
