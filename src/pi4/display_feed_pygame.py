@@ -24,13 +24,11 @@ class CameraFeed:
         self.cameraclock = pygame.time.Clock()
         self.framePeriod = float(1) / CAMERA_FRAMERATE
         # Grab the available camera and start it
+        self.fakeCamera = FakeCamera(0)
+        self.realCamera = None
+        self.currentCamera = self.fakeCamera
         pycam.init()
         self.camlist = pycam.list_cameras()
-        self.cam = FakeCamera(0)
-        if len(self.camlist) == 0:
-            self.cam = FakeCamera(0)
-        else:
-            self.cam = pycam.Camera(self.camlist[0])
         self.stopThread = False
         self.frameThread = threading.Thread(target=self.run, daemon=True)
         self.frameThread.start()
@@ -42,25 +40,36 @@ class CameraFeed:
         """
         Run threaded camera loop
         """
-        self.cam.start()
+        self.set_camera()
         while not self.stopThread:
             self.update_frame()
             time.sleep(self.framePeriod)
+
+    def set_camera(self) -> None:
+        """
+        Set the camera if it becomes unavailable
+        """
+        if len(self.camlist) != 0:
+            if self.realCamera is None:
+                self.realCamera = pycam.Camera(self.camlist[0])
+                self.realCamera.start()
+            self.currentCamera = self.realCamera
+        else:
+            self.currentCamera = self.fakeCamera
+        return
 
     def update_frame(self) -> pygame.Surface:
         """
         Obtain the current frame from the camera, if available
         """
         _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
-        # # Check for camera availability
-        # if len(self.camlist) == 0:
-        #     self.cam = FakeCamera(0)
-        # else:
-        #     self.cam = pycam.Camera(self.camlist[0])
-        #     self.cam.start()
-        # Get the current frame
-        if self.cam.query_image():
-            self.currentFrame = self.cam.get_image(self.currentFrame)
+        try:
+            # Get the current frame
+            if self.currentCamera.query_image():
+                self.currentFrame = self.currentCamera.get_image(self.currentFrame)
+        except:
+            self.set_camera()
+            return self.currentFrame
         # Draw FPS in the bottom right corner
         if not self.trainingMode:
             self.resizedFrame = pygame.transform.scale(self.currentFrame, self.size)
@@ -89,7 +98,7 @@ class CameraFeed:
         """
         self.stopThread = True
         self.frameThread.join()
-        self.cam.stop()
+        self.currentCamera.stop()
 
 if __name__ == '__main__':
     TRAINING_MODE = False
