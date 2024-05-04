@@ -39,8 +39,9 @@ class Component_Sorter:
         """
         Close all the resources
         """
-        # self.cameraLed.stop()
         self.conveyorMotor.stop()
+        self.cameraLed.stop()
+        self.lcdUI.cameraFeed.destroy()
         GPIO.cleanup()
 
 if __name__ == "__main__":
@@ -52,7 +53,7 @@ if __name__ == "__main__":
         start_ui(
             loopFunction=[systemObj.lcdUI.draw],
             eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.cameraFeed.event_handler],
-            exitFunction=[systemObj.lcdUI.cameraFeed.destroy, systemObj.close],
+            exitFunction=[systemObj.close],
             clock=systemObj.clk,
             manager=systemObj.lcdUI.manager,
             screen=systemObj.lcdUI.display,

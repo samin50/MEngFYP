@@ -53,7 +53,11 @@ class CameraFeed:
         if len(self.camlist) != 0:
             if self.realCamera is None:
                 self.realCamera = pycam.Camera(self.camlist[0])
+            try:
                 self.realCamera.start()
+            except:
+                self.realCamera = None
+                self.currentCamera = self.fakeCamera
             self.currentCamera = self.realCamera
         else:
             self.currentCamera = self.fakeCamera
@@ -99,7 +103,8 @@ class CameraFeed:
         """
         self.stopThread = True
         self.frameThread.join()
-        self.currentCamera.stop()
+        if self.realCamera is not None:
+            self.realCamera.stop()
 
 if __name__ == '__main__':
     TRAINING_MODE = False
