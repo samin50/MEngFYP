@@ -8,7 +8,7 @@ import psutil
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
-from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, LED_BRIGHTNESS, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
+from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, LED_BRIGHTNESS, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, LED_BRIGHTNESS
 from src.common.helper_functions import start_ui
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.display_feed_pygame import CameraFeed
@@ -65,6 +65,7 @@ class LCD_UI:
             relative_rect=pygame.Rect((cornerOffset[0]+2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
             start_value=LED_BRIGHTNESS,
+            click_increment=10,
             manager=self.manager
         )
         # Motor Speed

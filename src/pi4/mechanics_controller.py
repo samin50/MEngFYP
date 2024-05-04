@@ -13,7 +13,7 @@ except ImportError:
     from src.common.simulate import NeoPixel_SPI as neopixel_spi
     from src.common.simulate import SPI
     print("Simulating missing hardware!")
-from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER
+from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LED_BRIGHTNESS
 
 
 class Conveyor_Controller:
@@ -54,12 +54,12 @@ class WS2812B_Controller:
     WS2812B controller class
     """
     def __init__(self, numleds: int = 16) -> None:
-        self.leds = neopixel_spi(SPI(), numleds)
+        self.leds = neopixel_spi(SPI(), numleds, pixel_order='GRB', auto_write=False)
         self.currentColour = (0, 0, 0)
         self.stopFlag = threading.Event()
         self.colourLock = threading.Lock()
         self.newColourEvent = threading.Event()
-        self.latestColour = (0, 0, 0)
+        self.latestColour = (LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS)
         self.thread = threading.Thread(target=self.process_colour, daemon=True)
         self.thread.start()
 
@@ -71,7 +71,8 @@ class WS2812B_Controller:
             # Wait for new colour
             self.newColourEvent.wait()
             self.newColourEvent.clear()
-            time.sleep(5)
+            # Apply colour
+            time.sleep(12)
             with self.colourLock:
                 colour = self.latestColour
             print(colour)
@@ -91,8 +92,9 @@ class WS2812B_Controller:
         """
         Change the brightness of the LED ring
         """
-        colour = colorsys.hsv_to_rgb(float(brightness)/100, 0.5, 0.5)
-        newColour = tuple(int(x * 255) for x in colour)
+        # colour = colorsys.hsv_to_rgb(float(brightness)/100, 0.5, 0.5)
+        # newColour = tuple(int(x * 255) for x in colour)
+        newColour = (0, 0, brightness)
         self.change_colour(newColour)
 
     def stop(self):
@@ -103,16 +105,16 @@ class WS2812B_Controller:
         self.stopFlag.set()
         self.thread.join()
 
-# Example usage
 if __name__ == "__main__":
-    # controller = WS2812B_Controller()
-    # controller.change_colour((255, 0, 0))
-    # time.sleep(6)
-    # controller.change_brightness(50)
-    # controller.stop()
-    leds = neopixel_spi(SPI(), 16)
-    time.sleep(10)
-    leds.fill((255, 0, 0))
-    time.sleep(10)
+    leds = neopixel_spi(SPI(), 8, pixel_order='GRB', auto_write=False)
+    # leds.fill((0, 0, 0))
+    # for i in range(10):
+    #     leds.fill(colorsys.hsv_to_rgb(i/10, 0.5, 0.5))
+    #     leds.show()
+    #     time.sleep(4)
+    time.sleep(12)
+    leds.fill((16, 0, 16))
     leds.show()
-    time.sleep(10)
+    # # leds.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+    # leds.fill((0, 0, 0))
+    # leds.show()
