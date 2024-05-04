@@ -24,12 +24,12 @@ class Component_Sorter:
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
-        self.cameraLed = WS2812B_Controller()
+        # self.cameraLed = WS2812B_Controller()
         self.conveyorMotor = Conveyor_Controller()
         # LCD Setup
         if enableInterface:
             callbacks = {
-                "brightness_callback" : self.cameraLed.change_brightness,
+                # "brightness_callback" : self.cameraLed.change_brightness,
                 "conveyor_speed_callback"  : self.conveyorMotor.change_speed,
             }
             self.clk = pygame.time.Clock()
@@ -40,7 +40,7 @@ class Component_Sorter:
         Close all the resources
         """
         self.conveyorMotor.stop()
-        self.cameraLed.stop()
+        # self.cameraLed.stop()
         self.lcdUI.cameraFeed.destroy()
         GPIO.cleanup()
 

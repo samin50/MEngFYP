@@ -105,8 +105,14 @@ class WS2812B_Controller:
 
 # Example usage
 if __name__ == "__main__":
-    controller = WS2812B_Controller()
-    controller.change_color((255, 0, 0))
-    time.sleep(6)  # Allow the previous change to complete before changing again
-    controller.change_brightness(50)
-    controller.stop()
+    # controller = WS2812B_Controller()
+    # controller.change_colour((255, 0, 0))
+    # time.sleep(6)
+    # controller.change_brightness(50)
+    # controller.stop()
+    leds = neopixel_spi(SPI(), 16)
+    time.sleep(10)
+    leds.fill((255, 0, 0))
+    time.sleep(10)
+    leds.show()
+    time.sleep(10)

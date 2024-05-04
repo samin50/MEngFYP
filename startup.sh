@@ -8,4 +8,4 @@ xset -dpms
 while ! xset q &>/dev/null; do
     sleep 1
 done
-python3 /home/dietpi/MEngFYP/main.py & 
+# python3 /home/dietpi/MEngFYP/main.py & 
