@@ -7,7 +7,7 @@ try:
     import RPi.GPIO as GPIO # type: ignore
     RESIZEFLAG = False
 except ImportError:
-    import src.common.simulate as GPIO
+    from src.common.simulate import GPIO
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
 from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller

@@ -9,20 +9,24 @@ This file emulates:
 import pygame
 from src.common.constants import CAMERA_RESOLUTION
 # Constants
-BCM = 0
-OUT = 0
-# Functions
-def setmode(_) -> None: pass
-def setup(_, __) -> None: pass
-def cleanup() -> None: pass
 # Classes
-# PWM emulation
-class PWM:
-    def __init__(self, _, __) -> None: pass
-    def stop(self) -> None: pass
-    def start(self, _) -> None: pass
-    def ChangeDutyCycle(self, _) -> None: pass
-    def ChangeFrequency(self, _) -> None: pass
+class GPIO:
+    BCM = 0
+    OUT = 0
+    HIGH = 0
+    LOW = 0
+    def setmode(_) -> None: pass
+    def setup(_, __) -> None: pass
+    def cleanup() -> None: pass
+    def output(_, __) -> None: pass
+    # PWM emulation
+    class PWM:
+        def __init__(self, _, __) -> None: pass
+        def stop(self) -> None: pass
+        def start(self, _) -> None: pass
+        def ChangeDutyCycle(self, _) -> None: pass
+        def ChangeFrequency(self, _) -> None: pass
+
 # Camera emulation
 class FakeCamera:
     def __init__(self, _) -> None:

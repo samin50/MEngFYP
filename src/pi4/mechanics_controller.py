@@ -8,9 +8,9 @@ try:
     import neopixel_spi.NeoPixel_SPI as neopixel_spi
     import board.SPI as SPI
 except ImportError:
-    import src.common.simulate as GPIO
-    import src.common.simulate.NeoPixel_SPI as neopixel_spi
-    import src.common.simulate.SPI as SPI
+    from src.common.simulate import GPIO
+    from src.common.simulate import NeoPixel_SPI as neopixel_spi
+    from src.common.simulate import SPI
 from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER
 
 
