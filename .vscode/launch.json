@@ -30,5 +30,18 @@
             "envFile": "${workspaceFolder}/.vscode/win.env",
             "justMyCode": true,
         }
+        {
+            "name": "Dynamic Launch Sudo",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.vscode/.env",
+            "justMyCode": true,
+            "linux": {
+                "pythonPath": "sudo /usr/bin/python3"
+            }
+        }
+        
     ]
 }

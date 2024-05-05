@@ -7,7 +7,9 @@ import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
     from neopixel_spi import NeoPixel_SPI as neopixel_spi
+    from neopixel import NeoPixel as neopixel
     from board import SPI
+    from board import D18
 except ImportError:
     from src.common.simulate import GPIO
     from src.common.simulate import NeoPixel_SPI as neopixel_spi
@@ -56,37 +58,41 @@ class WS2812B_Controller:
     def __init__(self, numleds: int = 16) -> None:
         self.leds = neopixel_spi(SPI(), numleds, pixel_order='GRB', auto_write=False)
         self.currentColour = (0, 0, 0)
-        self.stopFlag = threading.Event()
         self.colourLock = threading.Lock()
-        self.newColourEvent = threading.Event()
         self.latestColour = (LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS)
-        self.thread = threading.Thread(target=self.process_colour, daemon=True)
-        self.thread.start()
+        self.processThread = None
+        self.stopFlag = threading.Event()
+        self.change_colour(self.latestColour)
 
-    def process_colour(self) -> None:
+    def _apply_colour_with_delay(self, delay: int, colour: tuple) -> None:
         """
-        Process the color change queue
+        Apply the specified color after a delay
         """
-        while not self.stopFlag.is_set():
-            # Wait for new colour
-            self.newColourEvent.wait()
-            self.newColourEvent.clear()
-            # Apply colour
-            time.sleep(12)
-            with self.colourLock:
-                colour = self.latestColour
-            print(colour)
+        time.sleep(delay)
+        with self.colourLock:
             self.leds.fill(colour)
             self.leds.show()
             self.currentColour = colour
 
-    def change_colour(self, colour: tuple) -> None:
+    def change_colour(self, colour: tuple, delay: int = 12) -> None:
         """
         Change the color of the LED ring to the most recent color request
         """
         with self.colourLock:
             self.latestColour = colour
-        self.newColourEvent.set()
+
+        self._restart_thread(self._apply_colour_with_delay, delay, colour)
+
+    def _restart_thread(self, target, *args):
+        """
+        Restart the process thread with a new target and arguments
+        """
+        self.stop()
+
+        # Restart the thread
+        self.processThread = threading.Thread(target=target, args=args, daemon=True)
+        self.stopFlag.clear()
+        self.processThread.start()
 
     def change_brightness(self, brightness: int) -> None:
         """
@@ -101,12 +107,14 @@ class WS2812B_Controller:
         """
         Stop the current thread if it's running
         """
-        self.change_colour((0, 0, 0))
         self.stopFlag.set()
-        self.thread.join()
+        if self.processThread:
+            self.processThread.join()
+            self.processThread = None
 
 if __name__ == "__main__":
-    leds = neopixel_spi(SPI(), 8, pixel_order='GRB', auto_write=False)
+    # leds = neopixel_spi(SPI(), 8, pixel_order='GRB', auto_write=False)
+    leds = neopixel(D18, 16)
     # leds.fill((0, 0, 0))
     # for i in range(10):
     #     leds.fill(colorsys.hsv_to_rgb(i/10, 0.5, 0.5))

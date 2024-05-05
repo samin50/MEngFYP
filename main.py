@@ -1,6 +1,7 @@
 """
 Main entry point for the application.
 """
+import time
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
@@ -14,6 +15,10 @@ from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller
 from src.common.helper_functions import start_ui
 from src.common.constants import GPIO_PINS
 
+# Lighting
+from neopixel_spi import NeoPixel_SPI as neopixel_spi
+from board import SPI
+
 class Component_Sorter:
     """
     Component Sorter class
@@ -24,12 +29,12 @@ class Component_Sorter:
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
-        self.cameraLed = WS2812B_Controller(8)
+        # self.cameraLed = WS2812B_Controller(8)
         self.conveyorMotor = Conveyor_Controller()
         # LCD Setup
         if enableInterface:
             callbacks = {
-                "brightness_callback" : self.cameraLed.change_brightness,
+                # "brightness_callback" : self.cameraLed.change_brightness,
                 "conveyor_speed_callback"  : self.conveyorMotor.change_speed,
             }
             self.clk = pygame.time.Clock()
@@ -47,6 +52,12 @@ class Component_Sorter:
 if __name__ == "__main__":
     ENABLE_INTERFACE = True
     TRAINING_MODE = False
+    leds = neopixel_spi(SPI(), 8, pixel_order='GRB', auto_write=False)
+    # time.sleep(12)
+    # BRIGHTNESS = 50
+    # brightnessLevel = int((BRIGHTNESS / 100) * 255)
+    # leds.fill((brightnessLevel, brightnessLevel, 0))
+    # leds.show()
     if ENABLE_INTERFACE:
         pygame.init()
         systemObj = Component_Sorter(ENABLE_INTERFACE, TRAINING_MODE)
