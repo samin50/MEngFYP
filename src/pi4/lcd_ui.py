@@ -141,6 +141,7 @@ class LCD_UI:
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 180),
             start_value=0,
+            click_increment=10,
             manager=self.manager
         )
         self.UIElements["saturation_slider_label"] = UILabel(
@@ -152,6 +153,7 @@ class LCD_UI:
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
             start_value=0,
+            click_increment=10,
             manager=self.manager
         )
         self.UIElements["value_slider_label"] = UILabel(
@@ -163,6 +165,7 @@ class LCD_UI:
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement*2), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
             start_value=0,
+            click_increment=10,
             manager=self.manager
         )
         self.UIElements["strip_reset_button"] = UIButton(
@@ -192,8 +195,6 @@ class LCD_UI:
             if event.ui_element == self.UIElements["value_slider"]:
                 self.colourCallback((None, None, event.value))
                 self.UIElements["value_slider_label"].set_text(f"Value: {event.value}")
-            if event.ui_element == self.UIElements["strip_reset_button"]:
-                self.stripResetCallback()
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
@@ -214,6 +215,8 @@ class LCD_UI:
                 subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'down'], check=True)
                 # Bring the Wi-Fi interface back up
                 subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'up'], check=True)
+            if event.ui_element == self.UIElements["strip_reset_button"]:
+                self.stripResetCallback()
 
     def draw(self) -> None:
         """

@@ -2,7 +2,7 @@
 Mechanics controller
 """
 import time
-import threading
+import multiprocessing
 import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
@@ -54,36 +54,52 @@ class WS2812B_Controller:
     def __init__(self, numleds: int = 16, speed: float = 5) -> None:
         self.numleds = numleds
         self.leds = None
-        self.rainbowThread = None
+        self.rainbowProcess = None
+        self.colourProcess = None
         self.colour = [0, 0, 0]
         self.speed = speed
+        self.queue = multiprocessing.Queue()
         self.initialize()
 
-    def initialize(self):
+    def initialize(self) -> None:
         """
         Initialize the LED strip
         """
         print("Initializing LED strip")
         self.leds = PixelStrip(self.numleds, 10, 800000, 10, False, 255, 0)
         self.leds.begin()
-        self.rainbowThread = threading.Thread(target=self.rainbow_cycle)
-        self.rainbowThread.start()
+        self.rainbowProcess = multiprocessing.Process(target=self.rainbow_cycle, args=(self.queue, self.leds,))
+        self.rainbowProcess.start()
+        self.rainbowProcess.join()
 
-    def rainbow_cycle(self):
+    def rainbow_cycle(self, queue: multiprocessing.Queue, ledstrip: PixelStrip) -> None:
         """
         Draw rainbow that uniformly distributes itself across all pixels.
         """
         counter = 0
         step = 0
         while counter <= 192:
-            for i in range(self.leds.numPixels()):
-                newColour = colorsys.hsv_to_rgb((i * 256 / self.leds.numPixels() + step) % 256 / 256.0, 1.0, 1.0)
-                self.leds.setPixelColor(i, Color(int(newColour[0]*255), int(newColour[1]*255), int(newColour[2]*255)))
-            self.leds.show()
+            for i in range(ledstrip.numPixels()):
+                newColour = colorsys.hsv_to_rgb((i * 256 / ledstrip.numPixels() + step) % 256 / 256.0, 1.0, 1.0)
+                ledstrip.setPixelColor(i, Color(int(newColour[0]*255), int(newColour[1]*255), int(newColour[2]*255)))
+            ledstrip.show()
             time.sleep(0.02)
             step += self.speed
             counter += 1
+            if not queue.empty():
+                command = queue.get()
+                if command == 'stop':
+                    break
         print("Rainbow cycle finished")
+
+    def change_colour_process(self, colour: tuple) -> None:
+        """
+        Change the colour of the strip
+        """
+        for i in range(self.leds.numPixels()):
+            self.leds.setPixelColor(i, Color(colour[0], colour[1], colour[2]))
+        self.leds.show()
+        time.sleep(0.02)
 
     def change_colour(self, colour: tuple) -> None:
         """
@@ -98,15 +114,23 @@ class WS2812B_Controller:
         trueColour = colorsys.hsv_to_rgb(*tuple(self.colour))
         rgbColour = (int(trueColour[0]*255), int(trueColour[1]*255), int(trueColour[2]*255))
         print(f"Setting colour to {rgbColour}")
-        for i in range(self.leds.numPixels()):
-            self.leds.setPixelColor(i, Color(*rgbColour))
+        self.colourProcess = multiprocessing.Process(target=self.change_colour_process, args=(rgbColour,))
+        self.colourProcess.start()
+        self.colourProcess.join()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Reset the LED strip
         """
         print("Resetting LED strip")
         self.initialize()
+
+    def stop(self) -> None:
+        """
+        Stop the LED strip
+        """
+        self.queue.put('stop')
+        self.rainbowProcess.join()
 
 if __name__ == "__main__":
     leds = WS2812B_Controller(speed=5)
