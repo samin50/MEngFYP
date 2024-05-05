@@ -6,16 +6,12 @@ import threading
 import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
-    from neopixel_spi import NeoPixel_SPI as neopixel_spi
-    from neopixel import NeoPixel as neopixel
-    from board import SPI
-    from board import D18
+    from rpi_ws281x import PixelStrip, Color
 except ImportError:
     from src.common.simulate import GPIO
-    from src.common.simulate import NeoPixel_SPI as neopixel_spi
-    from src.common.simulate import SPI
+    from src.common.simulate import PixelStrip, Color
     print("Simulating missing hardware!")
-from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LED_BRIGHTNESS
+from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER
 
 
 class Conveyor_Controller:
@@ -55,74 +51,48 @@ class WS2812B_Controller:
     """
     WS2812B controller class
     """
-    def __init__(self, numleds: int = 16) -> None:
-        self.leds = neopixel_spi(SPI(), numleds, pixel_order='GRB', auto_write=False)
-        self.currentColour = (0, 0, 0)
-        self.colourLock = threading.Lock()
-        self.latestColour = (LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS)
-        self.processThread = None
-        self.stopFlag = threading.Event()
-        self.change_colour(self.latestColour)
+    def __init__(self, numleds: int = 16, speed: float = 5) -> None:
+        self.numleds = numleds
+        self.leds = None
+        self.rainbowThread = None
+        self.speed = speed
+        self.initialize()
 
-    def _apply_colour_with_delay(self, delay: int, colour: tuple) -> None:
+    def initialize(self):
         """
-        Apply the specified color after a delay
+        Initialize the LED strip
         """
-        time.sleep(delay)
-        with self.colourLock:
-            self.leds.fill(colour)
+        self.leds = PixelStrip(self.numleds, 10, 800000, 10, False, 255, 0)
+        self.leds.begin()
+        self.rainbowThread = threading.Thread(target=self.rainbow_cycle)
+        self.rainbowThread.start()
+
+    def rainbow_cycle(self):
+        """
+        Draw rainbow that uniformly distributes itself across all pixels.
+        """
+        counter = 0
+        step = 0
+        while counter <= 192:
+            for i in range(self.leds.numPixels()):
+                newColour = colorsys.hsv_to_rgb((i * 256 / self.leds.numPixels() + step) % 256 / 256.0, 1.0, 1.0)
+                self.leds.setPixelColor(i, Color(int(newColour[0]*255), int(newColour[1]*255), int(newColour[2]*255)))
             self.leds.show()
-            self.currentColour = colour
+            time.sleep(0.02)
+            step += self.speed
+            counter += 1
 
-    def change_colour(self, colour: tuple, delay: int = 12) -> None:
+    def set_pixel(self, pixel: int, color: tuple) -> None:
         """
-        Change the color of the LED ring to the most recent color request
+        Set the color of a single pixel
         """
-        with self.colourLock:
-            self.latestColour = colour
+        self.leds.setPixelColor(pixel, Color(color[0], color[1], color[2]))
 
-        self._restart_thread(self._apply_colour_with_delay, delay, colour)
-
-    def _restart_thread(self, target, *args):
+    def restart(self):
         """
-        Restart the process thread with a new target and arguments
+        Restart the LED strip
         """
-        self.stop()
-
-        # Restart the thread
-        self.processThread = threading.Thread(target=target, args=args, daemon=True)
-        self.stopFlag.clear()
-        self.processThread.start()
-
-    def change_brightness(self, brightness: int) -> None:
-        """
-        Change the brightness of the LED ring
-        """
-        # colour = colorsys.hsv_to_rgb(float(brightness)/100, 0.5, 0.5)
-        # newColour = tuple(int(x * 255) for x in colour)
-        newColour = (0, 0, brightness)
-        self.change_colour(newColour)
-
-    def stop(self):
-        """
-        Stop the current thread if it's running
-        """
-        self.stopFlag.set()
-        if self.processThread:
-            self.processThread.join()
-            self.processThread = None
+        self.initialize()
 
 if __name__ == "__main__":
-    # leds = neopixel_spi(SPI(), 8, pixel_order='GRB', auto_write=False)
-    leds = neopixel(D18, 16)
-    # leds.fill((0, 0, 0))
-    # for i in range(10):
-    #     leds.fill(colorsys.hsv_to_rgb(i/10, 0.5, 0.5))
-    #     leds.show()
-    #     time.sleep(4)
-    time.sleep(12)
-    leds.fill((16, 0, 16))
-    leds.show()
-    # # leds.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-    # leds.fill((0, 0, 0))
-    # leds.show()
+    leds = WS2812B_Controller(speed=5)

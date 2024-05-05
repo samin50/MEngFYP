@@ -43,12 +43,12 @@ class FakeCamera:
         return frame
     def stop(self) -> None: pass
     def __del__(self) -> None: pass
-# Neopixel Emulation
-class NeoPixel_SPI:
-    def __init__(self, _, __) -> None: pass
-    def fill(self, _) -> None: pass
+
+# WS2812 emulation
+class PixelStrip:
+    def __init__(self, _, __, ___) -> None: pass
+    def begin(self) -> None: pass
     def show(self) -> None: pass
-    def __del__(self) -> None: pass
-class SPI:
-    def __init__(self) -> None: pass
-    def __del__(self) -> None: pass
+    def setPixelColor(self, _, __) -> None: pass
+
+def Color(_, __, ___) -> int: return 0
