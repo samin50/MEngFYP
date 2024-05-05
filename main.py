@@ -29,8 +29,8 @@ class Component_Sorter:
         # LCD Setup
         if enableInterface:
             callbacks = {
-                # "brightness_callback" : self.cameraLed.change_brightness,
                 "colour_callback" : self.cameraLed.change_colour,
+                "strip_reset_callback" : self.cameraLed.reset,
                 "conveyor_speed_callback" : self.conveyorMotor.change_speed,
             }
             self.clk = pygame.time.Clock()

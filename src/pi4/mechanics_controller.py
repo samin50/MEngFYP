@@ -63,6 +63,7 @@ class WS2812B_Controller:
         """
         Initialize the LED strip
         """
+        print("Initializing LED strip")
         self.leds = PixelStrip(self.numleds, 10, 800000, 10, False, 255, 0)
         self.leds.begin()
         self.rainbowThread = threading.Thread(target=self.rainbow_cycle)
@@ -82,6 +83,7 @@ class WS2812B_Controller:
             time.sleep(0.02)
             step += self.speed
             counter += 1
+        print("Rainbow cycle finished")
 
     def change_colour(self, colour: tuple) -> None:
         """
@@ -99,10 +101,11 @@ class WS2812B_Controller:
         for i in range(self.leds.numPixels()):
             self.leds.setPixelColor(i, Color(*rgbColour))
 
-    def restart(self):
+    def reset(self):
         """
-        Restart the LED strip
+        Reset the LED strip
         """
+        print("Resetting LED strip")
         self.initialize()
 
 if __name__ == "__main__":

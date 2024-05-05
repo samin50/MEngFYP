@@ -33,6 +33,7 @@ class LCD_UI:
         if SHOW_CURSOR:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
         # Callback functions
+        self.stripResetCallback = callbacks.get("strip_reset_callback", lambda: None)
         self.colourCallback = callbacks.get("colour_callback", lambda _: None)
         self.conveyorSpeedCallback = callbacks.get("conveyor_speed_callback", lambda _: None)
 
@@ -164,6 +165,11 @@ class LCD_UI:
             start_value=0,
             manager=self.manager
         )
+        self.UIElements["strip_reset_button"] = UIButton(
+            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*3), (CAMERA_DISPLAY_SIZE[0], buttonHeight)),
+            text="Reset Strip",
+            manager=self.manager
+        )
 
     def handle_events(self, event:pygame.event) -> None:
         """
@@ -186,6 +192,8 @@ class LCD_UI:
             if event.ui_element == self.UIElements["value_slider"]:
                 self.colourCallback((None, None, event.value))
                 self.UIElements["value_slider_label"].set_text(f"Value: {event.value}")
+            if event.ui_element == self.UIElements["strip_reset_button"]:
+                self.stripResetCallback()
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
