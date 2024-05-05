@@ -55,6 +55,7 @@ class WS2812B_Controller:
         self.numleds = numleds
         self.leds = None
         self.rainbowThread = None
+        self.colour = [0, 0, 0]
         self.speed = speed
         self.initialize()
 
@@ -82,11 +83,21 @@ class WS2812B_Controller:
             step += self.speed
             counter += 1
 
-    def set_pixel(self, pixel: int, color: tuple) -> None:
+    def change_colour(self, colour: tuple) -> None:
         """
-        Set the color of a single pixel
+        Set the color of the strip, assumed as HSV
         """
-        self.leds.setPixelColor(pixel, Color(color[0], color[1], color[2]))
+        if colour[0] is not None:
+            self.colour[0] = colour[0] / 180
+        elif colour[1] is not None:
+            self.colour[1] = colour[1] / 100
+        elif colour[2] is not None:
+            self.colour[2] = colour[2] / 100
+        trueColour = colorsys.hsv_to_rgb(*tuple(self.colour))
+        rgbColour = (int(trueColour[0]*255), int(trueColour[1]*255), int(trueColour[2]*255))
+        print(f"Setting colour to {rgbColour}")
+        for i in range(self.leds.numPixels()):
+            self.leds.setPixelColor(i, Color(*rgbColour))
 
     def restart(self):
         """

@@ -46,9 +46,10 @@ class FakeCamera:
 
 # WS2812 emulation
 class PixelStrip:
-    def __init__(self, _, __, ___) -> None: pass
+    def __init__(self, *_) -> None: pass
     def begin(self) -> None: pass
     def show(self) -> None: pass
     def setPixelColor(self, _, __) -> None: pass
+    def numPixels(self) -> int: return 0
 
 def Color(_, __, ___) -> int: return 0

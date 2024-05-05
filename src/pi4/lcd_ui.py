@@ -8,7 +8,7 @@ import psutil
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
-from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, LED_BRIGHTNESS, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, LED_BRIGHTNESS
+from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, LED_BRIGHTNESS, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
 from src.common.helper_functions import start_ui
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.display_feed_pygame import CameraFeed
@@ -33,7 +33,7 @@ class LCD_UI:
         if SHOW_CURSOR:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
         # Callback functions
-        self.brightnessCallback = callbacks.get("brightness_callback", lambda _: None)
+        self.colourCallback = callbacks.get("colour_callback", lambda _: None)
         self.conveyorSpeedCallback = callbacks.get("conveyor_speed_callback", lambda _: None)
 
     def init_ui_widgets(self, trainingMode) -> None:
@@ -126,9 +126,42 @@ class LCD_UI:
         xOffset = self.resolution[0] + WIDGET_PADDING
         yOffset = WIDGET_PADDING
         # Classification Label
-        self.UIElements["classification_label"] = UILabel(
+        # self.UIElements["classification_label"] = UILabel(
+        #     relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
+        #     text="Classification:",
+        #     manager=self.manager
+        # )
+        self.UIElements["hue_slider_label"] = UILabel(
             relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
-            text="Classification:",
+            text="Hue: 0",
+            manager=self.manager
+        )
+        self.UIElements["hue_slider"] = UIHorizontalSlider(
+            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
+            value_range=(0, 180),
+            start_value=0,
+            manager=self.manager
+        )
+        self.UIElements["saturation_slider_label"] = UILabel(
+            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement), (labelLength, sliderHeight)),
+            text="Saturation: 0",
+            manager=self.manager
+        )
+        self.UIElements["saturation_slider"] = UIHorizontalSlider(
+            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
+            value_range=(0, 100),
+            start_value=0,
+            manager=self.manager
+        )
+        self.UIElements["value_slider_label"] = UILabel(
+            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*2), (labelLength, sliderHeight)),
+            text="Value: 0",
+            manager=self.manager
+        )
+        self.UIElements["value_slider"] = UIHorizontalSlider(
+            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement*2), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
+            value_range=(0, 100),
+            start_value=0,
             manager=self.manager
         )
 
@@ -139,10 +172,20 @@ class LCD_UI:
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             if event.ui_element == self.UIElements["led_ring_power"]:
                 self.UIElements["led_ring_power_label"].set_text(f"LED Power: {event.value}%")
-                self.brightnessCallback(event.value)
+                # self.brightnessCallback(event.value)
             if event.ui_element == self.UIElements["conveyor_speed"]:
                 self.UIElements["conveyor_speed_label"].set_text(f"Conveyor Speed: {(event.value)}")
                 self.conveyorSpeedCallback(20 * event.value)
+            # Colour sliders
+            if event.ui_element == self.UIElements["hue_slider"]:
+                self.colourCallback((event.value, None, None))
+                self.UIElements["hue_slider_label"].set_text(f"Hue: {event.value}")
+            if event.ui_element == self.UIElements["saturation_slider"]:
+                self.colourCallback((None, event.value, None))
+                self.UIElements["saturation_slider_label"].set_text(f"Saturation: {event.value}")
+            if event.ui_element == self.UIElements["value_slider"]:
+                self.colourCallback((None, None, event.value))
+                self.UIElements["value_slider_label"].set_text(f"Value: {event.value}")
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
