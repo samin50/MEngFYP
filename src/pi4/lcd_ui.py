@@ -124,47 +124,49 @@ class LCD_UI:
             manager=self.manager
         )
         ## RIGHT SIDE
-        xOffset = self.resolution[0] + WIDGET_PADDING
+        xOffset = CAMERA_DISPLAY_SIZE[0] + 2*WIDGET_PADDING
         yOffset = WIDGET_PADDING
+        CAMERA_DISPLAY_SIZE = (LCD_RESOLUTION[0] - CAMERA_DISPLAY_SIZE[0] - 3*WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1])
         # Classification Label
         # self.UIElements["classification_label"] = UILabel(
         #     relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
         #     text="Classification:",
         #     manager=self.manager
         # )
+
         self.UIElements["hue_slider_label"] = UILabel(
             relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
-            text="Hue: 0",
+            text="Hue: 90",
             manager=self.manager
         )
         self.UIElements["hue_slider"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 180),
-            start_value=0,
+            start_value=90,
             click_increment=10,
             manager=self.manager
         )
         self.UIElements["saturation_slider_label"] = UILabel(
             relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement), (labelLength, sliderHeight)),
-            text="Saturation: 0",
+            text="Saturation: 50",
             manager=self.manager
         )
         self.UIElements["saturation_slider"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
-            start_value=0,
+            start_value=50,
             click_increment=10,
             manager=self.manager
         )
         self.UIElements["value_slider_label"] = UILabel(
             relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*2), (labelLength, sliderHeight)),
-            text="Value: 0",
+            text="Value: 50",
             manager=self.manager
         )
         self.UIElements["value_slider"] = UIHorizontalSlider(
             relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement*2), (CAMERA_DISPLAY_SIZE[0]-(labelLength+WIDGET_PADDING), sliderHeight)),
             value_range=(0, 100),
-            start_value=0,
+            start_value=50,
             click_increment=10,
             manager=self.manager
         )

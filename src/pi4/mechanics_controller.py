@@ -7,6 +7,7 @@ import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
     from rpi_ws281x import PixelStrip, Color
+    print("Using real hardware!")
 except ImportError:
     from src.common.simulate import GPIO
     from src.common.simulate import PixelStrip, Color
@@ -78,7 +79,7 @@ class WS2812B_Controller:
         """
         counter = 0
         step = 0
-        while counter <= 192:
+        while counter <= 128:
             for i in range(ledstrip.numPixels()):
                 newColour = colorsys.hsv_to_rgb((i * 256 / ledstrip.numPixels() + step) % 256 / 256.0, 1.0, 1.0)
                 ledstrip.setPixelColor(i, Color(int(newColour[0]*255), int(newColour[1]*255), int(newColour[2]*255)))
@@ -134,3 +135,10 @@ class WS2812B_Controller:
 
 if __name__ == "__main__":
     leds = WS2812B_Controller(speed=5)
+    # while True:
+    #     try:
+    #         leds.initialize()
+    #         time.sleep(5)
+    #     except KeyboardInterrupt:
+    #         leds.stop()
+    #         break
