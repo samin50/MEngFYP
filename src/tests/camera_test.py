@@ -1,5 +1,5 @@
 import cv2
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO # type: ignore
 
 # Use GPIO numbers not pin numbers
 GPIO.setmode(GPIO.BCM)
