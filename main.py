@@ -25,7 +25,7 @@ class Component_Sorter:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
         self.cameraLed = WS2812B_Controller()
-        self.conveyorMotor = Conveyor_Controller()
+        self.conveyorMotor = Conveyor_Controller(trainingMode)
         # LCD Setup
         if enableInterface:
             callbacks = {
@@ -46,7 +46,7 @@ class Component_Sorter:
 
 if __name__ == "__main__":
     ENABLE_INTERFACE = True
-    TRAINING_MODE = False
+    TRAINING_MODE = True
     if ENABLE_INTERFACE:
         pygame.init()
         systemObj = Component_Sorter(ENABLE_INTERFACE, TRAINING_MODE)

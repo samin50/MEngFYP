@@ -12,14 +12,16 @@ except ImportError:
     from src.common.simulate import GPIO
     from src.common.simulate import PixelStrip, Color
     print("Simulating missing hardware!")
-from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER
+from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LIGHT_COLOUR
 
 
 class Conveyor_Controller:
     """
     Conveyor controller class
     """
-    def __init__(self) -> None:
+    def __init__(self, trainingMode:bool) -> None:
+        if trainingMode:
+            return
         GPIO.setmode(GPIO.BCM)
         # Set up the GPIO pins for the conveyor belt
         GPIO.setup(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.OUT)
@@ -71,9 +73,8 @@ class WS2812B_Controller:
         self.leds.begin()
         self.rainbowProcess = multiprocessing.Process(target=self.rainbow_cycle, args=(self.queue, self.leds,))
         self.rainbowProcess.start()
-        self.rainbowProcess.join()
 
-    def rainbow_cycle(self, queue: multiprocessing.Queue, ledstrip: PixelStrip) -> None:
+    def rainbow_cycle(self, queue:multiprocessing.Queue, ledstrip: PixelStrip) -> None:
         """
         Draw rainbow that uniformly distributes itself across all pixels.
         """
@@ -92,6 +93,10 @@ class WS2812B_Controller:
                 if command == 'stop':
                     break
         print("Rainbow cycle finished")
+        # Set all pixels to LIGHT_COLOUR
+        for i in range(ledstrip.numPixels()):
+            ledstrip.setPixelColor(i, Color(*LIGHT_COLOUR))
+        ledstrip.show()
 
     def change_colour_process(self, colour: tuple) -> None:
         """
@@ -117,7 +122,8 @@ class WS2812B_Controller:
         print(f"Setting colour to {rgbColour}")
         self.colourProcess = multiprocessing.Process(target=self.change_colour_process, args=(rgbColour,))
         self.colourProcess.start()
-        self.colourProcess.join()
+        # self.colourProcess.join()
+        return trueColour
 
     def reset(self) -> None:
         """
