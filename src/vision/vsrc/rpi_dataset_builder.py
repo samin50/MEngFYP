@@ -8,9 +8,9 @@ import cv2
 import pyautogui
 import pygetwindow
 from PIL import Image, ImageTk
-from customtkinter import CTk, CTkButton, CTkLabel, CTkFrame, StringVar, IntVar
+from customtkinter import CTk, CTkButton, CTkLabel, CTkFrame, CTkEntry, StringVar, IntVar
 from src.vision.vsrc.constants import LOWER_THRESHOLD, UPPER_THRESHOLD, BORDER_WIDTH, CAMERA_BORDER, BORDER_COLOUR, \
-    BORDER_COLOUR_FAILED, IMG_SIZE, MAX_ROWS, REALVNC_WINDOW_NAME, PADDING, DATA, RESISTOR_BODY_COLOUR, DATASET_PATH, RECT_WIDTH, RECT_COLOUR, PRECISION
+    BORDER_COLOUR_FAILED, DISPLAY_IMG_SIZE, MAX_ROWS, REALVNC_WINDOW_NAME, PADDING, DATA, RESISTOR_BODY_COLOUR, DATASET_PATH, RECT_WIDTH, RECT_COLOUR, PRECISION, IMG_SIZE
 
 class RPIDatasetBuilder:
     def __init__(self, root:CTk, dataPath:str=False, labelPath:str=None) -> None:
@@ -28,20 +28,23 @@ class RPIDatasetBuilder:
         # Variables
         self.screenshot = None
         self.componentName = StringVar()
-        self.resistorValue = StringVar()
-        self.resistorTrueValue = StringVar()
         self.filename = StringVar()
         self.saveNum = IntVar()
         self.saveStr = StringVar(value="-")
         self.currentComponent = ""
         self.rectangleStartBounds = (0, 0)
         self.rectangleEndBounds = (0, 0)
+        # Component variables
+        self.resistorValue = StringVar()
+        self.resistorTrueValue = StringVar()
         self.selectedResistors = []
+        self.capacitorCapacity = StringVar()
+        self.capacitorVoltage = StringVar()
         # Grid weights
         self.root.grid_columnconfigure(1, weight=1)
         # Image display
         self.imgBorder = CTkLabel(self.root, text="", bg_color=BORDER_COLOUR_FAILED)
-        self.imgDisplay = Canvas(self.imgBorder, width=IMG_SIZE[0], height=IMG_SIZE[1], bg="#242424")
+        self.imgDisplay = Canvas(self.imgBorder, width=DISPLAY_IMG_SIZE[0], height=DISPLAY_IMG_SIZE[1], bg="#242424")
         self.imgBorder.grid(row=0, column=0, padx=PADDING, pady=PADDING)
         self.imgDisplay.grid(row=0, column=0, padx=CAMERA_BORDER, pady=CAMERA_BORDER)
         self.rectangle = self.imgDisplay.create_rectangle(0, 0, 0, 0, outline=RECT_COLOUR, width=RECT_WIDTH)
@@ -61,6 +64,13 @@ class RPIDatasetBuilder:
         self.resistorBody = None
         CTkLabel(self.resistorSelection, textvariable=self.resistorValue).grid(row=MAX_ROWS, column=5, padx=PADDING, pady=PADDING*2, sticky="nsew")
         CTkLabel(self.resistorSelection, textvariable=self.resistorTrueValue).grid(row=MAX_ROWS, column=1, padx=PADDING, pady=PADDING*2, sticky="nsew")
+        # Capacitor selection
+        self.capacitorSelection = CTkFrame(self.root)
+        CTkLabel(self.capacitorSelection, text="Capacity:").grid(row=0, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkLabel(self.capacitorSelection, text="Voltage:").grid(row=1, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.capacitorSelection, textvariable=self.capacitorCapacity).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.capacitorSelection, textvariable=self.capacitorVoltage).grid(row=1, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.capacitorSelection).grid(row=2, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
         # Filename builder
         self.filenameLabel = CTkLabel(self.root, textvariable=self.filename)
         self.filenameLabel.grid(row=1, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
@@ -69,7 +79,8 @@ class RPIDatasetBuilder:
         # Save button
         self.saveButton = CTkButton(self.root, text="Save Image (s)", state="disabled", command=self.save_image)
         self.saveButton.grid(row=2, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
-        CTkLabel(self.root, textvariable=self.saveStr, text_color="green").grid(row=2, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        self.saveLabel = CTkLabel(self.root, textvariable=self.saveStr, text_color="green")
+        self.saveLabel.grid(row=2, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
         # Key bindings
         self.root.bind_all("<Escape>", lambda _: self.component_selection_panel())
         self.root.bind_all("<Return>", lambda _: self.save_image())
@@ -135,7 +146,7 @@ class RPIDatasetBuilder:
             x, y, w, h = x+BORDER_WIDTH, y+BORDER_WIDTH, w-(BORDER_WIDTH*2), h-(BORDER_WIDTH*2)
             cameraRegion = screenshotCv[y:y+h, x:x+w]
             self.screenshot = Image.fromarray(cameraRegion)
-            self.imgDisplay.image = ImageTk.PhotoImage(self.screenshot.resize(IMG_SIZE, Image.NEAREST))
+            self.imgDisplay.image = ImageTk.PhotoImage(self.screenshot.resize(DISPLAY_IMG_SIZE, Image.NEAREST))
             self.update_image()
         else:
             self.imgBorder.configure(bg_color=BORDER_COLOUR_FAILED)
@@ -158,35 +169,60 @@ class RPIDatasetBuilder:
         """
         Save the image.
         """
-        if len(self.selectedResistors) > 3 and self.screenshot is not None:
-            foldername = self.componentName.get().split("_")[0]
-            filename = os.path.join(DATASET_PATH, foldername, 'imgs', self.componentName.get())
-            num = 0
-            # Make sure not to overwrite files, append a number to end
-            uniqueFile = False
-            while not uniqueFile:
-                if os.path.isfile(os.path.join(f"{filename}_{str(num)}.png")):
-                    num += 1
-                else:
-                    uniqueFile = True
-            self.screenshot.save(os.path.join(f"{filename}_{str(num)}.png"))
-            # Save label.txt
-            classNum = DATA[self.currentComponent]["num_label"]
-            x1, y1 = self.rectangleStartBounds[0] / IMG_SIZE[0], self.rectangleStartBounds[1] / IMG_SIZE[1]
-            x2, y2 = self.rectangleEndBounds[0] / IMG_SIZE[0], self.rectangleEndBounds[1] / IMG_SIZE[1]
-            # Calculate center coordinates, width and height
-            xCenter = (x1 + x2) / 2
-            yCenter = (y1 + y2) / 2
-            width = x2 - x1
-            height = y2 - y1
-            with open(os.path.join(DATASET_PATH, foldername, 'labels', f"{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
-                f.write(f"{classNum} {round(xCenter, PRECISION)} {round(yCenter, PRECISION)} {round(width, PRECISION)} {round(height, PRECISION)}")
-            # Update the save counter
-            self.saveNum.set(self.saveNum.get() + 1)
-            self.saveStr.set(f"Saved! x{self.saveNum.get()}")
-            if self.dataSet is not None and self.dataIndex != len(self.dataSet)-1:
-                self.dataIndex += 1
-                self.advance_image(None)
+        #Resistors
+        if self.currentComponent == "resistors" and (len(self.selectedResistors) <= 3 or self.screenshot is None):
+            return
+        # Capacitors
+        elif self.currentComponent == "capacitors" and (self.capacitorCapacity.get() == "" or self.capacitorVoltage.get() == "" or self.screenshot is None):
+            return
+        foldername = self.componentName.get().split("_")[0]
+        filename = os.path.join(DATASET_PATH, foldername, 'imgs', self.componentName.get())
+        num = 0
+        # Make sure not to overwrite files, append a number to end
+        uniqueFile = False
+        while not uniqueFile:
+            if os.path.isfile(os.path.join(f"{filename}_{str(num)}.png")):
+                num += 1
+            else:
+                uniqueFile = True
+        # transform the image to the correct size
+        self.screenshot = self.screenshot.resize(IMG_SIZE, Image.NEAREST)
+        self.screenshot.save(os.path.join(f"{filename}_{str(num)}.png"))
+        # Save label.txt
+        classNum = DATA[self.currentComponent]["num_label"]
+        x1, y1 = self.rectangleStartBounds[0] / DISPLAY_IMG_SIZE[0], self.rectangleStartBounds[1] / DISPLAY_IMG_SIZE[1]
+        x2, y2 = self.rectangleEndBounds[0] / DISPLAY_IMG_SIZE[0], self.rectangleEndBounds[1] / DISPLAY_IMG_SIZE[1]
+        # Calculate center coordinates, width and height
+        xCenter = (x1 + x2) / 2
+        yCenter = (y1 + y2) / 2
+        width = x2 - x1
+        height = y2 - y1
+        with open(os.path.join(DATASET_PATH, foldername, 'labels', f"{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
+            f.write(f"{classNum} {round(xCenter, PRECISION)} {round(yCenter, PRECISION)} {round(width, PRECISION)} {round(height, PRECISION)}")
+        # Update the save counter
+        self.save_indicator()
+        if self.dataSet is not None and self.dataIndex != len(self.dataSet)-1:
+            self.dataIndex += 1
+            self.advance_image(None)
+        return
+
+    def save_indicator(self) -> None:
+        """
+        Display the save indicator and flash box to indicate.
+        """
+        self.saveNum.set(self.saveNum.get() + 1)
+        self.saveStr.set(f"Saved! x{self.saveNum.get()}")
+        self.flash_box()
+
+    def flash_box(self) -> None:
+        """
+        Flash the box to indicate a save.
+        """
+        if self.saveLabel.cget("fg_color") == "yellow":
+            self.saveLabel.configure(fg_color="transparent")
+        else:
+            self.saveLabel.configure(fg_color="yellow")
+            self.root.after(500, self.flash_box)
         return
 
     def advance_image(self, event:object) -> None:
@@ -200,7 +236,7 @@ class RPIDatasetBuilder:
                 self.dataIndex += 1
         # Load the image
         self.screenshot = Image.open(os.path.join(self.dataPath, self.dataSet[self.dataIndex]))
-        self.imgDisplay.image = ImageTk.PhotoImage(self.screenshot.resize(IMG_SIZE, Image.NEAREST))
+        self.imgDisplay.image = ImageTk.PhotoImage(self.screenshot.resize(DISPLAY_IMG_SIZE, Image.NEAREST))
         self.filename.set(self.dataSet[self.dataIndex])
         self.update_image()
         # If label in the label file, draw the rectangle
@@ -212,10 +248,10 @@ class RPIDatasetBuilder:
                 label = f.readline().split(" ")
                 xCenter, yCenter, width, height = float(label[1]), float(label[2]), float(label[3]), float(label[4])
                 # Convert center coordinates back to top-left and bottom-right coordinates
-                x1 = (xCenter - width / 2) * IMG_SIZE[0]
-                y1 = (yCenter - height / 2) * IMG_SIZE[1]
-                x2 = (xCenter + width / 2) * IMG_SIZE[0]
-                y2 = (yCenter + height / 2) * IMG_SIZE[1]
+                x1 = (xCenter - width / 2) * DISPLAY_IMG_SIZE[0]
+                y1 = (yCenter - height / 2) * DISPLAY_IMG_SIZE[1]
+                x2 = (xCenter + width / 2) * DISPLAY_IMG_SIZE[0]
+                y2 = (yCenter + height / 2) * DISPLAY_IMG_SIZE[1]
                 self.rectangleStartBounds = (x1, y1)
                 self.rectangleEndBounds = (x2, y2)
                 print(self.rectangleStartBounds, self.rectangleEndBounds)
@@ -230,6 +266,7 @@ class RPIDatasetBuilder:
         """
         self.componentSelection.grid(row=0, column=1, padx=(0, PADDING), pady=PADDING, sticky="nsew")
         self.resistorSelection.grid_remove()
+        self.capacitorSelection.grid_remove()
         for _, (component, data) in enumerate(DATA.items()):
             self.root.bind(data["shortcut"], lambda _, component=component: self.component_handler(component))
         return
@@ -241,12 +278,20 @@ class RPIDatasetBuilder:
         self.componentName.set(DATA[component]["label"])
         self.componentSelection.grid_remove()
         self.currentComponent = component
+        # Resistors
         if component == "resistors":
             for _, (colour, data) in enumerate(DATA["resistors"]["values"].items()):
                 self.root.bind(data[0], lambda _, data=data, colour=colour: self.resistor_handler(colour, data))
             self.resistorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
             self.root.bind("<BackSpace>", lambda _: (self.selectedResistors.pop(), self.update_resistor_value()))
             self.update_resistor_value()
+        else:
+            for _, data in DATA["resistors"]["values"].items():
+                self.root.unbind(data[0])
+        # Capacitors
+        if component == "capacitors":
+            self.capacitorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_capacitor_value()))
         return
 
     def resistor_handler(self, colour:str, _:tuple) -> None:
@@ -308,6 +353,16 @@ class RPIDatasetBuilder:
             self.resistorTrueValue.set(str(value/1000) + "K ohms @ " + str(tolerance) + "%")
         elif value >= 1000000:
             self.resistorTrueValue.set(str(value/1000000) + "M ohms @ " + str(tolerance) + "%")
+        return
+
+    def update_capacitor_value(self) -> None:
+        """
+        Update the capacitor value.
+        """
+        componentStr = DATA["capacitors"]["label"] + "_"
+        componentStr += self.capacitorCapacity.get().strip() + "F-" + self.capacitorVoltage.get().strip() + "V"
+        self.componentName.set(componentStr)
+        return
 
 if __name__ == "__main__":
     main = CTk()
