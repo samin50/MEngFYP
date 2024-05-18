@@ -1,6 +1,7 @@
 """
 This module grabs a screenshot from the Raspberry Pi and allows easy labelling of the image.
 """
+# pylint: disable=consider-using-enumerate
 import os
 from tkinter import Canvas, ALL
 import numpy
@@ -10,7 +11,7 @@ import pygetwindow
 from PIL import Image, ImageTk
 from customtkinter import CTk, CTkButton, CTkLabel, CTkFrame, CTkEntry, StringVar, IntVar
 from src.vision.vsrc.constants import LOWER_THRESHOLD, UPPER_THRESHOLD, BORDER_WIDTH, CAMERA_BORDER, BORDER_COLOUR, \
-    BORDER_COLOUR_FAILED, DISPLAY_IMG_SIZE, MAX_ROWS, REALVNC_WINDOW_NAME, PADDING, DATA, RESISTOR_BODY_COLOUR, DATASET_PATH, RECT_WIDTH, RECT_COLOUR, PRECISION, IMG_SIZE
+    BORDER_COLOUR_FAILED, DISPLAY_IMG_SIZE, MAX_ROWS, REALVNC_WINDOW_NAME, PADDING, DATA, RESISTOR_BODY_COLOUR, DATASET_PATH, RECT_WIDTH, RECT_COLOUR, PRECISION, IMG_SIZE, DIRECTION_COLOUR
 
 class RPIDatasetBuilder:
     def __init__(self, root:CTk, dataPath:str=False, labelPath:str=None) -> None:
@@ -32,8 +33,10 @@ class RPIDatasetBuilder:
         self.saveNum = IntVar()
         self.saveStr = StringVar(value="-")
         self.currentComponent = ""
-        self.rectangleStartBounds = (0, 0)
-        self.rectangleEndBounds = (0, 0)
+        self.lines = []
+        self.points = []
+        self.drawingLine = False
+        self.tempLine = None
         # Component variables
         self.resistorValue = StringVar()
         self.resistorTrueValue = StringVar()
@@ -47,7 +50,6 @@ class RPIDatasetBuilder:
         self.imgDisplay = Canvas(self.imgBorder, width=DISPLAY_IMG_SIZE[0], height=DISPLAY_IMG_SIZE[1], bg="#242424")
         self.imgBorder.grid(row=0, column=0, padx=PADDING, pady=PADDING)
         self.imgDisplay.grid(row=0, column=0, padx=CAMERA_BORDER, pady=CAMERA_BORDER)
-        self.rectangle = self.imgDisplay.create_rectangle(0, 0, 0, 0, outline=RECT_COLOUR, width=RECT_WIDTH)
         # Component Selection
         self.componentSelection = CTkFrame(self.root)
         for i, (component, data) in enumerate(DATA.items()):
@@ -83,36 +85,90 @@ class RPIDatasetBuilder:
         self.saveLabel.grid(row=2, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
         # Key bindings
         self.root.bind_all("<Escape>", lambda _: self.component_selection_panel())
-        self.root.bind_all("<Return>", lambda _: self.save_image())
         if dataPath:
+            self.root.bind_all("<Return>", lambda _: self.save_label())
             self.root.bind_all("<Left>", self.advance_image)
             self.root.bind_all("<Right>", self.advance_image)
         else:
+            self.root.bind_all("<Return>", lambda _: self.save_image())
             self.root.bind_all("<space>", self.capture_image)
         self.component_selection_panel()
-        self.imgDisplay.bind("<ButtonRelease-1>", self.on_rectangle_end)
-        self.imgDisplay.bind("<ButtonPress-1>", self.on_rectangle_start)
-        self.imgDisplay.bind("<B1-Motion>", self.on_rectangle_drag)
+        # Bindings
+        self.imgDisplay.bind("<ButtonPress-1>", self.on_line_click)  # Left mouse button to start line
+        self.imgDisplay.bind("<ButtonRelease-1>", self.on_line_release)  # Left mouse button to end line
+        self.imgDisplay.bind("<ButtonPress-2>", lambda e: self.cancel_drawing())  # Middle mouse button to cancel drawing
+        self.imgDisplay.bind("<Motion>", self.on_drag)  # Left mouse drag
 
-    def on_rectangle_start(self, event:object) -> None:
-        """
-        Handle when the mouse is pressed on the image.
-        """
-        self.rectangleStartBounds = (event.x, event.y)
-        self.imgDisplay.coords(self.rectangle, self.rectangleStartBounds[0], self.rectangleStartBounds[1], self.rectangleStartBounds[0], self.rectangleStartBounds[1])
 
-    def on_rectangle_drag(self, event:object) -> None:
+    def on_line_click(self, event):
         """
-        Handle when the mouse is dragged on the image.
+        Start drawing the rectangle.
         """
-        self.rectangleEndBounds = (event.x, event.y)
-        self.imgDisplay.coords(self.rectangle, self.rectangleStartBounds[0], self.rectangleStartBounds[1], self.rectangleEndBounds[0], self.rectangleEndBounds[1])
+        if len(self.points) == 4:
+            self.cancel_drawing()
+        if not self.drawingLine:
+            self.points.append((event.x, event.y))
+            self.drawingLine = True
+            if len(self.points) == 1:
+                line = self.imgDisplay.create_line(event.x, event.y, event.x, event.y, fill=DIRECTION_COLOUR, width=RECT_WIDTH, arrow="last")
+                self.lines.append(line)
+        else:
+            # Line is being drawn
+            if len(self.points) <= 1:
+                line = self.imgDisplay.create_line(self.points[-1][0], self.points[-1][1], event.x, event.y, fill=DIRECTION_COLOUR, width=RECT_WIDTH)
+            else:
+                line = self.imgDisplay.create_line(self.points[-1][0], self.points[-1][1], event.x, event.y, fill=RECT_COLOUR, width=RECT_WIDTH)
+            if len(self.points) == 2:
+                self.tempLine = self.imgDisplay.create_line(self.points[0][0], self.points[0][1], event.x, event.y, fill="#888888", width=RECT_WIDTH, dash=(4, 4))
+            self.lines.append(line)
+            self.points.append((event.x, event.y))
 
-    def on_rectangle_end(self, _:object) -> None:
+    def on_line_release(self, event):
         """
-        Handle when the mouse is released on the image.
+        End drawing the rectangle.
         """
-        self.saveButton.configure(state="normal")
+        if self.drawingLine:
+            self.points[-1] = (event.x, event.y)
+            if len(self.points) == 4:
+                self.complete_rectangle()
+                self.drawingLine = False
+            self.saveButton.configure(state="normal")
+
+    def on_drag(self, event):
+        """
+        Drag the rectangle.
+        """
+        if self.drawingLine and len(self.points) > 0:
+            self.imgDisplay.coords(self.lines[-1], self.points[-1][0], self.points[-1][1], event.x, event.y)
+        if self.tempLine and len(self.points) > 2:
+            self.imgDisplay.coords(self.tempLine, self.points[0][0], self.points[0][1], event.x, event.y)
+
+    def complete_rectangle(self):
+        """
+        Complete the rectangle by joining the last point to the first point.
+        """
+        if len(self.points) == 4:
+            x0, y0 = self.points[0]
+            x3, y3 = self.points[3]
+            self.lines.append(self.imgDisplay.create_line(x0, y0, x3, y3, fill=RECT_COLOUR, width=RECT_WIDTH))
+            self.drawingLine = False
+            if self.tempLine:
+                self.imgDisplay.delete(self.tempLine)
+                self.tempLine = None
+
+    def cancel_drawing(self):
+        """
+        Cancel the drawing of the rectangle.
+        """
+        self.drawingLine = False
+        self.points = []
+        if self.tempLine:
+            self.imgDisplay.delete(self.tempLine)
+            self.tempLine = None
+        for line in self.lines:
+            self.imgDisplay.delete(line)
+        self.lines = []
+        self.saveButton.configure(state="disabled")
 
     def capture_image(self, _:object) -> None:
         """
@@ -156,12 +212,12 @@ class RPIDatasetBuilder:
         """
         Update the image.
         """
-        self.rectangleStartBounds = (0, 0)
-        self.rectangleEndBounds = (0, 0)
-        self.imgDisplay.coords(self.rectangle, self.rectangleStartBounds[0], self.rectangleStartBounds[1], self.rectangleEndBounds[0], self.rectangleEndBounds[1])
+        for line in self.lines:
+            self.imgDisplay.delete(line)
+        self.lines = []
+        self.points = []
         self.imgDisplay.create_image(0, 0, image=self.imgDisplay.image, anchor="nw")
         self.imgDisplay.config(scrollregion=self.imgDisplay.bbox(ALL))
-        self.imgDisplay.tag_raise(self.rectangle)
         self.imgBorder.configure(bg_color=BORDER_COLOUR)
         self.saveButton.configure(state="disabled")
 
@@ -169,13 +225,15 @@ class RPIDatasetBuilder:
         """
         Save the image.
         """
+        if len(self.points) != 4:
+            return
         #Resistors
         if self.currentComponent == "resistors" and (len(self.selectedResistors) <= 3 or self.screenshot is None):
             return
         # Capacitors
         elif self.currentComponent == "capacitors" and (self.capacitorCapacity.get() == "" or self.capacitorVoltage.get() == "" or self.screenshot is None):
             return
-        foldername = self.componentName.get().split("_")[0]
+        foldername = self.componentName.get().split("_")[1]
         filename = os.path.join(DATASET_PATH, foldername, 'imgs', self.componentName.get())
         num = 0
         # Make sure not to overwrite files, append a number to end
@@ -187,21 +245,33 @@ class RPIDatasetBuilder:
                 uniqueFile = True
         # transform the image to the correct size
         self.screenshot = self.screenshot.resize(IMG_SIZE, Image.NEAREST)
-        self.screenshot.save(os.path.join(f"{filename}_{str(num)}.png"))
+        self.screenshot.save(os.path.join(f"obb_{filename}_{str(num)}.png"))
         # Save label.txt
         classNum = DATA[self.currentComponent]["num_label"]
-        x1, y1 = self.rectangleStartBounds[0] / DISPLAY_IMG_SIZE[0], self.rectangleStartBounds[1] / DISPLAY_IMG_SIZE[1]
-        x2, y2 = self.rectangleEndBounds[0] / DISPLAY_IMG_SIZE[0], self.rectangleEndBounds[1] / DISPLAY_IMG_SIZE[1]
-        # Calculate center coordinates, width and height
-        xCenter = (x1 + x2) / 2
-        yCenter = (y1 + y2) / 2
-        width = x2 - x1
-        height = y2 - y1
-        with open(os.path.join(DATASET_PATH, foldername, 'labels', f"{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
-            f.write(f"{classNum} {round(xCenter, PRECISION)} {round(yCenter, PRECISION)} {round(width, PRECISION)} {round(height, PRECISION)}")
+        points = [(round(x / DISPLAY_IMG_SIZE[0], PRECISION), round(y / DISPLAY_IMG_SIZE[1], PRECISION)) for x, y in self.points]
+        with open(os.path.join(DATASET_PATH, foldername, 'labels', f"obb_{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
+            f.write(f"{classNum} {' '.join(f'{x} {y}' for x, y in points)}")
         # Update the save counter
         self.save_indicator()
         if self.dataSet is not None and self.dataIndex != len(self.dataSet)-1:
+            self.dataIndex += 1
+            self.advance_image(None)
+        return
+
+    def save_label(self) -> None:
+        """
+        Save function for dataset sorter.
+        """
+        if len(self.points) != 4:
+            return
+        filename = os.path.basename(self.dataSet[self.dataIndex]).split(".")[0]
+        labelpath = os.path.join(self.labelPath, f"{filename}.txt")
+        classNum = DATA[self.currentComponent]["num_label"]
+        points = [(round(x / DISPLAY_IMG_SIZE[0], PRECISION), round(y / DISPLAY_IMG_SIZE[1], PRECISION)) for x, y in self.points]
+        with open(labelpath, "w", encoding='utf-8') as f:
+            f.write(f"{classNum} {' '.join(f'{x} {y}' for x, y in points)}")
+        self.save_indicator()
+        if self.dataIndex != len(self.dataSet)-1:
             self.dataIndex += 1
             self.advance_image(None)
         return
@@ -246,18 +316,22 @@ class RPIDatasetBuilder:
         if os.path.isfile(labelpath):
             with open(labelpath, "r", encoding='utf-8') as f:
                 label = f.readline().split(" ")
-                xCenter, yCenter, width, height = float(label[1]), float(label[2]), float(label[3]), float(label[4])
-                # Convert center coordinates back to top-left and bottom-right coordinates
-                x1 = (xCenter - width / 2) * DISPLAY_IMG_SIZE[0]
-                y1 = (yCenter - height / 2) * DISPLAY_IMG_SIZE[1]
-                x2 = (xCenter + width / 2) * DISPLAY_IMG_SIZE[0]
-                y2 = (yCenter + height / 2) * DISPLAY_IMG_SIZE[1]
-                self.rectangleStartBounds = (x1, y1)
-                self.rectangleEndBounds = (x2, y2)
-                print(self.rectangleStartBounds, self.rectangleEndBounds)
-                self.imgDisplay.coords(self.rectangle, self.rectangleStartBounds[0], self.rectangleStartBounds[1], self.rectangleEndBounds[0], self.rectangleEndBounds[1])
-                self.imgDisplay.config(scrollregion=self.imgDisplay.bbox(ALL))
-                self.imgDisplay.tag_raise(self.rectangle)
+                points = [(float(label[i]), float(label[i+1])) for i in range(1, len(label), 2)]
+                # Convert normalized coordinates back to image coordinates
+                points = [(x * DISPLAY_IMG_SIZE[0], y * DISPLAY_IMG_SIZE[1]) for x, y in points]
+                # Draw lines between points
+                self.points = points  # Save points for further use if necessary
+                self.lines = []  # Initialize lines list
+                for i in range(len(points)):
+                    x1, y1 = points[i]
+                    x2, y2 = points[(i + 1) % len(points)]
+                    if i == 0:
+                        self.lines.append(self.imgDisplay.create_line(x1, y1, x2, y2, fill=DIRECTION_COLOUR, width=RECT_WIDTH, arrow="last"))
+                    elif i == 1:
+                        self.lines.append(self.imgDisplay.create_line(x1, y1, x2, y2, fill=DIRECTION_COLOUR, width=RECT_WIDTH))
+                    else:
+                        self.lines.append(self.imgDisplay.create_line(x1, y1, x2, y2, fill=RECT_COLOUR, width=RECT_WIDTH))
+            self.imgDisplay.config(scrollregion=self.imgDisplay.bbox(ALL))
         return
 
     def component_selection_panel(self) -> None:
