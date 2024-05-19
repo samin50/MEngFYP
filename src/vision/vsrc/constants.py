@@ -90,4 +90,9 @@ DATA = {
         "num_label" : 9,
         "shortcut" : "s",
     },
+    "film_cap": {
+        "label": "film_capacitor",
+        "num_label" : 10,
+        "shortcut" : "-",
+    }
 }

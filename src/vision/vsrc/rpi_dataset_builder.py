@@ -31,6 +31,7 @@ class RPIDatasetBuilder:
         self.componentName = StringVar()
         self.filename = StringVar()
         self.saveNum = IntVar()
+        self.uniqueNum = 0
         self.saveStr = StringVar(value="-")
         self.currentComponent = ""
         self.lines = []
@@ -43,6 +44,10 @@ class RPIDatasetBuilder:
         self.selectedResistors = []
         self.capacitorCapacity = StringVar()
         self.capacitorVoltage = StringVar()
+        self.capacitorCode = StringVar()
+        self.ledColour = StringVar()
+        self.wireColour = StringVar()
+        self.inductorCode = StringVar()
         # Grid weights
         self.root.grid_columnconfigure(1, weight=1)
         # Image display
@@ -73,6 +78,26 @@ class RPIDatasetBuilder:
         CTkEntry(self.capacitorSelection, textvariable=self.capacitorCapacity).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
         CTkEntry(self.capacitorSelection, textvariable=self.capacitorVoltage).grid(row=1, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
         CTkEntry(self.capacitorSelection).grid(row=2, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
+        # Ceramic capacitor selection
+        self.ceramicCapacitorSelection = CTkFrame(self.root)
+        CTkLabel(self.ceramicCapacitorSelection, text="Code:").grid(row=0, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.ceramicCapacitorSelection, textvariable=self.capacitorCode).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.ceramicCapacitorSelection).grid(row=1, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
+        # LED selection
+        self.ledSelection = CTkFrame(self.root)
+        CTkLabel(self.ledSelection, text="Colour:").grid(row=0, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.ledSelection, textvariable=self.ledColour).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.ledSelection).grid(row=1, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
+        # Inductor selection
+        self.inductorSelection = CTkFrame(self.root)
+        CTkLabel(self.inductorSelection, text="Code:").grid(row=0, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.inductorSelection, textvariable=self.inductorCode).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.inductorSelection).grid(row=1, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
+        # Wire selection
+        self.wireSelection = CTkFrame(self.root)
+        CTkLabel(self.wireSelection, text="Colour:").grid(row=0, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.wireSelection, textvariable=self.wireColour).grid(row=0, column=1, padx=PADDING, pady=PADDING, sticky="nsew")
+        CTkEntry(self.wireSelection).grid(row=1, column=0, columnspan=2, padx=PADDING, pady=PADDING, sticky="nsew")
         # Filename builder
         self.filenameLabel = CTkLabel(self.root, textvariable=self.filename)
         self.filenameLabel.grid(row=1, column=0, padx=PADDING, pady=PADDING, sticky="nsew")
@@ -233,7 +258,9 @@ class RPIDatasetBuilder:
         # Capacitors
         elif self.currentComponent == "capacitors" and (self.capacitorCapacity.get() == "" or self.capacitorVoltage.get() == "" or self.screenshot is None):
             return
-        foldername = self.componentName.get().split("_")[1]
+        elif self.currentComponent in ["ceramic_cap", "film_cap"] and (self.capacitorCode.get() == "" or self.screenshot is None):
+            return
+        foldername = DATA[self.currentComponent]["label"]
         filename = os.path.join(DATASET_PATH, foldername, 'imgs', self.componentName.get())
         num = 0
         # Make sure not to overwrite files, append a number to end
@@ -243,13 +270,14 @@ class RPIDatasetBuilder:
                 num += 1
             else:
                 uniqueFile = True
+        self.uniqueNum = num
         # transform the image to the correct size
         self.screenshot = self.screenshot.resize(IMG_SIZE, Image.NEAREST)
-        self.screenshot.save(os.path.join(f"obb_{filename}_{str(num)}.png"))
+        self.screenshot.save(os.path.join(f"{filename}_{str(num)}.png"))
         # Save label.txt
         classNum = DATA[self.currentComponent]["num_label"]
         points = [(round(x / DISPLAY_IMG_SIZE[0], PRECISION), round(y / DISPLAY_IMG_SIZE[1], PRECISION)) for x, y in self.points]
-        with open(os.path.join(DATASET_PATH, foldername, 'labels', f"obb_{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
+        with open(os.path.join(DATASET_PATH, foldername, 'labels', f"{self.componentName.get()}_{str(num)}.txt"), "w", encoding='utf-8') as f:
             f.write(f"{classNum} {' '.join(f'{x} {y}' for x, y in points)}")
         # Update the save counter
         self.save_indicator()
@@ -281,7 +309,7 @@ class RPIDatasetBuilder:
         Display the save indicator and flash box to indicate.
         """
         self.saveNum.set(self.saveNum.get() + 1)
-        self.saveStr.set(f"Saved! x{self.saveNum.get()}")
+        self.saveStr.set(f"Saved! x{self.saveNum.get()} #{self.uniqueNum}")
         self.flash_box()
 
     def flash_box(self) -> None:
@@ -341,6 +369,11 @@ class RPIDatasetBuilder:
         self.componentSelection.grid(row=0, column=1, padx=(0, PADDING), pady=PADDING, sticky="nsew")
         self.resistorSelection.grid_remove()
         self.capacitorSelection.grid_remove()
+        self.ceramicCapacitorSelection.grid_remove()
+        self.ledSelection.grid_remove()
+        self.wireSelection.grid_remove()
+        self.inductorSelection.grid_remove()
+        self.root.unbind("<Button-1>")
         for _, (component, data) in enumerate(DATA.items()):
             self.root.bind(data["shortcut"], lambda _, component=component: self.component_handler(component))
         return
@@ -349,7 +382,7 @@ class RPIDatasetBuilder:
         """
         Handle when a component button is pressed or the corresponding shortcut is pressed.
         """
-        self.componentName.set(DATA[component]["label"])
+        self.componentName.set(f"obb_{DATA[component]['label']}")
         self.componentSelection.grid_remove()
         self.currentComponent = component
         # Resistors
@@ -366,6 +399,24 @@ class RPIDatasetBuilder:
         if component == "capacitors":
             self.capacitorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
             self.root.bind("<Button-1>", lambda _: (self.update_capacitor_value()))
+        if component == "ceramic_cap":
+            self.ceramicCapacitorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_ceramic_capacitor_value()))
+        if component == "film_cap":
+            self.ceramicCapacitorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_film_capacitor_value()))
+        # LEDs
+        if component == "leds":
+            self.ledSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_led_value()))
+        # Wires
+        if component == "wires":
+            self.wireSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_wire_value()))
+        # Inductors
+        if component == "inductors":
+            self.inductorSelection.grid(row=0, column=1, padx=PADDING, pady=(PADDING, 0), sticky="nsew")
+            self.root.bind("<Button-1>", lambda _: (self.update_inductor_value()))
         return
 
     def resistor_handler(self, colour:str, _:tuple) -> None:
@@ -415,7 +466,7 @@ class RPIDatasetBuilder:
         for index, resistor in enumerate(self.selectedResistors):
             CTkLabel(self.resistorBody, text="", bg_color=resistorData[resistor][2], width=5).grid(row=0, column=index, padx=5, pady=1, sticky="nsew")
         # Draw resistor label
-        componentStr = DATA["resistors"]["label"] + "_"
+        componentStr = "obb_" + DATA["resistors"]["label"] + "_"
         for resistor in self.selectedResistors:
             componentStr += resistor + "_"
         self.componentName.set(componentStr + valueDisplay)
@@ -433,8 +484,53 @@ class RPIDatasetBuilder:
         """
         Update the capacitor value.
         """
-        componentStr = DATA["capacitors"]["label"] + "_"
+        componentStr = "obb_" + DATA["capacitors"]["label"] + "_"
         componentStr += self.capacitorCapacity.get().strip() + "F-" + self.capacitorVoltage.get().strip() + "V"
+        self.componentName.set(componentStr)
+        return
+
+    def update_ceramic_capacitor_value(self) -> None:
+        """
+        Update the ceramic capacitor value.
+        """
+        componentStr = "obb_" + DATA["ceramic_cap"]["label"] + "_"
+        componentStr += self.capacitorCode.get().strip()
+        self.componentName.set(componentStr)
+        return
+
+    def update_film_capacitor_value(self) -> None:
+        """
+        Update the film capacitor value.
+        """
+        componentStr = "obb_" + DATA["film_cap"]["label"] + "_"
+        componentStr += self.capacitorCode.get().strip()
+        self.componentName.set(componentStr)
+        return
+
+    def update_led_value(self) -> None:
+        """
+        Update the LED value.
+        """
+        componentStr = "obb_" + DATA["leds"]["label"] + "_"
+        componentStr += self.ledColour.get().strip()
+        self.componentName.set(componentStr)
+        return
+
+    def update_wire_value(self) -> None:
+        """
+        Update the wire value.
+        """
+        componentStr = "obb_" + DATA["wires"]["label"] + "_"
+        componentStr += self.wireColour.get().strip()
+        self.componentName.set(componentStr)
+        return
+
+    def update_inductor_value(self) -> None:
+        """
+        Update the inductor value.
+        """
+        componentStr = "obb_" + DATA["inductors"]["label"] + "_"
+        componentStr += self.inductorCode.get().strip()
         self.componentName.set(componentStr)
         return
 
