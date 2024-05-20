@@ -10,7 +10,7 @@ names:
 - 8: wires
 - 9: ics
 - 10: film_cap
-path: ./src/vision/dataset/current
-train: train
-val: val
-test: test
+path: ./current
+train: images/train
+val: images/val
+test: images/test

@@ -12,3 +12,6 @@ FYP-YOLO
 test/
 wandb/
 photos
+logs
+
+yolov8*.pt
