@@ -47,5 +47,15 @@ In the end, it was shown to be a power supply issue, an inconsistent powersupply
 
 After manual calibration, the lighting was kept at a constant (255, 255, 163). Noticebly, the blue channel is the weakest which may help to balance out the miscalibrated, blueish hue that the WS2182b leds tend to display. 
 
+# Sections:
+## implementation
 
+### CV system
+
+#### Dataset preparation
+show dataset annotation tool. show grid of training data and then show grid of inference data. explain yolo aabb box and format and show yolo obb format and compare. 
+
+from obb labelled points show orientated components.
+
+explain resistor training
 
