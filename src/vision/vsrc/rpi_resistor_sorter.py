@@ -127,6 +127,7 @@ class ResistorTrainer:
                         x2 = xCenter * self.imgDisplay.image.width() + width * self.imgDisplay.image.width() / 2
                         y2 = yCenter * self.imgDisplay.image.height() + height * self.imgDisplay.image.height() / 2
                         self.bandBoxes.append(self.imgDisplay.create_rectangle(x1, y1, x2, y2, outline="red", width=3))
+            self.update_box_colours()
         else:
             self.labelUpdate.configure(fg_color="transparent")
             self.labelUpdate.configure(text="No Label Exists!")
@@ -149,9 +150,6 @@ class ResistorTrainer:
         self.resistorBands = re.findall(self.repattern, self.dataSet[self.dataIndex])
         self.colourBand.set(" ".join(self.resistorBands))
         self.imgDisplay.configure(background=DATA["resistors"]["values"][self.resistorBands[0]][2])
-        # Tkinters brown is weirdly red
-        if self.resistorBands[0] == "brown":
-            self.imgDisplay.configure(background="saddle brown")
 
     def start_box(self, event:object) -> None:
         """
@@ -164,14 +162,14 @@ class ResistorTrainer:
         Draws a box on the image.
         """
         width, height = event.x - self.centrePoint[0], event.y - self.centrePoint[1]
+        x0, y0 = max(self.centrePoint[0] - width, 0), max(self.centrePoint[1] - height, 0)
+        x1, y1 = min(self.centrePoint[0] + width, self.imgDisplay.image.width()), min(self.centrePoint[1] + height, self.imgDisplay.image.height())
         if self.tempRect is not None:
             self.imgDisplay.delete(self.tempRect)
         if self.bandDisplay.get() == "Stem":
-            self.tempRect = self.imgDisplay.create_rectangle(self.centrePoint[0] - width, self.centrePoint[1] - height, self.centrePoint[0] + width, \
-                                                             self.centrePoint[1] + height, outline="yellow", width=3)
+            self.tempRect = self.imgDisplay.create_rectangle(x0, y0, x1, y1, outline="yellow", width=3)
         else:
-            self.tempRect = self.imgDisplay.create_rectangle(self.centrePoint[0] - width, self.centrePoint[1] - height, self.centrePoint[0] + width, \
-                                                            self.centrePoint[1] + height, outline="red", width=3)
+            self.tempRect = self.imgDisplay.create_rectangle(x0, y0, x1, y1, outline="red", width=3)
         self.endPoint = (event.x, event.y)
 
     def draw_box_fixed(self, event:object) -> None:
@@ -181,12 +179,16 @@ class ResistorTrainer:
         width, height = randint(90, 110), randint(30, 40)
         if self.bandDisplay.get() == "Stem":
             width, height = randint(110, 130), randint(60, 100)
+        x0, y0 = max(event.x - width, 0), max(event.y - height, 0)
+        x1, y1 = min(event.x + width, self.imgDisplay.image.width()), min(event.y + height, self.imgDisplay.image.height())
+        if self.bandDisplay.get() == "Stem":
             if self.stemBox is not None:
                 self.imgDisplay.delete(self.stemBox)
-            self.stemBox = self.imgDisplay.create_rectangle(event.x - width, event.y - height, event.x + width, event.y + height, outline="yellow", width=3)
+            self.stemBox = self.imgDisplay.create_rectangle(x0, y0, x1, y1, outline="yellow", width=3)
             self.bandDisplay.set("Band")
-        elif len(self.bandBoxes) < 5:
-            self.bandBoxes.append(self.imgDisplay.create_rectangle(event.x - width, event.y - height, event.x + width, event.y + height, outline="red", width=3))
+        elif len(self.bandBoxes) <= 5:
+            self.bandBoxes.append(self.imgDisplay.create_rectangle(x0, y0, x1, y1, outline="red", width=3))
+        self.update_box_colours()
 
     def cancel_box(self, _:object) -> None:
         """
@@ -248,7 +250,7 @@ class ResistorTrainer:
         """
         Saves the label.
         """
-        if len(self.bandBoxes) == 5:
+        if len(self.bandBoxes) >= 4:
             # Save the label
             label = [self.colourMap[band] for band in self.resistorBands] #42 is stem label
             # Determine whether stem is at the top or bottom
@@ -258,8 +260,8 @@ class ResistorTrainer:
             for box in self.bandBoxes:
                 avgY += self.imgDisplay.coords(box)[1]
             avgY /= 5
-            # If the stem is above the average y value, then it is at the top
-            reverse = stemBox[1] < avgY
+            # If the stem is below the average y value, then it is at the bottom
+            reverse = stemBox[1] > avgY
             # Determine coords of resistor bands according to yolov8 format
             coords = []
             for box in self.bandBoxes:
@@ -303,6 +305,22 @@ class ResistorTrainer:
                 self.imgDisplay.delete(box)
                 self.bandBoxes.pop(i)
                 return
+
+    def update_box_colours(self) -> None:
+        """
+        Updates the boxes with the colour band.
+        """
+        # Sort the boxes by y-coordinate
+        self.bandBoxes.sort(key=lambda x: self.imgDisplay.coords(x)[1])
+        # Reverse the boxes if the stem is at the top
+        if self.stemBox is not None:
+            stemCoords = self.imgDisplay.coords(self.stemBox)
+            if stemCoords[1] > sum(self.imgDisplay.coords(box)[1] for box in self.bandBoxes) / 5:
+                self.bandBoxes = self.bandBoxes[::-1]
+        # Update the boxes
+        for i, box in enumerate(self.bandBoxes):
+            self.imgDisplay.itemconfig(box, outline=DATA["resistors"]["values"][self.resistorBands[i]][2])
+
 
 if __name__ == "__main__":
     main = CTk()
