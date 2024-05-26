@@ -1,6 +1,7 @@
 """
 Main entry point for the application.
 """
+import sys
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
@@ -10,6 +11,7 @@ except ImportError:
     from src.common.simulate import GPIO
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
+from src.pi4.fail_screen import FailScreen_UI
 from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller
 from src.common.helper_functions import start_ui
 from src.common.constants import GPIO_PINS
@@ -18,7 +20,7 @@ class Component_Sorter:
     """
     Component Sorter class
     """
-    def __init__(self, enableInterface:bool=True, trainingMode:bool=False) -> None:
+    def __init__(self, trainingMode:bool=False) -> None:
         self.lcdUI = None
         GPIO.cleanup()
         # GPIO Setup
@@ -27,35 +29,56 @@ class Component_Sorter:
         self.cameraLed = WS2812B_Controller()
         self.conveyorMotor = Conveyor_Controller(trainingMode)
         # LCD Setup
-        if enableInterface:
-            callbacks = {
-                "colour_callback" : self.cameraLed.change_colour,
-                "strip_reset_callback" : self.cameraLed.reset,
-                "conveyor_speed_callback" : self.conveyorMotor.change_speed,
-            }
-            self.clk = pygame.time.Clock()
-            self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
+        callbacks = {
+            "colour_callback" : self.cameraLed.change_colour,
+            "strip_reset_callback" : self.cameraLed.reset,
+            "conveyor_speed_callback" : self.conveyorMotor.change_speed,
+        }
+        self.clk = pygame.time.Clock()
+        self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
 
     def close(self) -> None:
         """
         Close all the resources
         """
-        self.conveyorMotor.stop()
         self.lcdUI.cameraFeed.destroy()
+        self.conveyorMotor.stop()
         GPIO.cleanup()
 
 if __name__ == "__main__":
-    ENABLE_INTERFACE = True
     TRAINING_MODE = True
-    if ENABLE_INTERFACE:
-        pygame.init()
-        systemObj = Component_Sorter(ENABLE_INTERFACE, TRAINING_MODE)
-        start_ui(
-            loopFunction=[systemObj.lcdUI.draw],
-            eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.cameraFeed.event_handler],
-            exitFunction=[systemObj.close],
-            clock=systemObj.clk,
-            manager=systemObj.lcdUI.manager,
-            screen=systemObj.lcdUI.display,
-            resolution=systemObj.lcdUI.resolution
-            )
+    KEEPRUN = True
+    while KEEPRUN:
+        try:
+            pygame.init()
+            systemObj = Component_Sorter(TRAINING_MODE)
+            start_ui(
+                loopFunction=[systemObj.lcdUI.draw],
+                eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.cameraFeed.event_handler],
+                exitFunction=[systemObj.close],
+                clock=systemObj.clk,
+                manager=systemObj.lcdUI.manager,
+                screen=systemObj.lcdUI.display,
+                resolution=systemObj.lcdUI.resolution
+                )
+        except Exception as e:
+            # Try call close function
+            try:
+                systemObj.close()
+            except:
+                pass
+            print(e)
+            clk = pygame.time.Clock()
+            failScreen = FailScreen_UI(clk, str(e))
+            start_ui(
+                    loopFunction=[failScreen.draw],
+                    eventFunction=[failScreen.handle_events],
+                    exitFunction=[],
+                    clock=clk,
+                    manager=failScreen.manager,
+                    screen=failScreen.display,
+                )
+            KEEPRUN = failScreen.keepRunning
+    pygame.quit()
+    sys.exit()
+    

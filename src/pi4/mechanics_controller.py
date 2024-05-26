@@ -19,9 +19,8 @@ class Conveyor_Controller:
     """
     Conveyor controller class
     """
-    def __init__(self, trainingMode:bool) -> None:
-        if trainingMode:
-            return
+    def __init__(self, _:bool) -> None:
+        return
         GPIO.setmode(GPIO.BCM)
         # Set up the GPIO pins for the conveyor belt
         GPIO.setup(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.OUT)
@@ -141,10 +140,3 @@ class WS2812B_Controller:
 
 if __name__ == "__main__":
     leds = WS2812B_Controller(speed=5)
-    # while True:
-    #     try:
-    #         leds.initialize()
-    #         time.sleep(5)
-    #     except KeyboardInterrupt:
-    #         leds.stop()
-    #         break

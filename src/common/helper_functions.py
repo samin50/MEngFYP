@@ -1,6 +1,8 @@
 """
 Contains helper functions for the project.
 """
+import subprocess
+import time
 import pygame
 from src.common.constants import UI_FRAMERATE
 
@@ -45,3 +47,12 @@ def start_ui(loopFunction:list, eventFunction:list=None, exitFunction:list=None,
             manager.draw_ui(screen)
         pygame.display.flip()
     pygame.quit()
+
+def wifi_restart() -> None:
+    """
+    Restart the WiFi connection
+    """
+    subprocess.run(['sudo', 'ifdown', 'wlan0'], check=True)
+    time.sleep(5)
+    # Bring the Wi-Fi interface back up
+    subprocess.run(['sudo', 'ifup', 'wlan0'], check=True)

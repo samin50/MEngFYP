@@ -4,14 +4,13 @@ Displays on the 7 inch Dfrobot LCD
 """
 import os
 import sys
-import subprocess
-import psutil
 import colorsys
+import psutil
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
 from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
-from src.common.helper_functions import start_ui
+from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.display_feed_pygame import CameraFeed
 
@@ -222,9 +221,7 @@ class LCD_UI:
             if event.ui_element == self.UIElements["roi_toggle"]:
                 self.UIElements["roi_toggle"].toggle()
             if event.ui_element == self.UIElements["wifi_button"]:
-                subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'down'], check=True)
-                # Bring the Wi-Fi interface back up
-                subprocess.run(['sudo', 'ip', 'link', 'set', 'wlan0', 'up'], check=True)
+                wifi_restart()
             if event.ui_element == self.UIElements["strip_reset_button"]:
                 self.stripResetCallback()
             if event.ui_element == self.UIElements["take_photo_button"]:
@@ -252,8 +249,8 @@ class LCD_UI:
         self.UIElements["hsv_colour_code"].set_text(f"HSV: {hsvColour}")
 
 if __name__ == "__main__":
-    pygame.init()
     clk = pygame.time.Clock()
+    pygame.init()
     systemObj = LCD_UI(clk)
     start_ui(
         [systemObj.draw],
