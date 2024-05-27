@@ -14,7 +14,6 @@ from src.pi4.lcd_ui import LCD_UI
 from src.pi4.fail_screen import FailScreen_UI
 from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller
 from src.common.helper_functions import start_ui
-from src.common.constants import GPIO_PINS
 
 class Component_Sorter:
     """
@@ -25,7 +24,6 @@ class Component_Sorter:
         GPIO.cleanup()
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(GPIO_PINS["MOSFET_CONTROL_PIN"], GPIO.OUT)
         self.cameraLed = WS2812B_Controller()
         self.conveyorMotor = Conveyor_Controller(trainingMode)
         # LCD Setup
@@ -41,8 +39,8 @@ class Component_Sorter:
         """
         Close all the resources
         """
-        self.lcdUI.cameraFeed.destroy()
         self.conveyorMotor.stop()
+        self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
 if __name__ == "__main__":

@@ -213,7 +213,7 @@ class LCD_UI:
         # Exit Button
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements["exit_button"]:
-                self.cameraFeed.destroy()
+                self.cameraFeed.vision.destroy()
                 pygame.quit()
                 sys.exit()
             if event.ui_element == self.UIElements["heatmap_toggle"]:
@@ -225,7 +225,7 @@ class LCD_UI:
             if event.ui_element == self.UIElements["strip_reset_button"]:
                 self.stripResetCallback()
             if event.ui_element == self.UIElements["take_photo_button"]:
-                image = self.cameraFeed.currentCamera.get_image()
+                image = self.cameraFeed.vision.get_frame()
                 imageCounter = 0
                 while os.path.exists(f"./src/vision/photos/image-{imageCounter:03}.jpg"):
                     imageCounter += 1
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     start_ui(
         [systemObj.draw],
         eventFunction=[systemObj.handle_events, systemObj.cameraFeed.event_handler],
-        exitFunction=[systemObj.cameraFeed.destroy],
+        exitFunction=[systemObj.cameraFeed.vision.destroy],
         clock=clk,
         manager=systemObj.manager,
         screen=systemObj.display
