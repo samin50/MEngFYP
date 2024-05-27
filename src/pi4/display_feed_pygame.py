@@ -58,6 +58,7 @@ if __name__ == '__main__':
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
     camera = CameraFeed(CAMERA_RESOLUTION, display, TRAINING_MODE)
     start_ui(
+        loopConditionFunc=lambda: True,
         loopFunction=[],
         eventFunction=[camera.event_handler],
         exitFunction=[camera.vision.destroy],

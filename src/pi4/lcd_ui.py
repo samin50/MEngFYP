@@ -3,7 +3,6 @@ Pygame Frontend for the Pi4
 Displays on the 7 inch Dfrobot LCD
 """
 import os
-import sys
 import colorsys
 import psutil
 import pygame
@@ -16,6 +15,7 @@ from src.pi4.display_feed_pygame import CameraFeed
 
 class LCD_UI:
     def __init__(self, clock:pygame.time.Clock, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False) -> None:
+        self.running = True
         # Setup UI
         self.display = pygame.display.set_mode(LCD_RESOLUTION, resizeable and (pygame.RESIZABLE | pygame.SCALED))
         pygame.display.set_caption("Component Sorter")
@@ -37,6 +37,12 @@ class LCD_UI:
         self.stripResetCallback = callbacks.get("strip_reset_callback", lambda: None)
         self.colourCallback = callbacks.get("colour_callback", lambda _: None)
         self.conveyorSpeedCallback = callbacks.get("conveyor_speed_callback", lambda _: None)
+
+    def is_running(self) -> bool:
+        """
+        Check if the UI is running
+        """
+        return self.running
 
     def init_ui_widgets(self, trainingMode) -> None:
         """
@@ -214,8 +220,7 @@ class LCD_UI:
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements["exit_button"]:
                 self.cameraFeed.vision.destroy()
-                pygame.quit()
-                sys.exit()
+                self.running = False
             if event.ui_element == self.UIElements["heatmap_toggle"]:
                 self.UIElements["heatmap_toggle"].toggle()
             if event.ui_element == self.UIElements["roi_toggle"]:
@@ -253,7 +258,8 @@ if __name__ == "__main__":
     pygame.init()
     systemObj = LCD_UI(clk)
     start_ui(
-        [systemObj.draw],
+        loopConditionFunc=systemObj.is_running,
+        loopFunction=[systemObj.draw],
         eventFunction=[systemObj.handle_events, systemObj.cameraFeed.event_handler],
         exitFunction=[systemObj.cameraFeed.vision.destroy],
         clock=clk,

@@ -6,13 +6,13 @@ import time
 import pygame
 from src.common.constants import UI_FRAMERATE
 
-def start_ui(loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None, resolution:tuple=(0, 1)) -> None:
+def start_ui(loopConditionFunc:callable, loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None, resolution:tuple=(0, 1)) -> None:
     """
     Provide an event loop for standalone UIs
     """
     active = True
     aspectRatio = resolution[0] / resolution[1]
-    while active:
+    while loopConditionFunc() and active:
         events = pygame.event.get()
         delta = clock.tick(UI_FRAMERATE) / 1000.0
         # Deal with events

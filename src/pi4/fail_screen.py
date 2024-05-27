@@ -51,6 +51,12 @@ class FailScreen_UI:
             manager=self.manager
         )
 
+    def is_running(self) -> bool:
+        """
+        Check if the UI is running
+        """
+        return self.keepRunning
+
     def handle_events(self, event:pygame.event) -> None:
         """
         Handle events from the UI
@@ -76,7 +82,8 @@ if __name__ == "__main__":
     clk = pygame.time.Clock()
     systemObj = FailScreen_UI(clk)
     start_ui(
-        [systemObj.draw],
+        loopConditionFunc=systemObj.is_running,
+        loopFunction=[systemObj.draw],
         eventFunction=[systemObj.handle_events],
         exitFunction=[],
         clock=clk,

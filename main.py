@@ -1,7 +1,6 @@
 """
 Main entry point for the application.
 """
-import sys
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
@@ -43,15 +42,17 @@ class Component_Sorter:
         self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
-if __name__ == "__main__":
-    TRAINING_MODE = True
-    KEEPRUN = True
-    PROFILER = False
-    while KEEPRUN:
+def run(trainingMode:bool) -> None:
+    """
+    Run the main application
+    """
+    keepRunning = True
+    while keepRunning:
         try:
             pygame.init()
-            systemObj = Component_Sorter(TRAINING_MODE)
+            systemObj = Component_Sorter(trainingMode)
             start_ui(
+                loopConditionFunc=systemObj.lcdUI.is_running,
                 loopFunction=[systemObj.lcdUI.draw],
                 eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.cameraFeed.event_handler],
                 exitFunction=[systemObj.close],
@@ -60,6 +61,7 @@ if __name__ == "__main__":
                 screen=systemObj.lcdUI.display,
                 resolution=systemObj.lcdUI.resolution
                 )
+            keepRunning = systemObj.lcdUI.is_running()
         except Exception as e:
             # Try call close function
             try:
@@ -70,6 +72,7 @@ if __name__ == "__main__":
             clk = pygame.time.Clock()
             failScreen = FailScreen_UI(clk, str(e))
             start_ui(
+                    loopConditionFunc=failScreen.is_running,
                     loopFunction=[failScreen.draw],
                     eventFunction=[failScreen.handle_events],
                     exitFunction=[],
@@ -77,7 +80,22 @@ if __name__ == "__main__":
                     manager=failScreen.manager,
                     screen=failScreen.display,
                 )
-            KEEPRUN = failScreen.keepRunning
+            keepRunning = failScreen.keepRunning
     pygame.quit()
-    sys.exit()
-    
+
+if __name__ == "__main__":
+    TRAINING_MODE = True
+    PROFILER = False
+    SNAKEVIZ = True
+    # Run and optionally profile the application
+    if PROFILER:
+        import cProfile
+        import subprocess
+        profiler = cProfile.Profile()
+        profiler.enable()
+        profiler.run('run(TRAINING_MODE)')
+        profiler.dump_stats('./profiles/profile.prof')
+        if SNAKEVIZ:
+            subprocess.Popen("snakeviz ./profiles/profile.prof", shell=True)
+    else:
+        run(TRAINING_MODE)
