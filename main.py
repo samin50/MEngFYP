@@ -48,6 +48,7 @@ class Component_Sorter:
 if __name__ == "__main__":
     TRAINING_MODE = True
     KEEPRUN = True
+    PROFILER = False
     while KEEPRUN:
         try:
             pygame.init()

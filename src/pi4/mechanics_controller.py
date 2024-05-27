@@ -20,7 +20,6 @@ class Conveyor_Controller:
     Conveyor controller class
     """
     def __init__(self, _:bool) -> None:
-        return
         GPIO.setmode(GPIO.BCM)
         # Set up the GPIO pins for the conveyor belt
         GPIO.setup(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.OUT)
