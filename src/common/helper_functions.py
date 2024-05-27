@@ -56,3 +56,10 @@ def wifi_restart() -> None:
     time.sleep(5)
     # Bring the Wi-Fi interface back up
     subprocess.run(['sudo', 'ifup', 'wlan0'], check=True)
+
+def hex_to_bgr(hexcode):
+    """
+    Convert a hex colour to a BGR tuple
+    """
+    colour = tuple(int(hexcode[i:i+2], 16) for i in (0, 2, 4))
+    return colour[::-1]

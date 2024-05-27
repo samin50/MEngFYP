@@ -53,3 +53,9 @@ class PixelStrip:
     def numPixels(self) -> int: return 0
 
 def Color(_, __, ___) -> int: return 0
+
+# YOLO emulation
+class YOLO:
+    def __init__(self, _) -> None: pass
+    def __call__(self, _) -> None: pass
+    def predict(self, *_) -> None: pass
