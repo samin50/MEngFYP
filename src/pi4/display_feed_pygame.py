@@ -3,14 +3,10 @@ Pygame implementation of the display feed.
 Done to hopefully improve performance
 Also uses threading to improve performance
 """
-import threading
-import time
 import pygame
-import pygame.camera as pycam
-from src.common.simulate import FakeCamera
 from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMERATE
 from src.common.helper_functions import start_ui
-
+from src.pi4.vision_handler import Vision_Handler
 class CameraFeed:
     def __init__(self, size:tuple, cameraDisplay:pygame.display, trainingMode:bool=False) -> None:
         self.cameraDisplay = cameraDisplay
@@ -18,63 +14,20 @@ class CameraFeed:
         self.trainingMode = trainingMode
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
         self.resizedFrame = pygame.Surface(self.size)
+        self.vision = Vision_Handler(trainingMode)
         # FPS
         self.fpsFont = pygame.font.SysFont("Roboto", FPS_FONT_SIZE)
         self.fps = self.fpsFont.render("FPS: 0", True, (255,255,255))
         self.cameraclock = pygame.time.Clock()
-        self.framePeriod = float(1) / CAMERA_FRAMERATE
-        # Grab the available camera and start it
-        self.fakeCamera = FakeCamera(0)
-        self.realCamera = None
-        self.currentCamera = self.fakeCamera
-        pycam.init()
-        self.camlist = pycam.list_cameras()
-        self.stopThread = False
-        self.frameThread = threading.Thread(target=self.run, daemon=True)
-        self.frameThread.start()
-        # Draw FPS event
         self.drawFPSEvent = pygame.USEREVENT + 100
         pygame.time.set_timer(self.drawFPSEvent, 1000 // CAMERA_FRAMERATE)
-
-    def run(self) -> None:
-        """
-        Run threaded camera loop, updating the frame
-        Add failsafe for when the camera is not available
-        """
-        self.set_camera()
-        while not self.stopThread:
-            self.update_frame()
-            time.sleep(self.framePeriod)
-
-    def set_camera(self) -> None:
-        """
-        Set the camera if it becomes unavailable
-        """
-        if len(self.camlist) != 0:
-            if self.realCamera is None:
-                self.realCamera = pycam.Camera(self.camlist[0])
-            try:
-                self.realCamera.start()
-            except:
-                self.realCamera = None
-                self.currentCamera = self.fakeCamera
-            self.currentCamera = self.realCamera
-        else:
-            self.currentCamera = self.fakeCamera
-        return
 
     def update_frame(self) -> pygame.Surface:
         """
         Obtain the current frame from the camera, if available
         """
         _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
-        try:
-            # Get the current frame
-            if self.currentCamera.query_image():
-                self.currentFrame = self.currentCamera.get_image(self.currentFrame)
-        except:
-            self.set_camera()
-            return self.currentFrame
+        self.currentFrame = self.vision.get_frame()
         # Draw FPS in the bottom right corner
         if not self.trainingMode:
             self.resizedFrame = pygame.transform.scale(self.currentFrame, self.size)
@@ -95,16 +48,8 @@ class CameraFeed:
         Handle pygame events
         """
         if event.type == self.drawFPSEvent:
+            self.update_frame()
             self.fps = self.fpsFont.render(f"FPS: {self.cameraclock.get_fps():.0f}", True, (255,255,255))
-
-    def destroy(self):
-        """
-        Stop the thread and release the camera.
-        """
-        self.stopThread = True
-        self.frameThread.join()
-        if self.realCamera is not None:
-            self.realCamera.stop()
 
 if __name__ == '__main__':
     TRAINING_MODE = False
@@ -115,6 +60,6 @@ if __name__ == '__main__':
     start_ui(
         loopFunction=[],
         eventFunction=[camera.event_handler],
-        exitFunction=[camera.destroy],
+        exitFunction=[camera.vision.destroy],
         clock=clk,
         )

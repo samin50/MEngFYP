@@ -24,7 +24,6 @@ TOGGLE_FALSE_COLOUR = "#F84F31"
 TOGGLE_HOVER_COLOUR = "#AEAEAE"
 # GPIO Parameters
 GPIO_PINS = {
-    "MOSFET_CONTROL_PIN" : 18,
     "CONVEYOR_ENABLE_PIN" : 17,
     "CONVEYOR_DIRECTION_PIN" : 27,
     # Need PWM pin for conveyor speed control
@@ -34,3 +33,5 @@ GPIO_PINS = {
 # Conveyor Parameters
 SPEED_MULTIPLIER = 80
 LIGHT_COLOUR = (255, 218, 145)
+# Vision
+CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"

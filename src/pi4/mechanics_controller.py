@@ -141,10 +141,3 @@ class WS2812B_Controller:
 
 if __name__ == "__main__":
     leds = WS2812B_Controller(speed=5)
-    # while True:
-    #     try:
-    #         leds.initialize()
-    #         time.sleep(5)
-    #     except KeyboardInterrupt:
-    #         leds.stop()
-    #         break
