@@ -24,7 +24,7 @@ class Component_Sorter:
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
         self.cameraLed = WS2812B_Controller()
-        self.conveyorMotor = Conveyor_Controller(trainingMode)
+        self.conveyorMotor = Conveyor_Controller()
         # LCD Setup
         callbacks = {
             "colour_callback" : self.cameraLed.change_colour,
@@ -84,7 +84,7 @@ def run(trainingMode:bool) -> None:
     pygame.quit()
 
 if __name__ == "__main__":
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     PROFILER = False
     SNAKEVIZ = True
     # Run and optionally profile the application

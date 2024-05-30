@@ -1,12 +1,14 @@
 """
 Mechanics controller
 """
+from queue import Queue
 import time
 import multiprocessing
 import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
     from rpi_ws281x import PixelStrip, Color
+    GPIO.setmode(GPIO.BCM)
     print("Using real hardware!")
 except ImportError:
     from src.common.simulate import GPIO
@@ -14,18 +16,74 @@ except ImportError:
     print("Simulating missing hardware!")
 from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LIGHT_COLOUR
 
+class Sweeper_Controller:
+    """
+    Sweeper Controller - controls NEMA stepper motor and moves
+    it to bin locations
+    """
+    def __init__(self, numBins:int, binDistance:int) -> None:
+        # Setup GPIO pins
+        GPIO.setup(GPIO_PINS["SWEEPER_DIRECTION_PIN"], GPIO.OUT)
+        GPIO.setup(GPIO_PINS["SWEEPER_STEP_PIN"], GPIO.OUT)
+        self.motor = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 1)
+        self.motor.start(0)
+        # Constants
+        self.numBins = numBins
+        self.binDistance = binDistance
+        self.maxDistance = numBins * binDistance
+        # Sorting variables
+        self.running = True
+        self.sort = multiprocessing.Process(target=self.sort_process)
+        self.distance = 0
+        self.queue = Queue()
+        self.map = dict()
+
+    def stop(self) -> None:
+        """
+        Stop the sweeper
+        """
+        GPIO.output(GPIO_PINS['SWEEPER_DIRECTION_PIN'], GPIO.LOW)
+        self.motor.ChangeDutyCycle(0)
+        self.running = False
+        self.sort.join()
+
+    def set_map(self, newmap:dict) -> None:
+        """
+        Set the map of bin to classification
+        """
+        self.map = newmap
+
+    def add_queue(self, destination:tuple) -> None:
+        """
+        Add destination to queue in form of (time added, classification)
+        """
+        self.queue.put(destination)
+
+    def sort_process(self) -> None:
+        """
+        Process that manages the sweeper
+        """
+        lastTime = time.time()
+        while self.running:
+            # Block until queue is received
+            cls = self.queue.get()
+            currentTime = time.time()
+
+    def determine_path(self, binnum:int) -> None:
+        """
+        Make the motor move in time to reach the bin
+        """
 
 class Conveyor_Controller:
     """
     Conveyor controller class
     """
-    def __init__(self, _:bool) -> None:
-        GPIO.setmode(GPIO.BCM)
+    def __init__(self) -> None:
         # Set up the GPIO pins for the conveyor belt
-        GPIO.setup(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.OUT)
         GPIO.setup(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.OUT)
-        self.motorSpeed = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 500)
-        self.motorSpeed.start(50)
+        GPIO.setup(GPIO_PINS['CONVEYOR_STEP_PIN'], GPIO.OUT)
+        self.motor = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 1)
+        self.motor.start(50)
         self.stop()
 
     def change_speed(self, speed: int) -> None:
@@ -35,18 +93,16 @@ class Conveyor_Controller:
         if speed == 0:
             self.stop()
         else:
-            self.motorSpeed.ChangeDutyCycle(50)
-            GPIO.output(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.HIGH)
+            self.motor.ChangeDutyCycle(50)
             GPIO.output(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.HIGH if speed > 0 else GPIO.LOW)
-            self.motorSpeed.ChangeFrequency(SPEED_MULTIPLIER * abs(speed))
+            self.motor.ChangeFrequency(SPEED_MULTIPLIER * abs(speed))
 
     def stop(self) -> None:
         """
         Stop the conveyor belt
         """
-        GPIO.output(GPIO_PINS['CONVEYOR_ENABLE_PIN'], GPIO.LOW)
-        GPIO.output(GPIO_PINS['CONVEYOR_STEP_PIN'], GPIO.LOW)
-        self.motorSpeed.ChangeDutyCycle(0)
+        GPIO.output(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.LOW)
+        self.motor.ChangeDutyCycle(0)
 
 class WS2812B_Controller:
     """
@@ -67,7 +123,7 @@ class WS2812B_Controller:
         Initialize the LED strip
         """
         print("Initializing LED strip")
-        self.leds = PixelStrip(self.numleds, 10, 800000, 10, False, 255, 0)
+        self.leds = PixelStrip(self.numleds, GPIO_PINS["NEOPIXEL_PIN"], 800000, 10, False, 255, 0)
         self.leds.begin()
         self.rainbowProcess = multiprocessing.Process(target=self.rainbow_cycle, args=(self.queue, self.leds,))
         self.rainbowProcess.start()
@@ -120,7 +176,6 @@ class WS2812B_Controller:
         print(f"Setting colour to {rgbColour}")
         self.colourProcess = multiprocessing.Process(target=self.change_colour_process, args=(rgbColour,))
         self.colourProcess.start()
-        # self.colourProcess.join()
         return trueColour
 
     def reset(self) -> None:
