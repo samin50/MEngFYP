@@ -24,11 +24,14 @@ TOGGLE_FALSE_COLOUR = "#F84F31"
 TOGGLE_HOVER_COLOUR = "#AEAEAE"
 # GPIO Parameters
 GPIO_PINS = {
-    "CONVEYOR_ENABLE_PIN" : 17,
     "CONVEYOR_DIRECTION_PIN" : 27,
     # Need PWM pin for conveyor speed control
     "CONVEYOR_STEP_PIN" : 18,
-    "NEOPIXEL_PIN" : 13
+    # LED pin
+    "NEOPIXEL_PIN" : 10,
+    # PWM pin for sweeper
+    "SWEEPER_DIRECTION_PIN" : 6,
+    "SWEEPER_STEP_PIN" : 13,
 }
 # Conveyor Parameters
 SPEED_MULTIPLIER = 80
