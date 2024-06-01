@@ -12,9 +12,10 @@ from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PAD
 from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.display_feed_pygame import CameraFeed
+from src.pi4.vision_handler import Vision_Handler
 
 class LCD_UI:
-    def __init__(self, clock:pygame.time.Clock, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False) -> None:
+    def __init__(self, clock:pygame.time.Clock, visionHandler:Vision_Handler, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False) -> None:
         self.running = True
         # Setup UI
         self.display = pygame.display.set_mode(LCD_RESOLUTION, resizeable and (pygame.RESIZABLE | pygame.SCALED))
@@ -22,7 +23,7 @@ class LCD_UI:
         self.clock = clock
         self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
         self.cameraSurface = pygame.Surface(self.resolution)
-        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, trainingMode)
+        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, visionHandler, trainingMode=trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
@@ -196,7 +197,7 @@ class LCD_UI:
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             if event.ui_element == self.UIElements["conveyor_speed"]:
                 self.UIElements["conveyor_speed_label"].set_text(f"Conveyor Speed: {(event.value)}")
-                self.conveyorSpeedCallback(20 * event.value)
+                self.conveyorSpeedCallback(event.value)
             # Colour sliders
             if event.ui_element == self.UIElements["hue_slider"]:
                 colour = self.colourCallback((event.value, None, None))
@@ -256,7 +257,8 @@ class LCD_UI:
 if __name__ == "__main__":
     clk = pygame.time.Clock()
     pygame.init()
-    systemObj = LCD_UI(clk)
+    vision = Vision_Handler(enableInference=True, captureVNC=False)
+    systemObj = LCD_UI(clk, vision)
     start_ui(
         loopConditionFunc=systemObj.is_running,
         loopFunction=[systemObj.draw],

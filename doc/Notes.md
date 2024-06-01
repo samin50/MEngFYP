@@ -48,6 +48,23 @@ In the end, it was shown to be a power supply issue, an inconsistent powersupply
 After manual calibration, the lighting was kept at a constant (255, 255, 163). Noticebly, the blue channel is the weakest which may help to balance out the miscalibrated, blueish hue that the WS2182b leds tend to display. 
 
 # Sections:
+
+## design/system architecture
+show detailed system diagram
+system controller at top, with vision handler, conveyor controller, sweeper controller, led controller underneath
+
+for vision handler, show camera and yolov8 model
+
+for conveyor controller, show nema 17 motor
+uses multiprocessing locks to ensure safety when accessing shared variables eg distance that
+the system controller needs
+
+for sweeper controller, show nema 17 motor and endstop
+
+system controller also connects to beam break sensor which coordinates the movement of all, using interrupt
+
+using multiprocessing
+
 ## implementation
 
 ### CV system

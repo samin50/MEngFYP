@@ -11,8 +11,9 @@ except ImportError:
     RESIZEFLAG = True
 from src.pi4.lcd_ui import LCD_UI
 from src.pi4.fail_screen import FailScreen_UI
-from src.pi4.mechanics_controller import Conveyor_Controller, WS2812B_Controller
 from src.common.helper_functions import start_ui
+from src.pi4.mechanics_controller import System_Controller
+from src.pi4.vision_handler import Vision_Handler
 
 class Component_Sorter:
     """
@@ -23,16 +24,17 @@ class Component_Sorter:
         GPIO.cleanup()
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
-        self.cameraLed = WS2812B_Controller()
-        self.conveyorMotor = Conveyor_Controller()
+        self.visionHandler = Vision_Handler(enableInference=True, captureVNC=False)
+        self.systemController = System_Controller(self.visionHandler)
         # LCD Setup
         callbacks = {
-            "colour_callback" : self.cameraLed.change_colour,
-            "strip_reset_callback" : self.cameraLed.reset,
-            "conveyor_speed_callback" : self.conveyorMotor.change_speed,
+            "colour_callback" : self.systemController.leds.change_colour,
+            "strip_reset_callback" : self.systemController.leds.reset,
+            "conveyor_speed_callback" : self.systemController.conveyor.start,
         }
         self.clk = pygame.time.Clock()
         self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
+        self.systemController.set_lcd_handler(self.lcdUI)
 
     def close(self) -> None:
         """

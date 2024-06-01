@@ -27,6 +27,7 @@ class Vision_Handler:
         # Camera setup
         self.fakeCamera = FakeCamera(0)
         self.realCamera = None
+        self.inferencing = False
         # Class label font
         self.labelMap = {k["num_label"] : k["label"] for k in DATA.values()}
         self.labelFont = pygame.font.SysFont("Roboto", 20)
@@ -81,6 +82,7 @@ class Vision_Handler:
         """
         if self.captureVNC:
             self.currentFrame = self.capture_vnc()
+            _ = self.inference()
         else:
             try:
                 self.currentFrame = self.realCamera.get_image(self.currentFrame)
@@ -90,29 +92,34 @@ class Vision_Handler:
                 self.set_camera()
         return self.currentFrame
 
-    def inference(self) -> None:
+    def inference(self) -> list:
         """
         Perform inference on the current frame
         """
-        frame = self.get_frame()
         if not self.enableInference:
-            return frame
+            return []
+        classList = []
         # Classifier
-        imgData = pygame.surfarray.array3d(frame)
+        imgData = pygame.surfarray.array3d(self.currentFrame)
         results = self.model.predict(imgData, verbose=False)
         for result in results:
             clsList = result.obb.cls.tolist()
             # For every box
             for i, _ in enumerate(clsList):
                 box = result.obb.xyxyxyxy[i].tolist()
-                cls = clsList[i]
+                classList.append(clsList[i])
                 conf = result.obb.conf[i].tolist()
                 # Draw the bounding box
-                pygame.draw.lines(frame, (255, 0, 0), True, box, 2)
+                pygame.draw.lines(self.currentFrame, (255, 0, 0), True, box, 2)
                 # Draw the class
-                label = self.labelFont.render(f"{self.labelMap[cls]}:{conf:.2f}", True, (255, 0, 0))
-                frame.blit(label, (box[0], box[1]))
-        return frame
+                label = self.labelFont.render(f"{self.labelMap[clsList[i]]}:{conf:.2f}", True, (255, 0, 0))
+                self.currentFrame.blit(label, (box[0], box[1]))
+        return classList
+
+    def capture_window(self) -> None:
+        """
+        Perform inference on multiple frames and compute the mode
+        """
 
     def destroy(self) -> None:
         """

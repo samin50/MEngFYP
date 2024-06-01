@@ -8,13 +8,13 @@ from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMER
 from src.common.helper_functions import start_ui
 from src.pi4.vision_handler import Vision_Handler
 class CameraFeed:
-    def __init__(self, size:tuple, cameraDisplay:pygame.display, trainingMode:bool=False) -> None:
+    def __init__(self, size:tuple, cameraDisplay:pygame.display, visionHandler:Vision_Handler, trainingMode:bool=False) -> None:
         self.cameraDisplay = cameraDisplay
         self.size = size
         self.trainingMode = trainingMode
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
         self.resizedFrame = pygame.Surface(self.size)
-        self.vision = Vision_Handler(trainingMode)
+        self.vision = visionHandler
         # FPS
         self.fpsFont = pygame.font.SysFont("Roboto", FPS_FONT_SIZE)
         self.fps = self.fpsFont.render("FPS: 0", True, (255,255,255))
