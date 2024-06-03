@@ -124,7 +124,7 @@ Due to the complexity of the system, it is vital to ensure that the system is as
     \begin{minipage}[h]{0.95\textwidth}
         \centering
         \includegraphics[height=6cm]{imgs/parts/breakbeam.jpg}
-        \caption{IR Beam Break Sensor}
+        \caption{IR Beam Break Sensor \cite{breakbeamsensor}}
     \end{minipage}
 \end{figure}
 
@@ -140,12 +140,20 @@ For these reasons, the IR Beam Break Sensor was chosen as the best solution for 
 To power the system, two parameters were taken into account when choosing a PSU; the power rating and voltage.
 
 \begin{figure}[H]
-    \begin{minipage}[h]{0.95\textwidth}
+    \hfill
+    \begin{minipage}[h]{0.45\textwidth}
         \centering
-        \includegraphics[height=5cm]{imgs/parts/powermeter.png}
+        \includegraphics[width=\textwidth]{imgs/parts/powermeter.png}
         \caption{Power consumption of the system}
         \label{fig:powermeter}
     \end{minipage}
+    \hfill
+    \begin{minipage}[h]{0.45\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/parts/psu.jpg}
+        \caption{24V DC 6.25A Power Supply Unit \cite{psu}}
+    \end{minipage}
+    \hfill
 \end{figure}
 
 Firstly, the power supply must be able to drive all components in the system with overhead in case of spikes in power consumption. The system consists of a Raspberry Pi 4 Model B, a DFRobot 7" Touchscreen Display, two NEMA17 stepper motors and TMC2209 stepper motor drivers, an IR Beam Break Sensor, an Okdo Adjustable Focus OV5647 Camera, and 16 WS2812B LEDs. 
@@ -159,6 +167,19 @@ Additionally, the voltage of the power supply must be greater than or equal to t
 This resulted in selecting a 24V DC 6.25A Power Supply Unit.
 
 \subsubsection{Step Down Convertors}
+To power the components of the system, step-down convertors were used to convert the 24V output of the PSU to the required voltage of the components. The components that required a 12V supply were the NEMA17 stepper motors and TMC2209 stepper motor drivers, and the components that required a 5V supply were the Raspberry Pi, DFRobot 7" Touchscreen Display, Okdo Adjustable Focus OV5647 Camera, and WS2812B LEDs.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/parts/stepdownconverter.jpg}
+        \caption{24V to 12V Step Down Convertor \cite{stepdownconverter}}
+    \end{minipage}
+\end{figure}
+
+The DFRobot and Camera is powered directly from the Pi, however it is necessary that the WS2812B LEDs are powered from the PSU to prevent the Pi from being overloaded. Each LED can consume up to 60mA at full brightness, and with 16 LEDs, the total current draw could be up to 960mA, which may be too much for the Pi to handle. Instead, the LEDs and Pi are connected to a USB hub that is powered by a step-down convertor at 5V, which is connected to the PSU. Likewise, the NEMA17 motor and TMC2209 stepper motor driver are powered by a step-down convertor at 12V.
+
+The XL4015 High Power Step Down Convertor was chosen as it is capable of handling the current draw of the components, and is adjustable, allowing for fine-tuning of the output voltage. It is able to draw up to 75W, which is more than enough for the two 5V and 12V systems.
 
 \subsection{Software}
 \label{sec:electronics-and-software-integration}
