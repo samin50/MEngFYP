@@ -1,4 +1,4 @@
-\begin{thebibliography}{43}
+\begin{thebibliography}{35}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -24,6 +24,14 @@ Alasdair Allan.
   08-2019.
 \newblock Accessed: 06-02-2024.
 
+\bibitem[BIGTREETECH(n.d)]{tmc2209}
+BIGTREETECH.
+\newblock Bigtreetech tmc2209 stepper motor driver.
+\newblock
+  \url{https://botland.store/stepstick-stepper-motor-controllers/19883-bigtreetech-tmc2209-v13-stepper-motor-driver-5904422379667.html},
+  n.d.
+\newblock Accessed: 24-05-2024.
+
 \bibitem[Chand and Lal(2022)]{s22239079}
 Praneel Chand and Sunil Lal.
 \newblock Vision-based detection and classification of used electronic parts.
@@ -31,12 +39,6 @@ Praneel Chand and Sunil Lal.
 \newblock ISSN 1424-8220.
 \newblock \doi{10.3390/s22239079}.
 \newblock URL \url{https://www.mdpi.com/1424-8220/22/23/9079}.
-
-\bibitem[Code(n.d)]{vscode}
-Visual~Studio Code.
-\newblock Visual studio code.
-\newblock \url{https://code.visualstudio.com/}, n.d.
-\newblock Accessed: 22-01-2024.
 
 \bibitem[DFRobot(n.d)]{7inchdisplay}
 DFRobot.
@@ -52,43 +54,40 @@ Amol~I. Dhenge, Nāgpur, and A.~S. Khobragade.
 \newblock In \emph{n.a}, 2013.
 \newblock URL \url{https://api.semanticscholar.org/CorpusID:201742258}.
 
-\bibitem[DietPi(n.d)]{dietpi}
-DietPi.
-\newblock Dietpi.
-\newblock \url{https://dietpi.com/}, n.d.
-\newblock Accessed: 28-01-2024.
+\bibitem[FormLabs(n.d)]{fdmmaterials}
+FormLabs.
+\newblock Guide to 3d printing materials: Types, applications, and properties.
+\newblock \url{https://formlabs.com/uk/blog/3d-printing-materials/}, n.d.
+\newblock Accessed: 24-05-2024.
 
-\bibitem[Foundation(n.d)]{pi4}
+\bibitem[Foundation(n.d{\natexlab{a}})]{pi4}
 Raspberry~Pi Foundation.
 \newblock Raspberry pi 4 model b.
 \newblock
   \url{https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/},
-  n.d.
+  n.d{\natexlab{a}}.
 \newblock Accessed: 19-01-2024.
+
+\bibitem[Foundation(n.d{\natexlab{b}})]{picamerahq}
+Raspberry~Pi Foundation.
+\newblock Raspberry pi high quality camera.
+\newblock
+  \url{https://www.raspberrypi.com/products/raspberry-pi-high-quality-camera/},
+  n.d{\natexlab{b}}.
+\newblock Accessed: 24-05-2024.
+
+\bibitem[Foundation(n.d{\natexlab{c}})]{picamerav2}
+Raspberry~Pi Foundation.
+\newblock Raspberry pi camera module v2.
+\newblock \url{https://www.raspberrypi.com/products/camera-module-v2/},
+  n.d{\natexlab{c}}.
+\newblock Accessed: 24-05-2024.
 
 \bibitem[FreeCAD(n.d)]{freecad}
 FreeCAD.
 \newblock Freecad.
 \newblock \url{https://www.freecadweb.org/}, n.d.
 \newblock Accessed: 19-01-2024.
-
-\bibitem[Fritzing(n.d)]{fritzing}
-Fritzing.
-\newblock Fritzing.
-\newblock \url{https://fritzing.org/}, n.d.
-\newblock Accessed: 22-01-2024.
-
-\bibitem[Git(n.d)]{git}
-Git.
-\newblock Git.
-\newblock \url{https://git-scm.com/}, n.d.
-\newblock Accessed: 22-01-2024.
-
-\bibitem[GitHub(n.d)]{github}
-GitHub.
-\newblock Github.
-\newblock \url{https://github.com/}, n.d.
-\newblock Accessed: 22-01-2024.
 
 \bibitem[Guo et~al.(2021)Guo, ling Lv, Zhang, and lu~Zhang]{Guo2021}
 Ce~Guo, Xiao ling Lv, Yan Zhang, and Ming lu~Zhang.
@@ -98,26 +97,12 @@ Ce~Guo, Xiao ling Lv, Yan Zhang, and Ming lu~Zhang.
 \newblock \doi{10.1038/s41598-021-02225-y}.
 \newblock URL \url{https://doi.org/10.1038/s41598-021-02225-y}.
 
-\bibitem[Infineon(n.d)]{irlz44n}
-Infineon.
-\newblock Irlz44n datasheet.
-\newblock
-  \url{https://www.infineon.com/dgdl/Infineon-IRLZ44N-DataSheet-v01_01-EN.pdf?fileId=5546d462533600a40153567217c32725},
+\bibitem[Hut(n.d)]{breakbeamsensor}
+The~Pi Hut.
+\newblock Break beam sensor.
+\newblock \url{https://thepihut.com/products/ir-break-beam-sensor-3mm-leds},
   n.d.
-\newblock Accessed: 22-01-2024.
-
-\bibitem[Jupyter(n.d)]{jupyter}
-Jupyter.
-\newblock Jupyter.
-\newblock \url{https://jupyter.org/}, n.d.
-\newblock Accessed: 25-01-2024.
-
-\bibitem[Katranji(n.d)]{xl4015}
-Katranji.
-\newblock Xl4015 datasheet.
-\newblock \url{https://www.katranji.com/tocimages/files/457120-274359.pdf},
-  n.d.
-\newblock Accessed: 22-01-2024.
+\newblock Accessed: 24-05-2024.
 
 \bibitem[Kilikevičius and Fedaravičius(2021)]{s21217280}
 Sigitas Kilikevičius and Algimantas Fedaravičius.
@@ -127,6 +112,14 @@ Sigitas Kilikevičius and Algimantas Fedaravičius.
 \newblock ISSN 1424-8220.
 \newblock \doi{10.3390/s21217280}.
 \newblock URL \url{https://www.mdpi.com/1424-8220/21/21/7280}.
+
+\bibitem[Linear(n.d)]{nema17}
+PBC Linear.
+\newblock Nema 17 stepper motor.
+\newblock
+  \url{https://pages.pbclinear.com/rs/909-BFY-775/images/Data-Sheet-Stepper-Motor-Support.pdf},
+  n.d.
+\newblock Accessed: 24-05-2024.
 
 \bibitem[Magic(n.d{\natexlab{a}})]{deepsparse}
 Neural Magic.
@@ -152,14 +145,6 @@ Mia Muminovic and Emir Sokic.
 \newblock In \emph{2019 XXVII International Conference on Information,
   Communication and Automation Technologies (ICAT)}, pages 1--6, 2019.
 \newblock \doi{10.1109/ICAT47117.2019.8939034}.
-
-\bibitem[MyreMylar(n.d)]{pygamegui}
-MyreMylar.
-\newblock Pygame gui.
-\newblock
-  \url{https://github.com/MyreMylar/pygame_gui/tree/0cbf7056518377b455d51a8d20167f4029756ad9},
-  n.d.
-\newblock Accessed: 22-01-2024.
 
 \bibitem[Nam et~al.(2019)Nam, Mui, and Tu]{nam2019design}
 Le~Nam, Nguyen Mui, and Dang Tu.
@@ -197,23 +182,11 @@ Okdo.
   n.d{\natexlab{b}}.
 \newblock Accessed: 19-01-2024.
 
-\bibitem[Pygame(n.d)]{pygamedoc}
-Pygame.
-\newblock Pygame documentation.
-\newblock \url{https://www.pygame.org/docs/}, n.d.
-\newblock Accessed: 22-01-2024.
-
-\bibitem[Pylint(n.d)]{pylint}
-Pylint.
-\newblock Pylint.
-\newblock \url{https://github.com/pylint-dev/pylint}, n.d.
-\newblock Accessed: 19-01-2024.
-
-\bibitem[Python(n.d)]{python}
-Python.
-\newblock Python.
-\newblock \url{https://www.python.org/}, n.d.
-\newblock Accessed: 19-01-2024.
+\bibitem[Pololu(n.d)]{drv8825}
+Pololu.
+\newblock Pololu drv8825 stepper motor driver.
+\newblock \url{https://www.pololu.com/product/2133}, n.d.
+\newblock Accessed: 24-05-2024.
 
 \bibitem[Quilloy et~al.(2018)Quilloy, Delfin, and Pepito]{eggsorting}
 Erwin Quilloy, C.~Delfin, and M.~Pepito.
@@ -222,21 +195,6 @@ Erwin Quilloy, C.~Delfin, and M.~Pepito.
 \newblock \emph{African Journal of Agricultural Research}, 13:\penalty0
   918--926, 04 2018.
 \newblock \doi{10.5897/AJAR2018.13113}.
-
-\bibitem[Ranakoti et~al.(2022)Ranakoti, Gangil, Mishra, Singh, Sharma, Ilyas,
-  and El-Khatib]{Ranakoti2022}
-L.~Ranakoti, B.~Gangil, S.~K. Mishra, T.~Singh, S.~Sharma, R.~A. Ilyas, and
-  S.~El-Khatib.
-\newblock Critical review on polylactic acid: Properties, structure,
-  processing, biocomposites, and nanocomposites.
-\newblock \emph{Materials}, 15\penalty0 (12):\penalty0 4312, 2022.
-\newblock \doi{10.3390/ma15124312}.
-
-\bibitem[RealVNC(n.d)]{realvnc}
-RealVNC.
-\newblock Realvnc.
-\newblock \url{https://www.realvnc.com/en/}, n.d.
-\newblock Accessed: 22-01-2024.
 
 \bibitem[Reinhart and Loy(2010)]{REINHART2010191}
 Gunther Reinhart and Michael Loy.
@@ -247,12 +205,6 @@ Gunther Reinhart and Michael Loy.
 \newblock \doi{https://doi.org/10.1016/j.cirpj.2010.09.003}.
 \newblock URL
   \url{https://www.sciencedirect.com/science/article/pii/S1755581710000908}.
-
-\bibitem[Schimansky(n.d)]{customtkinter}
-Tom Schimansky.
-\newblock Custom tkinter widgets.
-\newblock \url{https://github.com/TomSchimansky/CustomTkinter}, n.d.
-\newblock Accessed: 25-01-2024.
 
 \bibitem[Silversides et~al.(2004)Silversides, Dai, and
   Seneviratne]{ForceAnalysisofVibratoryBowlFeeder}
@@ -277,17 +229,17 @@ Juan Terven and Diana-Margarita Cordova-Esparza.
 \newblock A comprehensive review of yolo: From yolov1 to yolov8 and beyond.
 \newblock \emph{n.j}, 04 2023.
 
-\bibitem[Tkinter(n.d)]{tkinterdoc}
-Tkinter.
-\newblock Tkinter documentation.
-\newblock \url{https://docs.python.org/3/library/tkinter.html}, n.d.
-\newblock Accessed: 22-01-2024.
-
 \bibitem[University(n.d)]{videobowlfeeder}
 Feeder University.
 \newblock Vibratory feeder basics.
 \newblock \url{https://www.youtube.com/watch?v=m27oD1wfQ0Y}, n.d.
 \newblock Accessed: 06-02-2024.
+
+\bibitem[Worldsemi(n.d)]{ws2812b}
+Worldsemi.
+\newblock Ws2812b datasheet.
+\newblock \url{https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf}, n.d.
+\newblock Accessed: 24-05-2024.
 
 \bibitem[Xu et~al.(2020)Xu, Yang, Luo, He, and Huang]{Xu2020}
 Yuanyuan Xu, Genke Yang, Jiliang Luo, Jianan He, and Chenxi Huang.

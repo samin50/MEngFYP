@@ -1,11 +1,6 @@
 \section{Background}
 \label{sec:background}
-For the background of this project, it is necessary to consider literature related to the following:
-\begin{mylist}
-  \item Existing computer vision systems for component identification
-  \item Real-time computer vision architectures
-  \item Mechanical design of existing sorting machines
-\end{mylist}
+This chapter will delve into the background of the project, exploring the existing literature on computer vision systems for component identification, real-time computer vision architectures, and the mechanical design of existing sorting machines. This research will inform the design of the project and its various systems.
 Research into these topics will inform the decisions made in the design of the project and its various systems.
 
 \begin{figure*}[t]
@@ -35,7 +30,7 @@ GTX 1050 2GB GPU (released in 2016) which is an impressive result. This work sho
 
 The paper by \citet{8939034} discusses the use of an SVM (Support Vector Machine) to characterise resistors, by identifying the resistor's centroid (centre of mass), determining the resistor's orientation, and then analysing the bands to determine the resistor's value.
 This is directly applicable to the project, as it is a viable approach to identifying resistors, which are very distinct from other components, given the presence of colour bands. The paper's novel approach to identifying the resistor values allows it to achieve high accuracy (86\%, however,
-the test images used are resistors that are positioned far away from the camera, as shown in Figure \ref{fig:resistordata}, and so the bands are very small, which will not be the case in the project's vision system, so the accuracy will likely be higher) which makes it a very promising resource for the project.
+the test images used are resistors that are positioned far away from the camera, as shown in  \autoref{fig:resistordata}, and so the bands are very small, which will not be the case in the project's vision system, so the accuracy will likely be higher) which makes it a very promising resource for the project.
 
 
 \begin{figure*}[t]
@@ -64,7 +59,7 @@ the test images used are resistors that are positioned far away from the camera,
 \subsection{Computer Vision Architectures}
 For the problem of component identification, the computer vision system must be able to identify components in real-time, as the components may eventually be moving on a conveyor belt, captured using
 a camera facing down at the components. This means that the computer vision system must be able to identify components in a very short amount of time, and so the system must be computationally efficient.
-The envisioned system is designed to be self-contained, and as described in Section \ref{sec:implementation} (Implementation), the system will run on a Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4},
+The envisioned system is designed to be self-contained, and as described in \autoref{sec:implementation} (Implementation), the system will run on a Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4},
 and must also be accurate and able to control the other systems in the project in real-time.
 
 This requires the Computer Vision system to be both computationally efficient and accurate, which is a difficult balance to strike.
@@ -96,7 +91,7 @@ is very promising, as it allows for the training of a robust model with a large 
 \noindent
 \textbf{Transport Mechanisms} \\
 The paper by \citet{Dhenge2013MechanicalNS} depicts a conveyor belt system that transports nuts and bolts to a computer vision system for identification, which aligns with the goals of the project. 
-The hardware prototype is shown in Figure \ref{fig:conveyor}, and a down-facing webcam is used to capture images of the components as they pass by. The webcam uses Principle Component Analysis (PCA) to identify the components,
+The hardware prototype is shown in \autoref{fig:conveyor}, and a down-facing webcam is used to capture images of the components as they pass by. The webcam uses Principle Component Analysis (PCA) to identify the components,
 which will be discussed in the next section.
 
 The components then separate into two chutes, one for nuts and one for bolts, using a stepper motor, which may be useful for the future design of the sorting system.
@@ -117,7 +112,7 @@ this will be changed to reflect the research outlined above, in the next stage o
 \noindent
 \textbf{Bowl Feeders} \\
 While researching for this project, and especially in videos\cite{videobowlfeeder}, it seems most industrial sorting machines use a Vibratory Bowl Feeder (VBF) to help feed components into the sorting system;
-as shown in Figure \ref{fig:feeder}, the VBF consists of a bowl that vibrates coupled with a spring and electromagnet.
+as shown in \autoref{fig:feeder}, the VBF consists of a bowl that vibrates coupled with a spring and electromagnet.
 The paper by \citet{nam2019design} explores the optimal design of a VBF for USB keycaps, by attempting to identify the ideal parameters for the structure of the bowl,
 sorting track, mounting adapter, and suspension system. The paper also uses modal analysis to determine the natural frequencies of the system and uses this to
 avoid resonant conditions that might cause inefficient or erratic operation.
@@ -134,6 +129,8 @@ by using a design that is specific to the geometry of the vials, and so does not
 
 An alternative to the VBF could be a robotic arm; fine control over movement would be necessary as the components are small and may be tangled, however, as mentioned before would require its own set of sensors and camera systems.
 As the components can be tangled, there are not many viable alternatives to the VBF or a robotic arm, so between these two solutions, it seems that the VBF is the most viable approach if the system is to be fully autonomous, as the vibrations of the VBF would help to untangle the components.
+\subsection{Commerical Systems}
+\todo{complete this section with a few youtube videos}
 \subsection{Key Takeaways}
 After reviewing the literature, the following key takeaways were made:
 

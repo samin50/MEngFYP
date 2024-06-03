@@ -1,3 +1,5 @@
+ <!-- LTeX: enabled=false -->
+
 # things to write about:
 
 ## cv model
