@@ -15,14 +15,15 @@
 \usepackage{tabularx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[hypcap=false, justification=centering]{caption}
-% \usepackage[none]{hyphenat}
 \usepackage[numbers, comma, sort&compress]{natbib}
 \usepackage[a4paper, margin=1.5cm]{geometry}
 \usepackage{hyperref}
+\usepackage{fancyhdr}
 % Font
-\usepackage{stix2} 
+\usepackage{stix2}
+\usepackage{amsmath}
 
-% Configuration - https://tex.stackexchange.com/questions/110406/two-column-article-templates
+\geometry{top=2cm}
 \renewcommand{\cftdotsep}{1}
 \renewcommand{\bibsection}{}
 \renewcommand{\sectionautorefname}{Section}
@@ -45,6 +46,13 @@
 }{ 
   \end{itemize}
 }
+% Fancy headers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textsc{Vision-Assisted Mechatronic Component Sorter}}
+\fancyhead[R]{\textsc{Shaheen Amin}}
+\renewcommand{\headrulewidth}{0.2pt} 
+\fancyfoot[C]{\thepage}
 
 % Adjusting space
 \titlespacing*{\section}{0pt}{1em}{1em}
@@ -96,7 +104,7 @@
 
   \vfill
   \normalsize
-  A Thesis submitted in fulfillment of requirements for the degree of\\
+  A thesis submitted in fulfilment of requirements for the degree of\\
   \textbf{Master of Electronics and Information Engineering}\\
   
   \vspace{0.5cm}
@@ -135,15 +143,15 @@ Supervised by Dr. Edward Stott, this project aims to solve the problems faced by
 \newpage
 \vspace*{\fill}
 \begin{center}
-  \textbf{Acknowledgements} \\
+  \large\textsc{Acknowledgements} \\
 \end{center}
-\noindent -
+\lipsum[1-2]
+\todo{add acknowledgements}
 \vspace*{\fill}
 \newpage
 
 % Contents page
-\vspace{1em}
-{\hypersetup{hidelinks}\tableofcontents}
+{\hypersetup{hidelinks}\tableofcontents\thispagestyle{fancy}}
 \listoftodos
 \newpage
 % Sections

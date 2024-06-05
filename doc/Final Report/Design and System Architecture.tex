@@ -117,6 +117,7 @@ Stepper motors possess the ability to move in precise increments, making them id
 For driving the motors, TMC2209s were selected due to their microstepping support and silent operation. Due to their popularity in FDM printing and the ease of use, they have a large amount of support and documentation. They are also capable of driving the NEMA17 series of stepper motors, and are compatible with the Raspberry Pi. Originally, the DRV8825 was considered \cite{drv8825}, however they added significant noise to the system and were unpleasant to use.
 
 \subsubsection{Break Beam Sensor}
+\label{sec:break-beam-sensor}
 
 Due to the complexity of the system, it is vital to ensure that the system is as efficient as possible to ensure real-time performance. The design choice was made to use an IR Beam Break Sensor \cite{breakbeamsensor} to detect the presence of objects on the conveyor belt to reduce the computational overhead of constant inference on the Vision Handler. The System Controller connects directly to the IR Beam Break Sensor, which is used to detect the presence of objects on the conveyor belt, making use of interrupts to detect changes in the sensor's state. This allows for a fast response from the system without much computational overhead. The sensor itself does not change lighting conditions as it operates with infrared light, which is not visible to the human eye. The sensor is also easy to install and maintain, as it only requires a power supply and a digital input pin to operate.
 
@@ -181,25 +182,15 @@ The DFRobot and Camera is powered directly from the Pi, however it is necessary 
 
 The XL4015 High Power Step Down Convertor was chosen as it is capable of handling the current draw of the components, and is adjustable, allowing for fine-tuning of the output voltage. It is able to draw up to 75W, which is more than enough for the two 5V and 12V systems.
 
-\subsection{Software}
-\label{sec:electronics-and-software-integration}
-
-\subsubsection{Conveyor Controller}
-\label{sec:conveyor}
-
-\subsubsection{Sweeper Controller}
-\label{sec:sweeper}
-
 \subsection{Mechanical Design and Electronics}
 \label{sec:mechanical-design}
 As the system has a major physical component, the mechanical design is a crucial aspect of the project. The mechanical design is responsible for the physical structure of the system, including the conveyor system, the sweeper, bins, the housing for the LCD and PSU (Power Supply Unit), and the camera mount. It provides the foundation for the system to operate and interact with the environment, and as such it is important to ensure that the mechanical design is robust and reliable.
 
 The system also has a major electronics component due to the requirement of moving parts, namely the conveyor and sweeper systems. Care must be taken to ensure that the power delivery to these systems is stable and reliable, and connections are secure. Careful consideration must also be taken to ensure electrical safety, preventing damage to the system and harm to the user. 
 
-The system has been designed in FreeCAD \cite{freecad}, a free and open-source parametric 3D CAD software. Aligning with the modular design approach of the project, the parametric nature of FreeCAD allows for easy modification of the design by modifying numerical parameters, which is useful in designs that require frequent changes. It was decided to use FDM printing to produce the components of the system using PLA, a biodegradable thermoplastic derived from renewable resources such as corn starch or sugarcane. PLA is easy to print, and does not require ventilation or post-processing, unlike other materials like ABS\cite{fdmmaterials}. The known brittleness and low heat resistance of PLA are not a concern for this project, as the system is not exposed to high temperatures or direct mechanical stress. An alternative to PLA would be PETG, which has higher heat resistance and is less brittle than PLA, however, it is more difficult to print and is more prone to warping - it is also less environmentally friendly than PLA and less cost effective.
+The system has been designed in FreeCAD \cite{freecad}, a free and open-source parametric 3D CAD software. Aligning with the modular design approach of the project, the parametric nature of FreeCAD allows for easy modification of the design by modifying numerical parameters, which is useful in designs that require frequent changes. It was decided to use FDM printing to produce the components of the system using PLA, a biodegradable thermoplastic derived from renewable resources such as corn starch or sugarcane \cite{fdmmaterials}. PLA is easy to print, and does not require ventilation or post-processing, unlike other materials like ABS. The known brittleness and low heat resistance of PLA are not a concern for this project, as the system is not exposed to high temperatures or direct mechanical stress. An alternative to PLA would be PETG, which has higher heat resistance and is less brittle than PLA, however, it is more difficult to print and is more prone to warping - it is also less environmentally friendly than PLA and less cost-effective.
 
 All components are designed to be easily assembled and disassembled, allowing for easy maintenance and repair. They are easily assembled using standard M3 screws and brass inserts, which are easy to source and replace. 
-
 
 \subsubsection{Conveyor}
 \label{sec:conveyor-design}
@@ -236,12 +227,161 @@ An improvement to this design would be to instead carefully design the gates suc
 The approach that was taken was to simply attach a static arm to a moving carriage that ran alongside the conveyor belt. The arm is angled, allowing the movement of the conveyor belt to push components off the belt and into the bins. This approach does not require intricately designed gates or complex control systems, and is simple and cost-effective. It requires the use of a NEMA17 stepper motor and an endstop for precise control of the arm's position, and a TMC2209 stepper motor driver to control the stepper motor. 
 
 Again, the issue of power delivery arises, as the NEMA17 stepper motor requires 12V.
-
 \subsection{Computer Vision System}
 \label{sec:computer-vision-system}
+To identify and classify components on the conveyor belt, a Computer Vision system is required. As discussed in the Background (\autoref{sec:background}), the approach taken will be to use the YOLOv8 object detection model, due to its notable inference speed, performance, and ability to optimise to deploy on the Raspberry Pi.
 
 \subsubsection{Image Processing}
 \label{sec:image-processing}
+\todo{talk about camera distortion correction}
+
+YOLOv8's training framework \cite{yolov8} allows image augmentation to be applied to the dataset in-flight, which can be used to artificially increase the size of the dataset and improve the model's performance. This can be used to apply transformations to the images such as rotation, scaling, and flipping, as well as more complex transformations such as perspective warping. This can be used to artificially increase the size of the dataset and improve the model's performance.
+
+It is important to select data augmentation schemes that would result in the images being in the same domain as the images that the model will be inferring on. For example, grayscale images should not be used as the model will be inferring on colour images. Scaling augmentations should be used sparingly as to not remove the component from the image, while rotation augmentations should be used to ensure that the model is invariant to the orientation of the component.
+
+For the task of component identification, the following augmentations were selected:
+
+\begin{table}[H]
+    \centering
+    {\fontsize{10pt}{12pt}\selectfont
+    \begin{tabularx}{\columnwidth}{|@{\hspace{4pt}}>{\raggedright\arraybackslash}p{3cm}|@{\hspace{4pt}}>{\raggedright\arraybackslash}p{1.4cm}|@{\hspace{4pt}}>{\raggedright\arraybackslash}X@{\hspace{4pt}}|}
+        \hline
+        \textbf{Augmentation} & \textbf{Value} & \textbf{Reasoning} \\
+        \hline
+        HSV\_H & 0.05 & This determines the range of hue values that the image can be augmented by. A 5\% change in hue can represent lighting conditions changing, which is important for the model to be invariant to. Changing it too much will result in the training data to not be in the same domain as the inference data. \\
+        \hline
+        HSV\_S & 0.3 & This determines the range of saturation values that the image can be augmented by. Justification is the same as above. \\
+        \hline
+        HSV\_V & 0.2 & This determines the range of value (degree of whiteness) values that the image can be augmented by. Justification is the same as above. \\
+        \hline
+        Degrees & 180 & This determines the range of rotation values that the image can be augmented by. Allowing any degree of rotation is important as the components may be placed on the conveyor belt at any orientation. \\
+        \hline
+        Translate & 0.1 & This determines the range of translation values that the image can be augmented by. Allowing a 10\% translation is important as the components may not be placed in the centre of the image, however too much translation may result in the component being cut off. \\
+        \hline
+        Scale & 0.8 & This determines the minimum scaling factor that the image can be augmented by. This provides robustness to the specific mounting height of the camera. \\
+        \hline
+        Shear & 10.0 & This determines the range of shear values that the image can be augmented by. Shearing is important as the components may not be placed in the centre of the image. \\
+        \hline
+        Perspective & 0.0 & This determines the range of perspective values that the image can be augmented by. Perspective warping is not required as the camera is always placed directly above the conveyor belt. \\
+        \hline
+        Flipud & 0.5 & This determines the probability that the image will be flipped up-down. Flipping the image up-down is important as the components may be placed on the conveyor belt in any orientation. \\
+        \hline
+        Fliplr & 0.5 & This determines the probability that the image will be flipped left-right. Justification is the same as above. \\
+        \hline
+        Mosaic & 0.5 & This determines the probability that the image will be augmented by a mosaic. According to YOLO \cite{yolov8}, this greatly improves model performance. \\
+        \hline
+    \end{tabularx}
+    }
+    \caption{Data Augmentation Parameters}
+    \label{tab:dap}
+\end{table}
 
 \subsubsection{Real-time Object Detection}
 \label{sec:real-time-object-detection}
+To perform real-time object detection, it is necessary to deploy a model with low inference latency, especially for the Raspberry Pi where computational resources are scarce. As discussed in the Background (\autoref{sec:background}), the YOLOv8 object detection model was initially chosen due to the ability to be optimised by optimisation libraries DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} to run on the Raspberry Pi. Pretrained 'sparsified' models are available for the YOLOv8 model, which have been pruned and quantised to reduce the number of parameters and the amount of computation required to run the model, preventing the need to 'sparsify' the model manually. In the event that the model could not be successfully deployed using these libraries, the model could have been run normally at a reduced frame rate, or could have been hosted on the cloud and accessed via an API --- though this would have introduced latency and would have required an internet connection. However, during the implementation phase, the typical YOLOv8 model not found to be suitable for the task.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/software/yoloobb.png}
+        \caption{OBB vs AABB Bounding Boxes \cite{aabbphoto}}
+        \label{fig:yoloobb}
+    \end{minipage}
+\end{figure}
+
+Common Computer Vision architectures typically draw AABBs (Axis Aligned Bounding Boxes) when detecting the object in the camera frame, as shown in \autoref{fig:yoloobb}. However, for the specific task of component identification it is more useful to draw OBBs (Oriented Bounding Boxes) which aligns with the orientation of the component, allowing the component to be cropped out and further inspected, for example in the case of value identification. There is a variant of the YOLO architecture that supports OBBs, called YOLOv8-obb \cite{yolov8}, which will be used for this task. 
+
+% table for yolov8-obb performance
+\begin{table}[H]
+    \centering
+    {\fontsize{12pt}{14pt}\selectfont
+    \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{Speed CPU ONNX (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\
+        \hline
+        YOLOv8n-obb & 78.0 & 204.77 & 3.1 & 23.3 \\
+        \hline
+        YOLOv8s-obb & 79.5 & 424.88 & 11.4 & 76.3 \\
+        \hline
+        YOLOv8m-obb & 80.5 & 763.48 & 26.4 & 208.6 \\
+        \hline
+        YOLOv8l-obb & 80.7 & 1278.42 & 44.5 & 433.8 \\
+        \hline
+        YOLOv8x-obb & 81.36 & 1759.10 & 69.5 & 676.7 \\
+        \hline
+    \end{tabular}
+    }
+    \caption{YOLOv8-obb Model Performance \cite{yolov8}}
+    \label{tab:yoloperformanceobb}
+\end{table}
+
+The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which contains 15 classes of objects, including components. Pretrained models are useful as they have already learnt useful features from a large dataset, and can be fine-tuned on a smaller dataset to improve performance \cite{pretrainedmodels}. The performance of the different sized YOLOv8-obb models is shown in \autoref{tab:yoloperformanceobb}. The most crucial parameters to take into consideration is the mAPval (mean average precision) and the CPU ONNX (inference latency). The mean average precision is defined by the following formula:
+
+{\fontsize{14pt}{11pt}\selectfont
+\begin{align*}
+    \text{mAP} &= \frac{1}{n} \sum_{i=1}^{n} \text{AP}_i % Extra & to move the equation to the right
+\end{align*}
+}
+
+Where $n$ is the number of classes, and $\texttt{AP}_i$ is the average precision for class $i$. The average precision is defined as the area under the precision-recall curve, and is an objective measure of the model's performance. For mAP\raisebox{-1pt}{\textsuperscript{50}}, the IoU (Intersection over Union) threshold is defined as being 50\%, meaning that as long as there is at least 50\% overlap between the predicted bounding box and the ground truth bounding box, the prediction is considered correct. In the formula below, $\text{A}$ is the ground truth bounding box, and $\text{B}$ is the predicted bounding box, with $\text{A} \cap \text{B}$ being the intersection of the two bounding boxes, and $\text{A} \cup \text{B}$ being the union of the two bounding boxes.
+
+{\fontsize{14pt}{11pt}\selectfont
+\begin{align*}
+    \text{IoU} &= \frac{\text{A} \cap \text{B}}{\text{A} \cup \text{B}} % 
+\end{align*}
+}
+
+From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 81.36 and a CPU ONNX of 1759.10ms. The YOLOv8n-obb model has the worst performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 78.0 and a CPU ONNX of 204.77ms. However, the Pi is likely significantly slower than the CPU used in the benchmarks, so the actual inference latency will be higher, making the ~0.5 FPS of the YOLOv8x-obb model infeasible, but the ~5 FPS of the YOLOv8n-obb model more promising, a 9x improvement in speed for only a 3.1\% decrease in mAP\raisebox{-1pt}{\textsuperscript{50}}. 
+
+As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break beam sensor to detect the presence of objects on the conveyor belt, reducing the potential of the Vision Handler to be a bottleneck due to constant inference. With the promising performance increase of using the DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} libraries to optimise the model for the Raspberry Pi, the YOLOv8n-obb model will be used for the project.
+
+
+% \begin{table}[H]
+%     \centering
+%     {\fontsize{12pt}{14pt}\selectfont
+%     \begin{tabular}{|l|l|l|l|l|}
+%         \hline
+%         \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50-95}}} & \textbf{CPU ONNX (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\
+%         \hline
+%         YOLOv8n & 37.3 & 80.4 & 3.2 & 8.7 \\
+%         \hline
+%         YOLOv8s & 44.9 & 128.4 & 11.2 & 28.6 \\
+%         \hline
+%         YOLOv8m & 50.2 & 234.7 & 25.9 & 78.9 \\
+%         \hline
+%         YOLOv8l & 52.9 & 375.2 & 43.7 & 165.2 \\
+%         \hline
+%         YOLOv8x & 53.9 & 479.1 & 68.2 & 257.8 \\
+%         \hline
+%     \end{tabular}
+%     }
+%     \caption{YOLOv8 Model Performance \cite{yolov8}}
+%     \label{tab:yoloperformance}
+% \end{table}
+
+% For regular AABB (axis-aligned bounding box) detection, the YOLOv8 model trained on the COCO dataset \cite{cocodataset} would provide a good starting point. The COCO dataset contains 80 classes, and the performance of different sized YOLO models is shown in \autoref{tab:yoloperformance}.
+
+\subsubsection{Dataset Annotation}
+
+To train the YOLOv8-obb model, a dataset of images of components is required. The dataset must be annotated with the bounding boxes of the components in the images, which can be done using a tool such as Roboflow \cite{roboflow}. However, the components will only be visible from the Raspberry Pi, so it can become tedious to take images from the Pi, transfer them to a computer, annotate them, and repeat for every distinct value within the component and then for every type of component.
+
+Instead, the decision was made to design a custom dataset labelling tool that could directly capture images from the Raspberry Pi, annotate them, and save them locally for training. The dataset would be correctly structured for training with YOLO, facilitating the training process.
+
+\subsection{Software}
+\label{sec:electronics-and-software-integration}
+The software of the system is responsible for controlling the hardware components, processing images from the camera, and interfacing with the user. The software is divided into several subsystems, each responsible for a different aspect of the system. The software is designed to be modular, with each subsystem exposing a high-level interface to other subsystems, allowing for easy integration and maintenance.
+
+Each component has the capability to run independently to facilitate debugging and maintenance, and communicates with the System Controller to receive commands. The System Controller is responsible for managing the communication between the components, and is the central hub of the system.
+
+The software is written in Python \cite{python}, due to its ease of use and large amount of support and libraries available, and will be run entirely on the Raspberry Pi. Git \cite{git} is used for version control to ensure that changes to the software can be tracked and reverted if necessary, Pylint \cite{pylint} is used for code linting to ensure that the code is clean and readable, RealVNC \cite{realvnc} is used for remote access to the Raspberry Pi, and Visual Studio Code \cite{vscode} is used as the IDE for development. As mentioned in \autoref{sec:mechanical-design}, FreeCAD \cite{freecad} has been used for the mechanical design of the system.
+
+\subsubsection{LCD UI}
+The LCD UI is responsible for displaying the status of the system, such as the current state of the system, the status of the conveyor belt and sweeper, and the classification of components. It also allows the user to interact with the system, such as starting and stopping the system, and manually controlling the conveyor belt and sweeper. The LCD UI communicates with the System Controller to receive status updates and send commands.
+
+The LCD UI is written with Pygame \cite{pygamedoc} and Pygame GUI \cite{pygamegui}, a Python library for creating graphical user interfaces. Pygame GUI builds upon the Pygame library, providing UI elements so that they do not need to be created from scratch. Pygame also provides camera support, allowing the Vision Handler to receive frames for inference or displaying the feed on the LCD UI. It also allows for precise control over what is being drawn and the event loop, allowing for a responsive UI.
+
+\subsubsection{Data Annotation Tool}
+As mentioned in \autoref{sec:real-time-object-detection}, a custom dataset labelling tool was designed to capture images from the Raspberry Pi, annotate them, and save them locally for training. The tool is responsible for capturing images from the camera, displaying them to the user, allowing the user to draw bounding boxes around the components, and saving the images and annotations to disk.
+
+This tool was written using CustomTkinter \cite{customtkinter}, a modern fork of the Tkinter library that provides a more modern look and feel, and is more customisable. CustomTkinter provides a high-level interface for creating GUIs, allowing for easy creation of UI elements and event handling. Draw loops are not needed as the UI is event-driven, allowing for easy development.
+
