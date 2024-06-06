@@ -190,7 +190,15 @@ The system also has a major electronics component due to the requirement of movi
 
 The system has been designed in FreeCAD \cite{freecad}, a free and open-source parametric 3D CAD software. Aligning with the modular design approach of the project, the parametric nature of FreeCAD allows for easy modification of the design by modifying numerical parameters, which is useful in designs that require frequent changes. It was decided to use FDM printing to produce the components of the system using PLA, a biodegradable thermoplastic derived from renewable resources such as corn starch or sugarcane \cite{fdmmaterials}. PLA is easy to print, and does not require ventilation or post-processing, unlike other materials like ABS. The known brittleness and low heat resistance of PLA are not a concern for this project, as the system is not exposed to high temperatures or direct mechanical stress. An alternative to PLA would be PETG, which has higher heat resistance and is less brittle than PLA, however, it is more difficult to print and is more prone to warping - it is also less environmentally friendly than PLA and less cost-effective.
 
-All components are designed to be easily assembled and disassembled, allowing for easy maintenance and repair. They are easily assembled using standard M3 screws and brass inserts, which are easy to source and replace. 
+\begin{figure}[H]
+    \begin{minipage}[h]{\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/parts/heatsetinserts.jpg}
+        \caption{Heat Set Inserts \cite{heatsetinsert}}
+    \end{minipage}
+\end{figure}
+
+All components are designed to be easily assembled and disassembled, allowing for easy maintenance and repair. They are easily assembled using standard M3 screws and heat-set brass inserts, which are easy to source and replace. The inserts are melted into the plastic using a soldering iron, providing a strong and reliable connection. The knurls on the inserts provide a strong grip on the plastic, preventing them from rotating when screws are inserted. The use of heat-set inserts also prevents the plastic from being stripped when screws are inserted, which can happen with repeated use of screws in the same hole.
 
 \subsubsection{Conveyor}
 \label{sec:conveyor-design}
