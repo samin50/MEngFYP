@@ -8,7 +8,7 @@
 \usepackage{tocloft}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{titlesec}
+\usepackage{titlesec, minitoc}
 \usepackage{enumitem}
 \usepackage{silence}
 \usepackage{multicol}
@@ -74,6 +74,16 @@
 \setlength{\cftbeforesecskip}{1pt}
 \setlength{\cftbeforesubsecskip}{1pt}
 \setlength{\cftaftertoctitleskip}{4pt}
+% \dosecttoc
+
+% Rename the section command
+\setcounter{secttocdepth}{3}
+\let\oldsection\section
+\renewcommand\section[1]{
+  \pagebreak
+  \oldsection{#1}
+  {\hypersetup{hidelinks}\secttoc\thispagestyle{fancy}}
+}
 
 % Document
 \begin{document}
@@ -151,8 +161,18 @@
 
 % Contents page
 {\hypersetup{hidelinks}\tableofcontents\thispagestyle{fancy}}
-\listoftodos
-\newpage
+% List of todos
+\newcommand{\neutralizelistoftodos}{
+  \begingroup
+  % Redefine \section to simply swallow its argument and do nothing
+  \renewcommand{\section}[1]{}
+  \newpage
+  {\large\textbf{List of Todos}}
+  \listoftodos
+  \endgroup
+}
+\neutralizelistoftodos
+
 % Sections
 \include*{Project Specification}
 % Background
@@ -161,19 +181,13 @@
 \include*{Design and System Architecture}
 % Implementation
 \include*{Implementation}
-% Problems and Changes - subsumed into Design and System Architecture
-% \include*{Problems and Changes}
-
 % Testing
 % \include*{Testing}
-
 % Results
 % \include*{Results}
 % Evaluation
 % \include*{Evaluation}
-
 % Conclusion and Future Work
-
 \section{References}
 \bibliographystyle{plainnat}
 \bibliography{References}
