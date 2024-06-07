@@ -8,13 +8,13 @@
 \usepackage{tocloft}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage[hypcap=false, justification=centering]{caption}
 \usepackage{titlesec, minitoc}
 \usepackage{enumitem}
 \usepackage{silence}
 \usepackage{multicol}
 \usepackage{tabularx}
 \usepackage[colorinlistoftodos]{todonotes}
-\usepackage[hypcap=false, justification=centering]{caption}
 \usepackage[numbers, comma, sort&compress]{natbib}
 \usepackage[a4paper, margin=1.5cm]{geometry}
 \usepackage{hyperref}
@@ -74,13 +74,20 @@
 \setlength{\cftbeforesecskip}{1pt}
 \setlength{\cftbeforesubsecskip}{1pt}
 \setlength{\cftaftertoctitleskip}{4pt}
-% \dosecttoc
+\dosecttoc
 
 % Rename the section command
 \setcounter{secttocdepth}{3}
+% Set up right-aligned section titles with a custom right space
+\titleformat{\section}
+  {\normalfont\Huge\bfseries\raggedleft} % Right-aligned, bold, large font
+  {\thesection} % The section number
+  {1em} % Space between number and text
+  {\textsc} % Adding horizontal space on the left
 \let\oldsection\section
 \renewcommand\section[1]{
-  \pagebreak
+  \pagebreak\
+  \vspace{2em}
   \oldsection{#1}
   {\hypersetup{hidelinks}\secttoc\thispagestyle{fancy}}
 }

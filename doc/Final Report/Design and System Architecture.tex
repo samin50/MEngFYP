@@ -22,7 +22,7 @@ A System Controller oversees the entire system, interacting with all other compo
 There is two-way communication between the LCD UI and System Controller as the user may input commands to the system, and the System Controller may send status updates to the LCD UI.
 
 \subsection{Hardware}
-\label{sec:hardware}
+\label{sec:design-hardware}
 
 When selecting hardware for the project, it is vital to consider the requirements of the system and to evaluate the trade-offs between alternatives. This section will detail the choice of hardware and provide justification for the selection.
 
@@ -96,6 +96,7 @@ To illuminate the components on the conveyor belt, a solution was required that 
 Originally, a 12V COB ring light was considered, as it could produce a uniform light source, however the specific ring was not dimmable and resulted in strange flickering when attempting to do so with a MOSFET. It also did not produce a clean white light, but a more blue light. The WS2812B LEDs were chosen as they could produce any light colour, and could be cut and placed in any configuration, allowing for a more customisable design.
 
 \subsubsection{Stepper Motors}
+\label{sec:stepper-motors}
 Stepper motors possess the ability to move in precise increments, making them ideal for the Sweeper System which requires precise control. The Conveyor System is not as demanding, but stepper motors were chosen for consistency across the system. The NEMA17 series of stepper motors were chosen \cite{nema17} as they are widely used and have a large amount of support and documentation, also typically used in FDM printers. With the ability to rotate at 1200RPM/900RPM at 12V, and a holding torque 48/63Ncm (for single/double stack motors), they are more than capable of driving the conveyor belt and sweeper arm.
 
 \begin{figure}[H]
@@ -104,17 +105,19 @@ Stepper motors possess the ability to move in precise increments, making them id
       \centering
       \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/nema17.jpg}
       \caption{NEMA17 Stepper Motor \cite{nema17}}
+      \label{fig:nema17}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/tmc2209.png}
         \caption{TMC2209 Stepper Motor Driver \cite{tmc2209}}
+        \label{fig:tmc2209}
       \end{minipage}
       \hfill
 \end{figure}
 
-For driving the motors, TMC2209s were selected due to their microstepping support and silent operation. Due to their popularity in FDM printing and the ease of use, they have a large amount of support and documentation. They are also capable of driving the NEMA17 series of stepper motors, and are compatible with the Raspberry Pi. Originally, the DRV8825 was considered \cite{drv8825}, however they added significant noise to the system and were unpleasant to use.
+For driving the motors, TMC2209s were selected due to their silent operation, and microstepping features, although not required for the system, a method of allowing the motors to achieve higher precision and more silent operation. Due to their popularity in FDM printing and the ease of use, they have a large amount of support and documentation. They are also capable of driving the NEMA17 series of stepper motors, and are compatible with the Raspberry Pi. Originally, the DRV8825 was considered \cite{drv8825}, however they added significant noise to the system and were unpleasant to use.
 
 \subsubsection{Break Beam Sensor}
 \label{sec:break-beam-sensor}
@@ -138,6 +141,7 @@ An alternative to the IR Beam Break Sensor would be to use a proximity sensor to
 For these reasons, the IR Beam Break Sensor was chosen as the best solution for detecting the presence of objects on the conveyor belt.
 
 \subsubsection{Power Supply Unit}
+\label{sec:power-supply}
 To power the system, two parameters were taken into account when choosing a PSU; the power rating and voltage.
 
 \begin{figure}[H]
@@ -174,7 +178,7 @@ To power the components of the system, step-down convertors were used to convert
     \begin{minipage}[h]{\textwidth}
         \centering
         \includegraphics[height=5cm]{imgs/parts/stepdownconverter.jpg}
-        \caption{24V to 12V Step Down Convertor \cite{stepdownconverter}}
+        \caption{XL4015 High Power Step Down Convertor \cite{stepdownconverter}}
     \end{minipage}
 \end{figure}
 
@@ -302,7 +306,7 @@ Common Computer Vision architectures typically draw AABBs (Axis Aligned Bounding
 % table for yolov8-obb performance
 \begin{table}[H]
     \centering
-    {\fontsize{12pt}{14pt}\selectfont
+    {\fontsize{10pt}{12pt}\selectfont
     \begin{tabular}{|l|l|l|l|l|l|}
         \hline
         \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{Speed CPU ONNX (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\

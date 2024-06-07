@@ -1,0 +1,30 @@
+As mentioned in \autoref{sec:design-and-system-architecture}, the software for the system is written in Python and is run entirely on the Raspberry Pi 4B. The software is divided into three main components: the user interface, the computer vision system, and the system controller which manages the hardware components of the system. The software is designed to be modular, with each component being able to run independently of the others. This allows for easier debugging and testing of the system, as well as making it easier to add new features in the future.
+
+\subsubsection{User Interface}
+The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. From here, the user is able to\dots
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{example-image-a}
+      \caption{User Interface}
+      \label{fig:ui}
+    \end{minipage}
+\end{figure}
+
+\todo{Complete section after fully implementing the user interface}
+
+As shown in \autoref{fig:ui}, the user interface consists\dots
+
+Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD\_UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, with the user interface updating at this 
+
+The user interface also supports a training mode, where the camera feed is enlarged in order to capture images of components to be used for training the computer vision system, done programmatically by toggling a flag called \texttt{TRAININGMODE} in the \texttt{LCD\_UI} class. This is only used during the dataset collection phase of the project, and is not used during the normal operation of the system. This is discussed in more detail in \autoref{sec:dataset-collection}.
+
+The camera feed in the top left is controlled by the Vision Handler, which is responsible for delivering frames to the user interface. The Vision Handler is discussed in more detail in \autoref{sec:vision-handler}. 
+
+\subsubsection{Vision Handler}
+\label{sec:vision-handler}
+
+\subsubsection{Dataset Collection}
+\label{sec:dataset-collection}

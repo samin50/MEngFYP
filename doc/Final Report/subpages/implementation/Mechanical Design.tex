@@ -30,7 +30,7 @@ As the system is using FDM printed parts, it is necessary to ensure that the par
 
 \begin{table}[H]
     \centering
-    {\fontsize{12pt}{14pt}\selectfont
+    {\fontsize{10pt}{12pt}\selectfont
     \begin{tabularx}{\textwidth}{|p{3cm}|p{3cm}|X|}
         \hline
         \textbf{Setting} & \textbf{Value} & \textbf{Justification} \\
@@ -47,7 +47,7 @@ As the system is using FDM printed parts, it is necessary to ensure that the par
         \hline
     \end{tabularx}
     }
-    \caption{3D Printer Settings}
+    \caption{FDM Printer Settings}
     \label{tab:3dprintersettings}
 \end{table}
 
@@ -91,26 +91,26 @@ The PSU enclosure contains several components;
 
 A standard IEC C14 power connector and an RS Pro Snap-In Fused Rocker Switch \cite{rsproc14switch} are used to connect the PSU to the mains power. As the power supply is a 6.25A power supply, a 6A fuse was chosen for the switch, which is the closest available fuse rating to the power supply's current rating. This ensures that the fuse will trigger before the power supply is damaged, should there be a short circuit in the system. For wiring the power supply and connecting the step-down converters, 18AWG wire was chosen which is rated for 17A \cite{18awgwire}, which is sufficient for the system's power consumption. The wire is securely crimped to the power supply using a crimping tool.
 
-\begin{minipage}{0.5\textwidth}
-    \centering
-    {\fontsize{8pt}{11pt}\selectfont
-    \begin{tabularx}{\textwidth}{|X|p{1cm}|p{1cm}|X|}
-        \hline
-        \textbf{Test} & \textbf{Result} & \textbf{Req} & \textbf{Description} \\ \hline
-        Earth Continuity & 0.06$\Omega$ & $\leq$ 0.1$\Omega$ & Verifies the earth wire is connected. \\ \hline
-        Earth Leakage & 0.2mA & $\leq$ 0.75mA & Ensure the touchable metal parts cannot cause harm. \\ \hline
-        Insulation Resistance & 320M$\Omega$ & $\geq$ 1M$\Omega$ & Ensure wires are sufficiently insulated. \\ \hline
-    \end{tabularx}
-    }
-    \captionof{table}{PAT Testing Results}
+\begin{minipage}{\textwidth}
+    \begin{minipage}{0.6\textwidth}
+        \centering
+        {\fontsize{10pt}{12pt}\selectfont
+        \begin{tabularx}{\textwidth}{|X|p{1cm}|p{1cm}|X|}
+            \hline
+            \textbf{Test} & \textbf{Result} & \textbf{Req} & \textbf{Description} \\ \hline
+            Earth Continuity & 0.06$\Omega$ & $\leq$ 0.1$\Omega$ & Verifies the earth wire is connected. \\ \hline
+            Earth Leakage & 0.2mA & $\leq$ 0.75mA & Ensure the touchable metal parts cannot cause harm. \\ \hline
+            Insulation Resistance & 320M$\Omega$ & $\geq$ 1M$\Omega$ & Ensure wires are sufficiently insulated. \\ \hline
+        \end{tabularx}
+        }
+    \end{minipage}%
+    \hfill % Adds horizontal space between the table and the image
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \raisebox{-\height}{\includegraphics[height=3.5cm]{imgs/pattesting.jpeg}}
+    \end{minipage}
+    \captionof{table}{PAT Testing Results and PAT Machine}
     \label{tab:pat}
-\end{minipage}%
-\hfill % Adds horizontal space between the table and the image
-\begin{minipage}{0.45\textwidth}
-    \centering
-    \raisebox{-\height}{\includegraphics[height=3.5cm]{imgs/pattesting.jpeg}}
-    \captionof{figure}{PAT Testing Machine}
-    \label{fig:pat}
 \end{minipage}
 
 
