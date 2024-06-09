@@ -109,7 +109,7 @@ class ResistorTrainer:
                 lines = f.readlines()
                 for line in lines:
                     line = line.strip()
-                    if line.startswith("42"):
+                    if line.startswith("42") or line.startswith("12"):
                         # Stem
                         parts = line.split(" ")
                         xCenter, yCenter, width, height = map(float, parts[1:])

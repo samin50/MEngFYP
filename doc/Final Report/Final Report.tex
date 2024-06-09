@@ -19,6 +19,7 @@
 \usepackage[a4paper, margin=1.5cm]{geometry}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
+\usepackage[outputdir=out, newfloat]{minted}
 % Font
 \usepackage{stix2}
 \usepackage{amsmath}
@@ -31,8 +32,13 @@
 \renewcommand{\subsubsectionautorefname}{Subsubsection}
 \renewcommand{\figureautorefname}{Figure}
 \renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
-% Todo notes
 \hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue, citecolor=blue}
+
+% Code snippet
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Code Snippet}
+
+% Todo notes
 \presetkeys{todonotes}{inline}{
   backgroundcolor=red!20,
 }
@@ -195,7 +201,7 @@
 \include*{Evaluation}
 % Conclusion and Future Work
 \section{References}
-\bibliographystyle{plainnat}
+\bibliographystyle{IEEEtranN}
 \bibliography{References}
 
 % Appendices

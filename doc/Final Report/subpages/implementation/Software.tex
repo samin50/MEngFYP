@@ -7,7 +7,7 @@ The user interface allows the user to view and command the state of the system b
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{example-image-a}
+      \includegraphics[height=8cm]{example-image-a}
       \caption{User Interface}
       \label{fig:ui}
     \end{minipage}
@@ -23,7 +23,7 @@ The user interface also supports a "training mode", where the camera feed is enl
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[width=\textwidth]{imgs/python/systemcrash.jpg}
+      \includegraphics[height=8cm]{imgs/python/systemcrash.jpg}
       \caption{System crash during development}
       \label{fig:crash}
     \end{minipage}
@@ -51,7 +51,7 @@ The Vision Handler is responsible for managing the camera feed, and performs the
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[width=\textwidth, height=10cm]{example-image-b}
+      \includegraphics[height=8cm]{example-image-b}
       \caption{Camera disconnect error}
       \label{fig:camera-disconnect}
     \end{minipage}
@@ -65,7 +65,36 @@ As mentioned in \autoref{sec:data-annotation-tool}, a custom dataset annotation 
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[width=\textwidth, height=10cm]{example-image-c}
+      \includegraphics[height=8cm]{imgs/python/visiontrainer.jpg}
+      \caption{Vision Trainer Menu}
+      \label{fig:vision-trainer}
+    \end{minipage}
+\end{figure}
+
+Upon launch, the user is able to select which mode they would like to use, as shown in \autoref{fig:vision-trainer}. The user can select the mode by using the following buttons:
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{0.8\textwidth}{|p{3cm}|X|}
+        \hline
+        \textbf{Button} & \textbf{Action} \\
+        \hline
+        \texttt{RPi Dataset Builder} & Opens the dataset collection tool, capturing images from the VNC window connected to the Pi \\
+        \hline
+        \texttt{Open Dataset Sorter} & Opens the dataset sorter tool that sorts a local dataset and reads the labels if they exist \\
+        \hline
+        \texttt{Open Resistor Band Annotation} & Opens the resistor band annotation tool \\
+        \hline
+    \end{tabularx}
+    \caption{Main buttons for the dataset collection tool}
+    \label{tab:dataset-buttons}
+\end{table}
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[height=8cm]{example-image-c}
       \caption{Training mode screen}
       \label{fig:training-mode}
     \end{minipage}
@@ -73,11 +102,11 @@ As mentioned in \autoref{sec:data-annotation-tool}, a custom dataset annotation 
 
 As shown in \autoref{fig:training-mode}, to facilitate the collection of the dataset, the user interface was modified to include a "training mode" that allows the user to capture images of components to be used for training the computer vision system. As the camera feed must originate from the Pi, dataset collection is done on a machine connected to the Pi with VNC \cite{realvnc}, and the user interface is displayed on the VNC client. When \texttt{TRAININGMODE} is enabled, a purple border surrounds the camera feed, enabling the dataset tool to identify where the camera feed is located on the VNC window.
 
-The tool makes use of keybinds to capture images, to allow the user to capture images of components quickly, detailed in the following table:
+The tool makes use of keybinds to capture images, to allow the user to capture images of components quickly, detailed in the \autoref{tab:keybinds}.
 
 \begin{table}[H]
     \centering
-    \begin{tabularx}{0.8\textwidth}{|p{2cm}|X|}
+    \begin{tabularx}{0.8\textwidth}{|p{3cm}|X|}
         \hline
         \textbf{Key} & \textbf{Action} \\
         \hline
@@ -87,10 +116,124 @@ The tool makes use of keybinds to capture images, to allow the user to capture i
         \hline
         \texttt{Escape} & Return to the component selection screen \\
         \hline
+        \texttt{Mouse Left Click} & Draw line for OBB \\
+        \hline
+        \texttt{Mouse Middle Click} & Cancel OBB \\
+        \hline
     \end{tabularx}
     \caption{Main keybinds for the dataset collection tool}
     \label{tab:keybinds}
 \end{table}
+
+The dataset collection tool uses PyGetWindow \cite{pygetwindow_2020} to identify the VNC window, and PyAutoGUI \cite{pyautogui_2023} to capture the images. OpenCV's \texttt{cv2.findContours} function is used to find the largest contour within the image that is bordered by the purple rectangle, allowing it to effectively extract the camera feed from the VNC window.
+
+%  code block
+\begin{minipage}[H]{\textwidth}
+    \centering
+    \begin{minted}[linenos, fontsize=\footnotesize, breaklines]{python}
+    try:
+        realVNCWindow = pygetwindow.getWindowsWithTitle(REALVNC_WINDOW_NAME)[0]
+        realVNCWindow.activate()
+        pygetwindow.getWindowsWithTitle("RPi Dataset Builder")[0].activate()
+    except:
+        try:
+            realVNCWindow = pygetwindow.getWindowsWithTitle("Component Sorter")[0]
+            realVNCWindow.activate()
+            pygetwindow.getWindowsWithTitle("RPi Dataset Builder")[0].activate()
+        except:
+            self.imgBorder.configure(bg_color=BORDER_COLOUR_FAILED)
+            print("No Window Found")
+            return
+    # Capture the image
+    screenshotPil = pyautogui.screenshot(region=(realVNCWindow.left, realVNCWindow.top, realVNCWindow.width, realVNCWindow.height))
+    # Convert to OpenCV format
+    screenshotCv = numpy.array(screenshotPil)
+    # Find the contours defined by the pink square
+    mask = cv2.inRange(cv2.cvtColor(screenshotCv, cv2.COLOR_BGR2HSV), LOWER_THRESHOLD, UPPER_THRESHOLD)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    \end{minted}
+    \captionof{listing}{Camera feed extraction from VNC window}
+\end{minipage}
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/python/uncaptured.jpg}
+      \caption{Uncaptured camera feed with red border}
+        \label{fig:uncaptured}
+    \end{minipage}
+\end{figure}
+
+If the camera feed is not captured (it may be obscured), the border of the camera feed will turn red, as shown in \autoref{fig:uncaptured}, indicating that the camera feed was not captured, otherwise it will turn green, as shown in \autoref{fig:captured}. In \autoref{fig:uncaptured}, the user is selecting which component to sort on the component selection screen, and has a selection from the following components: 
+\begin{multicols}{2}
+    \begin{mylist}
+        
+        \item Resistors
+        \item Capacitors
+        \item Ceramic Capacitors
+        \item Inductors
+        \item Diodes
+        \item MOSFETs
+        \item Transistors
+        \item LEDs
+        \item Wires
+        \item ICs
+        \item Film Capacitors
+    \end{mylist}
+\end{multicols}
+
+The user can select the component to sort by clicking on the component button or by using the hotkey indicated to the left of the button.  
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/python/captured.jpg}
+      \caption{Successfully captured camera feed with green border and annotated resistor}
+        \label{fig:captured}
+    \end{minipage}
+\end{figure}
+
+In \autoref{fig:captured}, the user has successfully captured the camera feed, and has annotated a resistor. The tool has hotkeys for quickly annotating the band and retains the configuration of the band between images, allowing for quick annotation of resistors (as the user would take multiple angles of the same resistor). During band annotation, the program automatically calculates what the value of the resistor should be, including tolerances, and displays this on the screen, to help prevent the mislabelling of the resistors. The bands and value are then saved in the filename of the image and label, allowing the resistor value model to be trained based off the file names. For eaxmple, in \autoref{fig:captured}, the resistor will be saved as \texttt{obb\_resistor\_blue\_grey\_black\_red\_brown\_680E2-1\_1.png}; the value of the resistor is 68 k$\Omega$, with a tolerance of 1\% and is the first image of this value in the dataset.
+
+The user can also draw the OBB by clicking and dragging the mouse, and can cancel the OBB by clicking the middle mouse button. The tool automatically connects the first and last points to form the OBB, showing a gray dotted line so the user can verify the OBB is correct. The user can then save the image by pressing the \texttt{Enter} key, or return to the component selection screen by pressing the \texttt{Escape} key.
+
+Originally, it was thought that the OBB model learns the correct left-right orientation of objects by the order of which the vertexes are joined, and this is represented in the tool with two orange arrows, showing the desired right-side up orientation of the resistor. However, this was found to be incorrect, and the OBB model only learns the bounding box of the object, and not the orientation of the object. This was discovered during the training of the OBB model, as discussed in \autoref{sec:computer-vision}
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\columnwidth]{imgs/python/capcapture.jpg}
+      \caption{Annotated Ceramic Capacitor}
+      \label{fig:capcapture}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\columnwidth]{imgs/python/ledcapture.jpg}
+      \caption{Annotated LED}
+      \label{fig:indcapture}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+\autoref{fig:capcapture} shows an annotated ceramic capacitor, and \autoref{fig:indcapture} shows an annotated LED, demonstrating the tool's ability to annotate components of different shapes and sizes.
+
+In addition to regular component identification using the YOLO-OBB model, a separate model was trained to identify the value of resistors, which is discussed in more detail in \autoref{sec:computer-vision}. This dataset is collected by using the classification model to identify the resistor, and then the bounding box is used to crop the image to the resistor. The cropped image then contains the neccessary information to train the resistor value model, such as the bands and the value of the resistor, but is missing the location of the bands in the image, and the orientation of the resistor, which would help it determine what the first band is. This means a tool is still required to annotate the resistor bands.
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/python/resistorannotate.jpg}
+        \caption{Resistor band annotation tool}
+        \label{fig:resistorannotate}
+    \end{minipage}
+\end{figure}
+
+As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor being annotated, with the bands being drawn on the resistor. The user only has to click on the location of the bands, and does not need to manually annotate what band the user is clicking on; the information of the order of the bands in encoded in the filename as discussed earlier. The user only needs to indicate where the 'stem' of the resistor is, indicated by the yellow box, enabling the tool to identify the orientation of the resistor, and then allowing the resistor value model to be trained. Clicking on the resistor automatically draws a bounding box centered at the band location with the current band colour, and then saves the image and label in the same way in the YOLO format (not the YOLO-OBB format as the component identification model will always produce resistors upright). The format is discussed in more detail in \autoref{sec:computer-vision}.
 
 
 
