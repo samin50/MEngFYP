@@ -1,5 +1,62 @@
-As mentioned in \autoref{sec:design-and-system-architecture}, the software for the system is written in Python and is run entirely on the Raspberry Pi 4B. The software is divided into three main components: the user interface, the computer vision system, and the system controller which manages the hardware components of the system. The software is designed to be modular, with each component being able to run independently of the others. This allows for easier debugging and testing of the system, as well as making it easier to add new features in the future.
+As mentioned in \autoref{sec:design-and-system-architecture}, the software for the system is written in Python and is run entirely on the Raspberry Pi 4B. The software is divided into three main components: the user interface, the computer vision system, and the system controller which manages the hardware components of the system. The software is designed to be modular, with each component being able to run independently of the others. This allows for easier debugging and testing of the system, as well as making it easier to add new features in the future. All written Python code adheres to a style defined in a \texttt{.pylintrc} file, which is a configuration file for the pylint\cite{pylint} linter. This ensures that the code is consistent and readable. The code is also documented using docstrings for readability and maintainability.
 
+All software constants are defined in a \texttt{constants.py} file, which is imported by all other Python files, allowing for easy modification of constants that define the behaviour of the system which is useful for testing and debugging.
+
+Additionally, a lot of thought went into streamlining the development process to ensure that the system is easy to develop and maintain. For example, Visual Studio Code's\cite{vscode} Remote SSH extension is used to develop the system remotely, as it allows developing the system on a much more powerful laptop, while using the familiar VSCode environment with any extensions that help streamline the development process. This is crucial as the Pi is not very powerful, so compiling and running the system on the Pi may be slow and cumbersome.
+
+During development, the Pi connects to the laptop's Wi-Fi hotspot and is configured to be discoverable with the Pi's hostname, facilitating easy access to the Pi through SSH and a VNC Viewer without needing the Pi's IP address, which is dynamic. The Pi also makes use of SSH keys, allowing connection to the Pi without needing to enter a password every time, ensuring quick and easy access.
+
+% Code block
+\begin{minipage}[H]{\textwidth}
+    \centering
+    \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{python}
+    # Allow development on non-Raspberry Pi devices
+    try:
+        import RPi.GPIO as GPIO # type: ignore
+        RESIZEFLAG = False
+        print("Using real hardware!")
+    except ImportError:
+        from src.common.simulate import GPIO
+        RESIZEFLAG = True
+        print("Simulating missing hardware!")
+    \end{minted}
+    \captionof{listing}{Cross-platform GPIO import}
+    \label{code:cross-platform-gpio}
+\end{minipage}
+
+Additionally, as development is done on both a Windows laptop and the Pi, the code is written to be cross-platform, however certain libraries like the GPIO library are only available on the Pi, so a \texttt{simulate.py} file is used to simulate the GPIO pins on the laptop, allowing for development of the system without needing to be on the Pi as shown in \autoref{code:cross-platform-gpio}.
+
+% Code block
+\begin{minipage}[H]{\textwidth}
+    \centering
+    \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{python}
+    # Allow development on non-Raspberry Pi devices
+    class GPIO:
+    BCM = 0
+    IN, OUT = 0, 0
+    HIGH, LOW = 0, 0
+    PUD_DOWN, PUD_UP = 0, 0
+    FALLING, RISING = 0, 0
+    def setmode(_) -> None: pass
+    def setup(_, *__, **___) -> None: pass
+    def cleanup() -> None: pass
+    def output(_, __) -> None: pass
+    def add_event_detect(_, *__, **___) -> None: pass
+    # PWM emulation
+    class PWM:
+        def __init__(self, _, __) -> None: pass
+        def stop(self) -> None: pass
+        def start(self, _) -> None: pass
+        def ChangeDutyCycle(self, _) -> None: pass
+        def ChangeFrequency(self, _) -> None: pass
+    \end{minted}
+    \captionof{listing}{Example simulation of the GPIO library}
+    \label{code:simulate-gpio}
+\end{minipage}
+
+As shown in \autoref{code:simulate-gpio}, the \texttt{simulate.py} file contains a class called \texttt{GPIO} that emulates the GPIO library.
+
+The Pi uses Git\cite{git} for version control, and the repository is hosted on GitHub\cite{github}, with a dedicated branch for the Pi that is regularly updated with the main branch. The vision system and the laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring that all systems are running the same code. This is crucial as it enables development on a more powerful laptop, and then synchronises the changes to the Pi, without having to manually copy any files over.
 \subsubsection{User Interface}
 The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. From here, the user is able to\dots
 
@@ -15,9 +72,9 @@ The user interface allows the user to view and command the state of the system b
 
 As shown in \autoref{fig:ui}, the user interface consists\dots
 
-Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD\_UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
+Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
 
-The user interface also supports a "training mode", where the camera feed is enlarged in order to capture images of components to be used for training the computer vision system, done programmatically by toggling a flag called \texttt{TRAININGMODE} in the \texttt{LCD\_UI} class. This is only used during the dataset collection phase of the project, and is not used during the normal operation of the system. This is discussed in more detail in \autoref{sec:dataset-collection}.
+The user interface also supports a "training mode", where the camera feed is enlarged in order to capture images of components to be used for training the computer vision system, done programmatically by toggling a flag called \texttt{TRAININGMODE} in the \texttt{LCD UI} class. This is only used during the dataset collection phase of the project, and is not used during the normal operation of the system. This is discussed in more detail in \autoref{sec:dataset-collection}.
 
 \begin{figure}[H]
     \hfill
@@ -56,6 +113,18 @@ The Vision Handler is responsible for managing the camera feed, and performs the
       \label{fig:camera-disconnect}
     \end{minipage}
 \end{figure}
+
+\subsubsection{System Controller}
+\label{sec:system-controller}
+\todo{diagram of interupt/data flow?}
+The System Controller heavily leverages Python's \texttt{Multiprocessing} library to allow for the system to run multiple processes concurrently, allowing for the system to be more responsive while displaying the \texttt{LCD UI}. The System Controller is responsible for the following tasks:
+
+\begin{mylist}
+    \item Detecting a beam break and triggering procedure to sort the component
+    \item Coordinating the movement of the \texttt{Sweeper Controller} to sort the component
+    \item Relaying information back to the \texttt{LCD UI} to display the current state of the system
+    \item Handling the event of the beam break sensor being triggered while the system is in the process of sorting a component
+\end{mylist}
 
 \subsubsection{Dataset Collection}
 \label{sec:dataset-collection}
@@ -127,10 +196,10 @@ The tool makes use of keybinds to capture images, to allow the user to capture i
 
 The dataset collection tool uses PyGetWindow \cite{pygetwindow_2020} to identify the VNC window, and PyAutoGUI \cite{pyautogui_2023} to capture the images. OpenCV's \texttt{cv2.findContours} function is used to find the largest contour within the image that is bordered by the purple rectangle, allowing it to effectively extract the camera feed from the VNC window.
 
-%  code block
+% Code block
 \begin{minipage}[H]{\textwidth}
     \centering
-    \begin{minted}[linenos, fontsize=\footnotesize, breaklines]{python}
+    \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{python}
     try:
         realVNCWindow = pygetwindow.getWindowsWithTitle(REALVNC_WINDOW_NAME)[0]
         realVNCWindow.activate()
@@ -233,7 +302,5 @@ In addition to regular component identification using the YOLO-OBB model, a sepa
     \end{minipage}
 \end{figure}
 
-As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor being annotated, with the bands being drawn on the resistor. The user only has to click on the location of the bands, and does not need to manually annotate what band the user is clicking on; the information of the order of the bands in encoded in the filename as discussed earlier. The user only needs to indicate where the 'stem' of the resistor is, indicated by the yellow box, enabling the tool to identify the orientation of the resistor, and then allowing the resistor value model to be trained. Clicking on the resistor automatically draws a bounding box centered at the band location with the current band colour, and then saves the image and label in the same way in the YOLO format (not the YOLO-OBB format as the component identification model will always produce resistors upright). The format is discussed in more detail in \autoref{sec:computer-vision}.
-
-
+As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor being annotated, with the bands being drawn on the resistor. The user only has to click on the location of the bands, and does not need to manually annotate what band the user is clicking on; the information of the order of the bands in encoded in the filename as discussed earlier, so the tool can automatically determine what band the user is clicking on. The user only needs to indicate where the 'stem' of the resistor is, indicated by the yellow box, enabling the tool to identify the orientation of the resistor, and then allowing the resistor value model to be trained. Clicking on the resistor automatically draws a bounding box centered at the band location with the current band colour, and then saves the image and label in the same way in the YOLO format (not the YOLO-OBB format as the component identification model will always produce resistors upright). The format is discussed in more detail in \autoref{sec:computer-vision}. 
 

@@ -34,9 +34,17 @@
 \renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
 \hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue, citecolor=blue}
 
-% Code snippet
+% Minted Setup
 \newenvironment{code}{\captionsetup{type=listing}}{}
 \SetupFloatingEnvironment{listing}{name=Code Snippet}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+% Texttt colouring
+\let\oldtexttt\texttt
+\renewcommand{\texttt}[1]{
+  \colorbox{bg}{
+    \oldtexttt{#1}
+  }%
+}
 
 % Todo notes
 \presetkeys{todonotes}{inline}{

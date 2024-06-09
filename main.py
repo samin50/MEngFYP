@@ -7,9 +7,11 @@ import pygame
 try:
     import RPi.GPIO as GPIO # type: ignore
     RESIZEFLAG = False
+    print("Using real hardware!")
 except ImportError:
     from src.common.simulate import GPIO
     RESIZEFLAG = True
+    print("Simulating missing hardware!")
 from src.pi4.lcd_ui import LCD_UI
 from src.pi4.fail_screen import FailScreen_UI
 from src.common.helper_functions import start_ui

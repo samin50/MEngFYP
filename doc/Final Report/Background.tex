@@ -1,9 +1,42 @@
 \section{Background}
 \label{sec:background}
-This chapter will delve into the background of the project, exploring the existing literature on computer vision systems for component identification, real-time computer vision architectures, and the mechanical design of existing sorting machines. This research will inform the design of the project and its various systems.
-Research into these topics will inform the decisions made in the design of the project and its various systems.
+This chapter will delve into the background of the project, exploring the existing literature on computer vision systems for component identification, real-time computer vision architectures, and the mechanical design of existing sorting machines. This research will inform the design of the project and its various systems. Research into these topics will inform the decisions made in the design of the project and its various systems.
 
-\begin{figure*}[t]
+\subsection{Existing Computer Vision Systems}
+A range of computer vision systems have been explored in the literature, ranging from PCA (Principle Component Analysis) \citet{Dhenge2013MechanicalNS} to more modern computer vision techniques like CNNs as used by \citet{Xu2020,s22239079}. However, given the rate of advancement of computer vision techniques, the techniques used in the literature reflect the state of the art at the time of writing, and so are not necessarily the most viable current techniques for the project, but they inspire novel approaches to the problem of component identification.
+
+PCA with ANN (Artificial Neural Networks) as used by \citet{Dhenge2013MechanicalNS} is a relatively simple but outdated statistical technique that was successful in identifying nuts and bolts, which are very distinct components. In this paper, PCA is used as a feature extractor and then fed directly into, though not explicitly mentioned, a FCL (Fully Connected Layer), as the classifier. Although a valid approach, CNNs (Convolutional Neural Networks) are known to be much more
+effective at feature extraction, and do not "have the problem of low recall and accuracy", as mentioned by \citet{Xu2020}, that PCA may suffer from, so this approach is not viable for the project. 
+
+The authors \citet{Xu2020} use the SqueezeNet CNN architecture to identify 22 different subcategories of electronic components, specifically resistors, capacitors, and inductors, achieving a TPR (True Positive Rate) of 99.999\% with only a 2.67ms average inference time on a GTX 1050 2GB GPU (released in 2016) which is an impressive result. This work shows that a CNN is a viable approach to the problem of component identification, helping to inform the design of the project's computer vision system.
+
+The paper by \citet{8939034} discusses the use of an SVM (Support Vector Machine) to characterise resistors, by identifying the resistor's centroid (centre of mass), determining the resistor's orientation, and then analysing the bands to determine the resistor's value. This is directly applicable to the project, as it is a viable approach to identifying resistors, which are very distinct from other components, given the presence of colour bands. The paper's novel approach to identifying the resistor values allows it to achieve high accuracy (86\%, however, the test images used are resistors that are positioned far away from the camera, as shown in  \autoref{fig:resistordata}, and so the bands are very small, which will not be the case in the project's vision system, so the accuracy will likely be higher) which makes it a very promising resource for the project.
+
+
+\begin{figure}[H]
+  \begin{minipage}[t]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/feeder.jpg}
+    \caption{VBF \cite{nam2019design}}
+    \label{fig:feeder}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.33\textwidth}
+      \centering
+      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/conveyor.jpg}
+      \caption{Conveyor Bel \cite{Dhenge2013MechanicalNS}}
+      \label{fig:conveyor}
+      \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/resistordata.jpg}
+    \caption{Resistor Test Set \cite{8939034}}
+    \label{fig:resistordata}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
   \begin{minipage}[t]{0.49\textwidth}
     \centering
     \includegraphics[width=\textwidth,height=5cm]{imgs/articles/sparseml-workflow.png}
@@ -15,52 +48,10 @@ Research into these topics will inform the decisions made in the design of the p
       \includegraphics[width=\textwidth,height=5cm]{imgs/articles/yoloperf.jpg}
       \caption{DeepSparse Performance \cite{neuralmagic}}
       \end{minipage}
-\end{figure*}
-
-\subsection{Existing Computer Vision Systems}
-A range of computer vision systems have been explored in the literature, ranging from PCA (Principle Component Analysis) \citet{Dhenge2013MechanicalNS} to more modern computer vision techniques like CNNs as used by \citet{Xu2020,s22239079}. However, given the rate of advancement of computer vision
-techniques, the techniques used in the literature reflect the state of the art at the time of writing, and so are not necessarily the most viable current techniques for the project, but they inspire novel approaches to the problem of component identification.
-
-PCA with ANN (Artificial Neural Networks) as used by \citet{Dhenge2013MechanicalNS} is a relatively simple but outdated statistical technique that was successful in identifying nuts and bolts, which are very distinct components. 
-In this paper, PCA is used as a feature extractor and then fed directly into, though not explicitly mentioned, a FCL (Fully Connected Layer), as the classifier. Although a valid approach, CNNs (Convolutional Neural Networks) are known to be much more
-effective at feature extraction, and do not "have the problem of low recall and accuracy", as mentioned by \citet{Xu2020}, that PCA may suffer from, so this approach is not viable for the project. 
-
-The authors \citet{Xu2020} use the SqueezeNet CNN architecture to identify 22 different subcategories of electronic components, specifically resistors, capacitors, and inductors, achieving a TPR (True Positive Rate) of 99.999\% with only a 2.67ms average inference time on a 
-GTX 1050 2GB GPU (released in 2016) which is an impressive result. This work shows that a CNN is a viable approach to the problem of component identification, helping to inform the design of the project's computer vision system.
-
-The paper by \citet{8939034} discusses the use of an SVM (Support Vector Machine) to characterise resistors, by identifying the resistor's centroid (centre of mass), determining the resistor's orientation, and then analysing the bands to determine the resistor's value.
-This is directly applicable to the project, as it is a viable approach to identifying resistors, which are very distinct from other components, given the presence of colour bands. The paper's novel approach to identifying the resistor values allows it to achieve high accuracy (86\%, however,
-the test images used are resistors that are positioned far away from the camera, as shown in  \autoref{fig:resistordata}, and so the bands are very small, which will not be the case in the project's vision system, so the accuracy will likely be higher) which makes it a very promising resource for the project.
-
-
-\begin{figure*}[t]
-  \begin{minipage}[t]{0.33\textwidth}
-    \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/feeder.jpg}
-    \caption{VBF\cite{nam2019design}}
-    \label{fig:feeder}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.33\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/conveyor.jpg}
-      \caption{Conveyor Belt\cite{Dhenge2013MechanicalNS}}
-      \label{fig:conveyor}
-      \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.33\textwidth}
-    \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/articles/resistordata.jpg}
-    \caption{Resistor Test Set\cite{8939034}}
-    \label{fig:resistordata}
-  \end{minipage}
-\end{figure*}
+\end{figure}
 
 \subsection{Computer Vision Architectures}
-For the problem of component identification, the computer vision system must be able to identify components in real-time, as the components may eventually be moving on a conveyor belt, captured using
-a camera facing down at the components. This means that the computer vision system must be able to identify components in a very short amount of time, and so the system must be computationally efficient.
-The envisioned system is designed to be self-contained, and as described in \autoref{sec:implementation} (Implementation), the system will run on a Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4},
-and must also be accurate and able to control the other systems in the project in real-time.
+For the problem of component identification, the computer vision system must be able to identify components in real-time, as the components may eventually be moving on a conveyor belt, captured using a camera facing down at the components. This means that the computer vision system must be able to identify components in a very short amount of time, and so the system must be computationally efficient. The envisioned system is designed to be self-contained, and as described in \autoref{sec:implementation} (Implementation), the system will run on a Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4}, and must also be accurate and able to control the other systems in the project in real-time.
 
 This requires the Computer Vision system to be both computationally efficient and accurate, which is a difficult balance to strike.
 
@@ -73,23 +64,18 @@ Other papers like \citet{Guo2021} also comment on YOLOv4's effectiveness at iden
 on YOLOv4's ability to run in real-time, achieving 67 FPS, albeit on a powerful NVIDIA TITAN Xp GPU. For the Raspberry Pi 3B, the paper by \citet{9166199} has shown to run YOLOv3 at a very low 1 FPS,
 with an IoU (Intersection over Union) accuracy of 86.7\%, which is relatively low.
 
-However, efforts made by Neural Magic \cite{neuralmagic} in the optimisation of YOLOv5 and YOLOv8 show performance improvements of up to 10x on CPUs, through their open-source 
-optimisation toolkit SparseML \cite{sparseml} and CPU inferencing runtime, DeepSparse \cite{deepsparse}; a very promising result.
+However, efforts made by Neural Magic \cite{neuralmagic} in the optimisation of YOLOv5 and YOLOv8 show performance improvements of up to 10x on CPUs, through their open-source optimisation toolkit SparseML \cite{sparseml} and CPU inferencing runtime, DeepSparse \cite{deepsparse}; a very promising result.
 
 \subsection{Training Methods}
-When training a neural network, it is important to have training data. For a computer vision system, this means having a dataset of images that are representative of the conditions that the system will be used in and
-are well-labeled with bounding boxes and class labels. It is important to have a large dataset to ensure that the model is robust and generalises well, which is time-consuming to create.
+When training a neural network, it is important to have training data. For a computer vision system, this means having a dataset of images that are representative of the conditions that the system will be used in and are well-labeled with bounding boxes and class labels. It is important to have a large dataset to ensure that the model is robust and generalises well, which is time-consuming to create.
 
-To solve this problem, a paper by \citet{Yang_2023} proposes many different training techniques, the most promising of which is semi-supervised learning. In this approach, the model is trained on a small labeled dataset, and then
-used to label a large unlabelled dataset, which is reviewed and corrected by a human.
+To solve this problem, a paper by \citet{Yang_2023} proposes many different training techniques, the most promising of which is semi-supervised learning. In this approach, the model is trained on a small labeled dataset, and then used to label a large unlabelled dataset, which is reviewed and corrected by a human.
 
-This process is repeated until the model is sufficiently accurate, and then the model is trained on the large labeled dataset. This approach
-is very promising, as it allows for the training of a robust model with a large dataset, without the time-consuming process of manually labeling the entire dataset.
+This process is repeated until the model is sufficiently accurate, and then the model is trained on the large labeled dataset. This approach is very promising, as it allows for the training of a robust model with a large dataset, without the time-consuming process of manually labeling the entire dataset.
 
 \subsection{Mechanical Design}
 
-\noindent
-\textbf{Transport Mechanisms} \\
+\subsubsection{Transport Mechanisms}
 The paper by \citet{Dhenge2013MechanicalNS} depicts a conveyor belt system that transports nuts and bolts to a computer vision system for identification, which aligns with the goals of the project. 
 The hardware prototype is shown in \autoref{fig:conveyor}, and a down-facing webcam is used to capture images of the components as they pass by. The webcam uses Principle Component Analysis (PCA) to identify the components,
 which will be discussed in the next section.
@@ -109,8 +95,7 @@ This configuration would enable the user to place the component on an acrylic pl
 Having the camera face-down would block the user's view of the component, which would be an inconvenience, and as such, the current design of the system features an up-facing camera. However, 
 this will be changed to reflect the research outlined above, in the next stage of the project.
 
-\noindent
-\textbf{Bowl Feeders} \\
+\subsubsection{Bowl Feeders}
 While researching for this project, and especially in videos\cite{videobowlfeeder}, it seems most industrial sorting machines use a Vibratory Bowl Feeder (VBF) to help feed components into the sorting system;
 as shown in \autoref{fig:feeder}, the VBF consists of a bowl that vibrates coupled with a spring and electromagnet.
 The paper by \citet{nam2019design} explores the optimal design of a VBF for USB keycaps, by attempting to identify the ideal parameters for the structure of the bowl,
