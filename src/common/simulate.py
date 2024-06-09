@@ -12,13 +12,15 @@ from src.common.constants import CAMERA_RESOLUTION
 # Classes
 class GPIO:
     BCM = 0
-    OUT = 0
-    HIGH = 0
-    LOW = 0
+    IN, OUT = 0, 0
+    HIGH, LOW = 0, 0
+    PUD_DOWN, PUD_UP = 0, 0
+    FALLING, RISING = 0, 0
     def setmode(_) -> None: pass
-    def setup(_, __) -> None: pass
+    def setup(_, *__, **___) -> None: pass
     def cleanup() -> None: pass
     def output(_, __) -> None: pass
+    def add_event_detect(_, *__, **___) -> None: pass
     # PWM emulation
     class PWM:
         def __init__(self, _, __) -> None: pass

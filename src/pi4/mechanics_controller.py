@@ -1,7 +1,7 @@
 """
 Mechanics controller
 """
-from queue import Queue
+from multiprocessing import Queue
 import time
 import multiprocessing
 import colorsys
@@ -34,7 +34,7 @@ class Sweeper_Controller:
         self.speed = 0
         self.running = True
         self.isHomed = False
-        self.sort = multiprocessing.Process(target=self.sort_process)
+        self.sort = multiprocessing.Process(target=self.sort_process, daemon=True)
         self.steps = 0
         self.queue = Queue()
         self.map = dict()
@@ -159,7 +159,6 @@ class Conveyor_Controller:
         GPIO.setup(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.OUT)
         GPIO.setup(GPIO_PINS['CONVEYOR_STEP_PIN'], GPIO.OUT)
         self.motor = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 1)
-        self.stop()
         self.speed = 0
         self.distance = 0
         self.startTime = time.time()
@@ -167,6 +166,7 @@ class Conveyor_Controller:
         self.distanceLock = multiprocessing.Lock()
         self.timeLock = multiprocessing.Lock()
         self.speedLock = multiprocessing.Lock()
+        self.stop()
 
     def start(self, speed:int=0) -> None:
         """
@@ -259,7 +259,7 @@ class WS2812B_Controller:
         print("Initializing LED strip")
         self.leds = PixelStrip(self.numleds, GPIO_PINS["NEOPIXEL_PIN"], 800000, 10, False, 255, 0)
         self.leds.begin()
-        self.rainbowProcess = multiprocessing.Process(target=self.rainbow_cycle, args=(self.queue, self.leds,))
+        self.rainbowProcess = multiprocessing.Process(target=self.rainbow_cycle, args=(self.queue, self.leds,), daemon=True)
         self.rainbowProcess.start()
 
     def rainbow_cycle(self, queue:multiprocessing.Queue, ledstrip: PixelStrip) -> None:
@@ -299,7 +299,7 @@ class WS2812B_Controller:
         trueColour = colorsys.hsv_to_rgb(*tuple(self.colour))
         rgbColour = (int(trueColour[0]*255), int(trueColour[1]*255), int(trueColour[2]*255))
         print(f"Setting colour to {rgbColour}")
-        self.colourProcess = multiprocessing.Process(target=self.change_colour_process, args=(rgbColour,))
+        self.colourProcess = multiprocessing.Process(target=self.change_colour_process, args=(rgbColour,), daemon=True)
         self.colourProcess.start()
         return trueColour
 
@@ -364,7 +364,7 @@ class System_Controller:
         """
         Interrupt function for when the beam is broken
         """
-        beamProcess = multiprocessing.Process(target=self.beam_broken)
+        beamProcess = multiprocessing.Process(target=self.beam_broken, daemon=True)
         beamProcess.start()
 
     def beam_broken(self) -> None:

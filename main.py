@@ -1,6 +1,7 @@
 """
 Main entry point for the application.
 """
+import traceback
 import pygame
 # Allow development on non-Raspberry Pi devices
 try:
@@ -33,8 +34,8 @@ class Component_Sorter:
             "conveyor_speed_callback" : self.systemController.conveyor.start,
         }
         self.clk = pygame.time.Clock()
-        self.lcdUI = LCD_UI(self.clk, callbacks, trainingMode, RESIZEFLAG)
-        self.systemController.set_lcd_handler(self.lcdUI)
+        self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG)
+        self.systemController.set_lcd_handle(self.lcdUI)
 
     def close(self) -> None:
         """
@@ -70,7 +71,7 @@ def run(trainingMode:bool) -> None:
                 systemObj.close()
             except:
                 pass
-            print(e)
+            traceback.print_exc()
             clk = pygame.time.Clock()
             failScreen = FailScreen_UI(clk, str(e))
             start_ui(

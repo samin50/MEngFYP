@@ -87,7 +87,6 @@
 \let\oldsection\section
 \renewcommand\section[1]{
   \pagebreak\
-  \vspace{2em}
   \oldsection{#1}
   {\hypersetup{hidelinks}\secttoc\thispagestyle{fancy}}
 }
@@ -193,7 +192,7 @@
 % Results
 % \include*{Results}
 % Evaluation
-% \include*{Evaluation}
+\include*{Evaluation}
 % Conclusion and Future Work
 \section{References}
 \bibliographystyle{plainnat}

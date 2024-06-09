@@ -373,11 +373,6 @@ As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break bea
 
 % For regular AABB (axis-aligned bounding box) detection, the YOLOv8 model trained on the COCO dataset \cite{cocodataset} would provide a good starting point. The COCO dataset contains 80 classes, and the performance of different sized YOLO models is shown in \autoref{tab:yoloperformance}.
 
-\subsubsection{Dataset Annotation}
-
-To train the YOLOv8-obb model, a dataset of images of components is required. The dataset must be annotated with the bounding boxes of the components in the images, which can be done using a tool such as Roboflow \cite{roboflow}. However, the components will only be visible from the Raspberry Pi, so it can become tedious to take images from the Pi, transfer them to a computer, annotate them, and repeat for every distinct value within the component and then for every type of component.
-
-Instead, the decision was made to design a custom dataset labelling tool that could directly capture images from the Raspberry Pi, annotate them, and save them locally for training. The dataset would be correctly structured for training with YOLO, facilitating the training process.
 
 \subsection{Software}
 \label{sec:electronics-and-software-integration}
@@ -393,7 +388,10 @@ The LCD UI is responsible for displaying the status of the system, such as the c
 The LCD UI is written with Pygame \cite{pygamedoc} and Pygame GUI \cite{pygamegui}, a Python library for creating graphical user interfaces. Pygame GUI builds upon the Pygame library, providing UI elements so that they do not need to be created from scratch. Pygame also provides camera support, allowing the Vision Handler to receive frames for inference or displaying the feed on the LCD UI. It also allows for precise control over what is being drawn and the event loop, allowing for a responsive UI.
 
 \subsubsection{Data Annotation Tool}
-As mentioned in \autoref{sec:real-time-object-detection}, a custom dataset labelling tool was designed to capture images from the Raspberry Pi, annotate them, and save them locally for training. The tool is responsible for capturing images from the camera, displaying them to the user, allowing the user to draw bounding boxes around the components, and saving the images and annotations to disk.
+\label{sec:data-annotation-tool}
+To train the YOLOv8-obb model, a dataset of images of components is required. The dataset must be annotated with the bounding boxes of the components in the images, which can be done using a tool such as Roboflow \cite{roboflow}. However, the components will only be visible from the Raspberry Pi, so it can become tedious to take images from the Pi, transfer them to a computer, annotate them, and repeat for every distinct value within the component and then for every type of component.
+
+Instead, the decision was made to design a custom dataset labelling tool that could directly capture images from the Raspberry Pi, annotate them, and save them locally for training. The dataset would be correctly structured for training with YOLO, facilitating the training process. The tool is responsible for capturing images from the camera, displaying them to the user, allowing the user to draw bounding boxes around the components, and saving the images and annotations to disk.
 
 This tool was written using CustomTkinter \cite{customtkinter}, a modern fork of the Tkinter library that provides a more modern look and feel, and is more customisable. CustomTkinter provides a high-level interface for creating GUIs, allowing for easy creation of UI elements and event handling. Draw loops are not needed as the UI is event-driven, allowing for easy development.
 
