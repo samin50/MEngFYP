@@ -1,3 +1,74 @@
 \todo{talk about yolo format}
 \todo{show pictures of model in action}
 \todo{show metrics of the model}
+
+As mentioned in \autoref{sec:background} and \label{sec:computer-vision-system}, the YOLO-OBB model \cite{yolov8} is used to classify and detect the electrical components, and the regular YOLO model was used for resistor value detection.
+
+\subsubsection{Component Identification}
+Using the dataset collection tool discussed in \autoref{sec:dataset-collection}, a total of 974 images were collected across 8 classes. The distribution of the dataset is shown in the following table:
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{0.5\textwidth}{|X|X|}
+    \hline
+    \textbf{Class} & \textbf{Number of Images} \\
+    \hline
+    Resistors & 259 \\
+    \hline
+    Capacitors & 164 \\
+    \hline
+    Ceramic Capacitors & 264 \\
+    \hline
+    Film Capacitors & 66 \\
+    \hline
+    Inductors & 52 \\
+    \hline
+    LEDs & 96 \\
+    \hline
+    Wires & 75 \\
+    \hline
+  \end{tabularx}
+  \caption{Distribution of the dataset}
+  \label{tab:dataset-distribution}
+\end{table}
+
+It is important to note that the 8 classes shown above are not the same type of components that were discussed in \autoref{sec:project-specification}. It was decided to do a smaller subset of classes due to the time it takes to collect a dataset, and the fact that the model can be extended to include more classes in the future. This model therefore serves as a proof of concept, and the model can be easily extended to include more classes in the future, due to the flexibility of the dataset collection tool and the YOLOv8 models.
+
+\todo{discuss trainer notebook}
+
+For the training of the model, and to determine model performance, the dataset was split into a 70-20-10 split for training, validation, and testing respectively. Data augmentation was also used as part of the training process to increase the diversity of the dataset and improve the model's generalisation capabilities. The specific augmentations used were discussed in \autoref{sec:image-processing}. 
+
+The following training parameters were set:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{0.9\textwidth}{|p{4cm}|p{1.5cm}|X|}
+    \hline
+    \textbf{Parameter} & \textbf{Value} & \textbf{Explanation} \\
+    \hline
+    Epochs & 100 & The number of times the model will see the entire dataset. Due to early stopping, the model will not necessarily train for the full 100 epochs. \\
+    \hline
+    Patience & 5 & The number of epochs to wait before early stopping; this helps to mitigate overfitting by cutting off training when the relative improvement between epochs is below a certain threshold. \\
+    \hline
+    Cosine LR Scheduler & True & A learning rate scheduler that adjusts the learning rate according to a cosine function. This helps to prevent the model from getting stuck in local minima during training and reaching a suboptimal solution. \\
+    \hline
+    Batch Size & -1 & The number of images to be processed in one iteration. The YOLO training process automatically detects the optimal batch size based on the GPU memory available. \\
+    \hline
+    Class Loss & 1.2 & The weight given to the classification loss. It was more important that the model correctly classify the components than it was to detect the bounding boxes accurately. \\
+    \hline
+    Box Loss & 1.0 & The weight given to the bounding box loss. \\
+    \hline
+    DFL (Dynamic Focal Loss) & 2.0 & A loss function that helps to manage unbalanced classes in the dataset, which is clearly the case in this dataset, with the smallest class having only 52 images (inductors), and the largest class having 264 images (resistors). \\
+    \hline
+  \end{tabularx}
+  \caption{Training Parameters}
+  \label{tab:training-parameters}
+\end{table}
+
+The model was trained using an NVIDIA GTX 3080 Ti GPU with 16GB of VRAM, which is more than capable of handling the training process. 
+
+\todo{talk about tensor board}
+\todo{show metrics}
+
+On this GPU, the model only takes ...
+
+Interestingly, if Class Loss is set to 1.0, Box Loss is set to 4.0, and DFL is set to 1.5, the model converges in around ~15 epochs, taking only ~2 minutes to train. However, the model's performance is slightly impacted, calculating metrics on the test set yields an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 77.8\%, but it was decided that the time savings were not worth it given it was only a few minutes of training time. The model was therefore trained with the parameters shown in \autoref{tab:training-parameters}.

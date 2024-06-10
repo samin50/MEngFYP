@@ -3,22 +3,22 @@ While the system has no legal considerations at this stage, it is important to c
 as it will be used in the Level 1 Labs.
 
 The primary ethical concern for the system is the impact on the environment, as it is designed to reduce the amount of waste produced by the Labs. As such, the system should be designed to be as energy-efficient as possible, and the materials used should be recyclable where possible,
-which has been achieved through the use of 3D printed parts in bio-degradable PLA plastic\cite{Ranakoti2022}, and low-power components, such as the Raspberry Pi.
+which has been achieved through the use of 3D printed parts in bio-degradable PLA plastic \cite{Ranakoti2022}, and low-power components, such as the Raspberry Pi.
 
 As the system is mechanical and electrical, many safety considerations need to be taken into account, which are discussed in the following sections.
 \subsection{Electrical Safety}
-As mentioned in Section \ref{sec:hardware} (Hardware), the system is powered by a 24V, 6.25A, 150W power supply, and must be stepped down to 5V for the Pi and 12V for the LED strip. This is achieved using an XL4015 Step Down Converter\cite{xl4015}, a variable step down converter that can output up to 75W.
+As mentioned in Section \ref{sec:hardware} (Hardware), the system is powered by a 24V, 6.25A, 150W power supply, and must be stepped down to 5V for the Pi and 12V for the LED strip. This is achieved using an XL4015 Step Down Converter \cite{xl4015}, a variable step down converter that can output up to 75W.
 Due to the potential of high-current carrying wires, the PSU has been enclosed in a 3D printed case, which prevents accidental contact with the PSU's terminals.
 
-A standard IEC C14 power connector and an RS Pro Snap-In Fused Rocker Switch\cite{rsproc14switch} are used to connect the PSU to the mains power.
+A standard IEC C14 power connector and an RS Pro Snap-In Fused Rocker Switch \cite{rsproc14switch} are used to connect the PSU to the mains power.
 As the power supply is a 6.25A power supply, a 6A fuse was chosen for the switch, which is the closest available fuse rating to the power supply's
 current rating. This ensures that the fuse will trigger before the power supply is damaged, should there be a short circuit in the system.
 
-For wiring the power supply and connecting the step-down converters, 18AWG wire was chosen which is rated for 17A\cite{18awgwire}, which is sufficient
+For wiring the power supply and connecting the step-down converters, 18AWG wire was chosen which is rated for 17A \cite{18awgwire}, which is sufficient
 for the system's power consumption. The wire is securely crimped to the power supply using a crimping tool.
 
 In addition, the power supply has been PAT tested by technicians in the Level 1 Labs and has been deemed safe for use.
-PAT (Portable Appliance Testing) is a process by which electrical appliances are routinely checked for safety\cite{patwiki}\cite{patspec}.
+PAT (Portable Appliance Testing) is a process by which electrical appliances are routinely checked for safety \cite{patwiki} \cite{patspec}.
 The following table describes the PAT testing results for my power supply as well as a description of the tests performed.
 
 \begin{table}[t]

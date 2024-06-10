@@ -1,8 +1,8 @@
-As mentioned in \autoref{sec:design-and-system-architecture}, the software for the system is written in Python and is run entirely on the Raspberry Pi 4B. The software is divided into three main components: the user interface, the computer vision system, and the system controller which manages the hardware components of the system. The software is designed to be modular, with each component being able to run independently of the others. This allows for easier debugging and testing of the system, as well as making it easier to add new features in the future. All written Python code adheres to a style defined in a \texttt{.pylintrc} file, which is a configuration file for the pylint\cite{pylint} linter. This ensures that the code is consistent and readable. The code is also documented using docstrings for readability and maintainability.
+As mentioned in \autoref{sec:design-and-system-architecture}, the software for the system is written in Python and is run entirely on the Raspberry Pi 4B. The software is divided into three main components: the user interface, the computer vision system, and the system controller which manages the hardware components of the system. The software is designed to be modular, with each component being able to run independently of the others. This allows for easier debugging and testing of the system, as well as making it easier to add new features in the future. All written Python code adheres to a style defined in a \texttt{.pylintrc} file, which is a configuration file for the pylint \cite{pylint} linter. This ensures that the code is consistent and readable. The code is also documented using docstrings for readability and maintainability.
 
 All software constants are defined in a \texttt{constants.py} file, which is imported by all other Python files, allowing for easy modification of constants that define the behaviour of the system which is useful for testing and debugging.
 
-Additionally, a lot of thought went into streamlining the development process to ensure that the system is easy to develop and maintain. For example, Visual Studio Code's\cite{vscode} Remote SSH extension is used to develop the system remotely, as it allows developing the system on a much more powerful laptop, while using the familiar VSCode environment with any extensions that help streamline the development process. This is crucial as the Pi is not very powerful, so compiling and running the system on the Pi may be slow and cumbersome.
+Additionally, a lot of thought went into streamlining the development process to ensure that the system is easy to develop and maintain. For example, Visual Studio Code's \cite{vscode} Remote SSH extension is used to develop the system remotely, as it allows developing the system on a much more powerful laptop, while using the familiar VSCode environment with any extensions that help streamline the development process. This is crucial as the Pi is not very powerful, so compiling and running the system on the Pi may be slow and cumbersome.
 
 During development, the Pi connects to the laptop's Wi-Fi hotspot and is configured to be discoverable with the Pi's hostname, facilitating easy access to the Pi through SSH and a VNC Viewer without needing the Pi's IP address, which is dynamic. The Pi also makes use of SSH keys, allowing connection to the Pi without needing to enter a password every time, ensuring quick and easy access.
 
@@ -56,7 +56,7 @@ Additionally, as development is done on both a Windows laptop and the Pi, the co
 
 As shown in \autoref{code:simulate-gpio}, the \texttt{simulate.py} file contains a class called \texttt{GPIO} that emulates the GPIO library.
 
-The Pi uses Git\cite{git} for version control, and the repository is hosted on GitHub\cite{github}, with a dedicated branch for the Pi that is regularly updated with the main branch. The vision system and the laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring that all systems are running the same code. This is crucial as it enables development on a more powerful laptop, and then synchronises the changes to the Pi, without having to manually copy any files over.
+The Pi uses Git \cite{git} for version control, and the repository is hosted on GitHub \cite{github}, with a dedicated branch for the Pi that is regularly updated with the main branch. The vision system and the laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring that all systems are running the same code. This is crucial as it enables development on a more powerful laptop, and then synchronises the changes to the Pi, without having to manually copy any files over. The repository can be found in the Appendix \ref{app:github}.
 \subsubsection{User Interface}
 The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. From here, the user is able to\dots
 
@@ -126,6 +126,8 @@ The System Controller heavily leverages Python's \texttt{Multiprocessing} librar
     \item Handling the event of the beam break sensor being triggered while the system is in the process of sorting a component
 \end{mylist}
 
+\todo{finish section}
+
 \subsubsection{Dataset Collection}
 \label{sec:dataset-collection}
 As mentioned in \autoref{sec:data-annotation-tool}, a custom dataset annotation tool was used to collect and annotate the dataset required to train the YOLO-OBB model used for component identification, and then extended to train a regular YOLO model for resistor value detection.
@@ -148,11 +150,11 @@ Upon launch, the user is able to select which mode they would like to use, as sh
         \hline
         \textbf{Button} & \textbf{Action} \\
         \hline
-        \texttt{RPi Dataset Builder} & Opens the dataset collection tool, capturing images from the VNC window connected to the Pi \\
+        \oldtexttt{RPi Dataset Builder} & Opens the dataset collection tool, capturing images from the VNC window connected to the Pi \\
         \hline
-        \texttt{Open Dataset Sorter} & Opens the dataset sorter tool that sorts a local dataset and reads the labels if they exist \\
+        \oldtexttt{Open Dataset Sorter} & Opens the dataset sorter tool that sorts a local dataset and reads the labels if they exist \\
         \hline
-        \texttt{Open Resistor Band Annotation} & Opens the resistor band annotation tool \\
+        \oldtexttt{Open Resistor Band Annotation} & Opens the resistor band annotation tool \\
         \hline
     \end{tabularx}
     \caption{Main buttons for the dataset collection tool}
@@ -179,15 +181,15 @@ The tool makes use of keybinds to capture images, to allow the user to capture i
         \hline
         \textbf{Key} & \textbf{Action} \\
         \hline
-        \texttt{Space} & Capture from VNC window \\
+        \oldtexttt{Space} & Capture from VNC window \\
         \hline
-        \texttt{Enter} & Save image but only if the image is captured and labelled \\
+        \oldtexttt{Enter} & Save image but only if the image is captured and labelled \\
         \hline
-        \texttt{Escape} & Return to the component selection screen \\
+        \oldtexttt{Escape} & Return to the component selection screen \\
         \hline
-        \texttt{Mouse Left Click} & Draw line for OBB \\
+        \oldtexttt{Mouse Left Click} & Draw line for OBB \\
         \hline
-        \texttt{Mouse Middle Click} & Cancel OBB \\
+        \oldtexttt{Mouse Middle Click} & Cancel OBB \\
         \hline
     \end{tabularx}
     \caption{Main keybinds for the dataset collection tool}

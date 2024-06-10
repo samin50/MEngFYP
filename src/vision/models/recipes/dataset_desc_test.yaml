@@ -1,0 +1,15 @@
+names:
+- 0: resistor
+- 1: capacitor
+- 2: ceramic_cap
+- 3: inductors
+- 4: diodes
+- 5: mosfet
+- 6: transistor
+- 7: leds
+- 8: wire
+- 9: ics
+- 10: film_cap
+path: ./full/current
+train: images/train
+val: images/test

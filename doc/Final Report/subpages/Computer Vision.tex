@@ -14,7 +14,7 @@ Additionally, careful consideration of the Computer Vision system pipeline was d
 
 \subsubsection{Data Collection}
 For the task of component identification, the computer vision system must be trained on data that is representative of the conditions
-it will be used in. As such, the data collection process is manual and time-consuming. For this reason, a customtkinter\cite{customtkinter} script was developed to aid in the data collection process.
+it will be used in. As such, the data collection process is manual and time-consuming. For this reason, a customtkinter \cite{customtkinter} script was developed to aid in the data collection process.
 The script allows easy labelling of images with bounding boxes and class labels; and will save the labels in a format that is compatible with
 the YOLOv8 model. The script also streamlines the labelling process using shortcut keys, and sorts each image into a folder based on
 the class label, making it easy to manage the data. Given that this is a custom script, features can be easily added or removed - it is likely
@@ -42,7 +42,7 @@ The script has support for multiple components, including:
 \noindent
 A screenshot of the script at work can be seen in Figure \ref{fig:customtool}.
 
-A Jupyter Notebook\cite{jupyter} was also developed to aid in developing the computer vision system. This is common practice as it
+A Jupyter Notebook \cite{jupyter} was also developed to aid in developing the computer vision system. This is common practice as it
 allows code to be run and the data associated with it to be inspected, which is very helpful for debugging purposes. It 
 has the capability of training every model that will be used in the computer vision system and contains features like
 data augmentation, checkpointing, and model evaluation.

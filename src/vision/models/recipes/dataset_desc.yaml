@@ -10,7 +10,6 @@ names:
 - 8: wire
 - 9: ics
 - 10: film_cap
-path: ./current
+path: ./full/current
 train: images/train
 val: images/val
-test: images/test

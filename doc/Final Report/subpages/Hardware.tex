@@ -3,19 +3,19 @@
   \begin{minipage}[t]{0.22\textwidth}
     \centering
     \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/pi4_labelled.png}
-    \caption{Raspberry Pi 4 Model B 2GB\cite{pi4}}
+    \caption{Raspberry Pi 4 Model B 2GB \cite{pi4}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
     \centering
     \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/dfrobot_screen.jpg}
-    \caption{DFRobot 7" Touchscreen Display\cite{7inchdisplay}}
+    \caption{DFRobot 7" Touchscreen Display \cite{7inchdisplay}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
     \centering
     \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/parts/okdo_camera.jpg}
-    \caption{Okdo Adjustable Focus OV5647 Camera\cite{okdocamera}}
+    \caption{Okdo Adjustable Focus OV5647 Camera \cite{okdocamera}}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.22\textwidth}
@@ -37,10 +37,10 @@ as well as the cost of each component. A sample of this spreadsheet can be found
 \subsubsection{Hardware} \label{sec:hardware}
 The following hardware components have been used in the system:
 \begin{mylist}
-  \item Raspberry Pi 4 Model B 2GB\cite{pi4}
-  \item 7" Touchscreen Display\cite{7inchdisplay}
+  \item Raspberry Pi 4 Model B 2GB \cite{pi4}
+  \item 7" Touchscreen Display \cite{7inchdisplay}
   \item 24V dc, 6.25A, 150W Power Supply
-  \item Okdo Adjustable Focus OV5647 Camera\cite{okdocamera}
+  \item Okdo Adjustable Focus OV5647 Camera \cite{okdocamera}
   \item LED Light Ring
   \item NEMA17 42-40 Stepper Motor + DRV8825 Driver
 \end{mylist}
@@ -61,14 +61,14 @@ An alternative to the Pi family of SoCs are Arduinos, but while they are capable
 and potentially drive an LCD, the microcontrollers are typically not powerful enough to run the computer vision system and stream video from the camera,
 so they cannot be used as a replacement for the Pi.
 
-A viable alternative to the Pi is a NVIDIA Jetson Nano\cite{jetsonnano}, as it is designed for computer vision applications and has a dedicated GPU. The dedicated GPU
+A viable alternative to the Pi is a NVIDIA Jetson Nano \cite{jetsonnano}, as it is designed for computer vision applications and has a dedicated GPU. The dedicated GPU
 would reduce the likelihood of the computer vision system being a bottleneck, and it has a CSI port for the camera; in terms of CPU performance, the Nano is weaker than the Pi,
-having a quad-core ARM Cortex-A57, whereas the Pi has a quad-core ARM Cortex-A72\cite{pi4}. However, the worse CPU performance is offset by the dedicated GPU, and the Nano has 4GB of RAM, 
+having a quad-core ARM Cortex-A57, whereas the Pi has a quad-core ARM Cortex-A72 \cite{pi4}. However, the worse CPU performance is offset by the dedicated GPU, and the Nano has 4GB of RAM, 
 making the Nano a very attractive alternative to the Pi. The Nano's drawback is that it is significantly more expensive than the Pi (up to 3x from retailers), and
 given the ability to optimise the computer vision system as discussed in Section \ref{sec:background} (Background), the Pi is still
 a viable choice for the computer vision system.
 
-To address the lack of a dedicated GPU for inference, an article from Medium\cite{benchmarks} benchmarked the Pi's performance on various computer vision tasks with 
+To address the lack of a dedicated GPU for inference, an article from Medium \cite{benchmarks} benchmarked the Pi's performance on various computer vision tasks with 
 various accelerators like the Intel Neural Compute Stick 2 and the Google Coral USB Accelerator against other SoCs like the Jetson Nano and the Coral Dev Board. 
 It was found that the Coral Dev Board was the best performing, however the Pi using optimisation libraries like TensorFlow Lite showed  promising results, which
 helps to strengthen the argument for using the Pi for the computer vision system, especially with the SparseML and DeepSparse libraries that were discussed in Section \ref{sec:background} (Background).
@@ -112,7 +112,7 @@ For the Computer Vision system, a camera is required to capture images of the co
 was chosen as it is CSI compatible, meaning it can be connected directly to the Raspberry Pi, and has a manual focus ring, allowing
 it to be used as a macro camera to capture images of small components placed directly above it. The manual focus ring allows the camera
 to be specifically tuned to the design of the system, allowing for the best possible image quality. It also
-has a 5MP sensor\cite{okdospec}, which is sufficient for the computer vision system, as high-resolution images would be preprocessed and reduced,
+has a 5MP sensor \cite{okdospec}, which is sufficient for the computer vision system, as high-resolution images would be preprocessed and reduced,
 only adding to the amount of processing required.
 
 % LED
