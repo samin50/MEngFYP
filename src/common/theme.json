@@ -31,5 +31,70 @@
         "misc": {
             "text_horiz_alignment": "right"
         }
+    },
+    "#center_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_vert_alignment" : "bottom",
+            "text_horiz_alignment": "center"
+            
+        }
+    },
+    "#top_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_vert_alignment" : "top",
+            "text_horiz_alignment": "left"
+            
+        }
+    },
+    "#topright_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_vert_alignment" : "top",
+            "text_horiz_alignment": "right"
+            
+        }
+    },
+    "#bottomleft_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_vert_alignment" : "bottom",
+            "text_horiz_alignment": "left"
+            
+        }
+    },
+    "#bottomright_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_vert_alignment" : "bottom",
+            "text_horiz_alignment": "right"
+            
+        }
     }
 }
