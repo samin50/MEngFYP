@@ -196,7 +196,7 @@ The tool makes use of keybinds to capture images, to allow the user to capture i
     \label{tab:keybinds}
 \end{table}
 
-The dataset collection tool uses PyGetWindow \cite{pygetwindow_2020} to identify the VNC window, and PyAutoGUI \cite{pyautogui_2023} to capture the images. OpenCV's \texttt{cv2.findContours} function is used to find the largest contour within the image that is bordered by the purple rectangle, allowing it to effectively extract the camera feed from the VNC window.
+The dataset collection tool uses PyGetWindow \cite{pygetwindow_2020} to identify the VNC window, and PyAutoGUI \cite{pyautogui_2023} to capture the images. OpenCV's \cite{home_2024} \texttt{cv2.findContours} function is used to find the largest contour within the image that is bordered by the purple rectangle, allowing it to effectively extract the camera feed from the VNC window.
 
 % Code block
 \begin{minipage}[H]{\textwidth}

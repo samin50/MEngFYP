@@ -132,7 +132,7 @@ Due to the complexity of the system, it is vital to ensure that the system is as
     \end{minipage}
 \end{figure}
 
-An alternative to the IR Beam Break Sensor would be to use software approaches on the Vision Handler to detect the presence of objects on the conveyor belt, for example using OpenCV to detect large changes between successive frames. This could be implemented in a number of ways such as background subtraction or histogram comparison. However, this would also require the Vision Handler to constantly process frames, which would increase the computational overhead of the system. The IR Beam Break Sensor is a more efficient solution as it allows the system to only process images when an object is detected on the conveyor belt.
+An alternative to the IR Beam Break Sensor would be to use software approaches on the Vision Handler to detect the presence of objects on the conveyor belt, for example using OpenCV \cite{home_2024} to detect large changes between successive frames. This could be implemented in a number of ways such as background subtraction or histogram comparison. However, this would also require the Vision Handler to constantly process frames, which would increase the computational overhead of the system. The IR Beam Break Sensor is a more efficient solution as it allows the system to only process images when an object is detected on the conveyor belt.
 
 An approach to dynamically adjust the frame rate of the camera could be considered, increasing frame rates when there are no objects on the conveyor belt in anticipation of objects being placed on the conveyor belt, and reducing frame rates when objects are detected to reduce computational overhead. This could potentially impose resource contention between the Vision Handler and the System Controller while it is controlling the Sweeper and Conveyor Belt. The framerate also needs to take into consideration the conveyor speed to not miss objects, requiring both more complexity and computational resources.
 
@@ -348,31 +348,8 @@ From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best perfor
 As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break beam sensor to detect the presence of objects on the conveyor belt, reducing the potential of the Vision Handler to be a bottleneck due to constant inference. With the promising performance increase of using the DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} libraries to optimise the model for the Raspberry Pi, the YOLOv8n-obb model will be used for the project.
 
 
-% \begin{table}[H]
-%     \centering
-%     {\fontsize{12pt}{14pt}\selectfont
-%     \begin{tabular}{|l|l|l|l|l|}
-%         \hline
-%         \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50-95}}} & \textbf{CPU ONNX (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\
-%         \hline
-%         YOLOv8n & 37.3 & 80.4 & 3.2 & 8.7 \\
-%         \hline
-%         YOLOv8s & 44.9 & 128.4 & 11.2 & 28.6 \\
-%         \hline
-%         YOLOv8m & 50.2 & 234.7 & 25.9 & 78.9 \\
-%         \hline
-%         YOLOv8l & 52.9 & 375.2 & 43.7 & 165.2 \\
-%         \hline
-%         YOLOv8x & 53.9 & 479.1 & 68.2 & 257.8 \\
-%         \hline
-%     \end{tabular}
-%     }
-%     \caption{YOLOv8 Model Performance \cite{yolov8}}
-%     \label{tab:yoloperformance}
-% \end{table}
-
-% For regular AABB (axis-aligned bounding box) detection, the YOLOv8 model trained on the COCO dataset \cite{cocodataset} would provide a good starting point. The COCO dataset contains 80 classes, and the performance of different sized YOLO models is shown in \autoref{tab:yoloperformance}.
-
+\todo{justify why training component detcection and resistor detection model}
+\todo{flow diagram of cv pipeline?}
 
 \subsection{Software}
 \label{sec:electronics-and-software-integration}
