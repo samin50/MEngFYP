@@ -8,8 +8,9 @@ from src.common.constants import CAMERA_RESOLUTION, FPS_FONT_SIZE, CAMERA_FRAMER
 from src.common.helper_functions import start_ui
 from src.pi4.vision_handler import Vision_Handler
 class CameraFeed:
-    def __init__(self, size:tuple, cameraDisplay:pygame.display, visionHandler:Vision_Handler, trainingMode:bool=False) -> None:
+    def __init__(self, size:tuple, cameraDisplay:pygame.display, componentDisplay:pygame.display, visionHandler:Vision_Handler, trainingMode:bool=False) -> None:
         self.cameraDisplay = cameraDisplay
+        self.componentDisplay = componentDisplay
         self.size = size
         self.trainingMode = trainingMode
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
@@ -22,7 +23,7 @@ class CameraFeed:
         self.drawFPSEvent = pygame.USEREVENT + 100
         pygame.time.set_timer(self.drawFPSEvent, 1000 // CAMERA_FRAMERATE)
 
-    def update_frame(self) -> pygame.Surface:
+    def update_frame(self) -> None:
         """
         Obtain the current frame from the camera, if available
         """
@@ -41,7 +42,8 @@ class CameraFeed:
             self.resizedFrame = backgroundFrame
         # Draw the frame
         self.cameraDisplay.blit(self.resizedFrame, (0,0))
-        return self.currentFrame
+        self.componentDisplay.blit(self.vision.get_component_frame(), (0,0))
+        # return self.currentFrame
 
     def event_handler(self, event:pygame.event.Event) -> None:
         """
@@ -56,7 +58,8 @@ if __name__ == '__main__':
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
-    camera = CameraFeed(CAMERA_RESOLUTION, display, TRAINING_MODE)
+    comp = pygame.display.set_mode((0, 0), 0)
+    camera = CameraFeed(CAMERA_RESOLUTION, display, comp, TRAINING_MODE)
     start_ui(
         loopConditionFunc=lambda: True,
         loopFunction=[],

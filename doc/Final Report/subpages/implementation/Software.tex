@@ -10,15 +10,16 @@ During development, the Pi connects to the laptop's Wi-Fi hotspot and is configu
 \begin{minipage}[H]{\textwidth}
     \centering
     \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{python}
-    # Allow development on non-Raspberry Pi devices
-    try:
-        import RPi.GPIO as GPIO # type: ignore
-        RESIZEFLAG = False
-        print("Using real hardware!")
-    except ImportError:
-        from src.common.simulate import GPIO
-        RESIZEFLAG = True
-        print("Simulating missing hardware!")
+# Allow development on non-Raspberry Pi devices
+try:
+    import RPi.GPIO as GPIO # type: ignore
+    from rpi_ws281x import PixelStrip, Color
+    GPIO.setmode(GPIO.BCM)
+    print("Using real hardware!")
+except ImportError:
+    from src.common.simulate import GPIO
+    from src.common.simulate import PixelStrip, Color
+    print("Simulating missing hardware!")
     \end{minted}
     \captionof{listing}{Cross-platform GPIO import}
     \label{code:cross-platform-gpio}
@@ -30,8 +31,8 @@ Additionally, as development is done on both a Windows laptop and the Pi, the co
 \begin{minipage}[H]{\textwidth}
     \centering
     \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{python}
-    # Allow development on non-Raspberry Pi devices
-    class GPIO:
+# Allow development on non-Raspberry Pi devices
+class GPIO:
     BCM = 0
     IN, OUT = 0, 0
     HIGH, LOW = 0, 0

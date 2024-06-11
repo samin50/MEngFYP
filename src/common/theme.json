@@ -5,6 +5,9 @@
         },
         "font": {
             "size": 20
+        },
+        "misc": {
+            "text_horiz_alignment": "left"
         }
     },
     "button": {
@@ -16,6 +19,17 @@
         },
         "misc": {
             "shadow_width": 0
+        }
+    },
+    "#right_label": {
+        "colours": {
+            "normal_text": "#FFFFFF"
+        },
+        "font": {
+            "size": 20
+        },
+        "misc": {
+            "text_horiz_alignment": "right"
         }
     }
 }

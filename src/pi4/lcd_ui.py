@@ -7,6 +7,7 @@ import colorsys
 import psutil
 import pygame
 import pygame_gui
+from pygame_gui.core import ObjectID
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
 from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
 from src.common.helper_functions import start_ui, wifi_restart
@@ -22,8 +23,10 @@ class LCD_UI:
         pygame.display.set_caption("Component Sorter")
         self.clock = clock
         self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
+        self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
-        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, visionHandler, trainingMode=trainingMode)
+        self.componentSurface = pygame.Surface(self.componentResolution)
+        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, self.componentSurface, visionHandler, trainingMode=trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
@@ -50,71 +53,88 @@ class LCD_UI:
         Draw the UI widgets
         """
         # Widget Parameters
-        labelLength = 220
+        # widgetWidth = 220
         sliderHeight = 30
-        offset = 15
-        yOffset = offset
-        offsetIncrement = 36
-        buttonHeight = 50
-        cornerOffset = (WIDGET_PADDING, 0)
+        offset = 2
+        cornerOffset = (WIDGET_PADDING, WIDGET_PADDING)
+        buttonHeight = 60
         # Training mode
         if trainingMode:
             cornerOffset = (740, 0)
             global CAMERA_DISPLAY_SIZE # pylint:disable=global-statement
             CAMERA_DISPLAY_SIZE = (240, 360) # pylint:disable=redefined-outer-name, invalid-name
-            labelLength = 50
+            widgetWidth = 50
+        widgetWidth = (CAMERA_DISPLAY_SIZE[0]-WIDGET_PADDING)/2
+        textWidth = 80
+        offsetIncrement = sliderHeight + WIDGET_PADDING
         ## LEFT SIDE
-        # Motor Speed
-        yOffset += offsetIncrement
-        self.UIElements["conveyor_speed_label"] = UILabel(
-            relative_rect=pygame.Rect((cornerOffset[0], CAMERA_DISPLAY_SIZE[1]+yOffset), (labelLength, sliderHeight)),
-            text="Conveyor Speed: 0",
+        yOffset = 2*WIDGET_PADDING
+        _ = UILabel(
+            relative_rect=pygame.Rect((cornerOffset[0]+offset, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth, sliderHeight)),
+            text="System Speed:",
             manager=self.manager
         )
-        self.UIElements["conveyor_speed"] = UIHorizontalSlider(
-            relative_rect=pygame.Rect((cornerOffset[0]+WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (CAMERA_DISPLAY_SIZE[0]-labelLength, sliderHeight)),
+        self.UIElements["system_speed_label"] = UILabel(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth-textWidth, CAMERA_DISPLAY_SIZE[1]+yOffset), (textWidth, sliderHeight)),
+            text="0",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
+        )
+        self.UIElements["system_speed"] = UIHorizontalSlider(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth+offset, sliderHeight)),
             value_range=(-5, 5),
             start_value=0,
             manager=self.manager
         )
         # CPU Usage
         yOffset += offsetIncrement
-        self.UIElements["cpu_usage_label"] = UILabel(
-            relative_rect=pygame.Rect((cornerOffset[0], CAMERA_DISPLAY_SIZE[1]+yOffset), (labelLength, sliderHeight)),
-            text="CPU Usage: -%",
+        _ = UILabel(
+            relative_rect=pygame.Rect((cornerOffset[0]+offset, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth, sliderHeight)),
+            text="CPU Usage: ",
             manager=self.manager
         )
+        self.UIElements["cpu_usage_label"] = UILabel(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth-textWidth, CAMERA_DISPLAY_SIZE[1]+yOffset), (textWidth, sliderHeight)),
+            text="-%",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
+        )
         # RAM Usage
+        _ = UILabel(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth, sliderHeight)),
+            text="RAM Usage: ",
+            manager=self.manager,
+        )
         self.UIElements["ram_usage_label"] = UILabel(
-            relative_rect=pygame.Rect((cornerOffset[0]+2*WIDGET_PADDING+labelLength, CAMERA_DISPLAY_SIZE[1]+yOffset), (labelLength, sliderHeight)),
-            text="RAM Usage: -%",
-            manager=self.manager
+            relative_rect=pygame.Rect((cornerOffset[0]+2*widgetWidth-textWidth+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (textWidth, sliderHeight)),
+            text="-%",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
         )
         # Heatmap toggle button
         yOffset += offsetIncrement
-        self.UIElements["heatmap_toggle"] = CustomToggleButton(
-            relative_rect=pygame.Rect((cornerOffset[0], CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]-WIDGET_PADDING)/2, buttonHeight)),
-            text="Heatmap",
+        self.UIElements["inference_once"] = UIButton(
+            relative_rect=pygame.Rect((cornerOffset[0], CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth, buttonHeight)),
+            text="Inference Once",
             manager=self.manager,
-            object_id="#heatmap_toggle"
         )
         # ROI toggle button
-        self.UIElements["roi_toggle"] = CustomToggleButton(
-            relative_rect=pygame.Rect((cornerOffset[0]+(CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, buttonHeight)),
-            text="Enhance ROI",
+        self.UIElements["const_inference"] = CustomToggleButton(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth+offset, buttonHeight)),
+            text="Const. Inference?",
             manager=self.manager,
-            object_id="#roi_toggle"
+            object_id="#const_inference"
         )
         # Exit Button
-        yOffset += offsetIncrement*1.5
+        yOffset += buttonHeight + WIDGET_PADDING
         self.UIElements["exit_button"] = UIButton(
-            relative_rect=pygame.Rect((cornerOffset[0], CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]-WIDGET_PADDING)/2, buttonHeight)),
+            relative_rect=pygame.Rect((cornerOffset[0], LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (widgetWidth, buttonHeight)),
             text="Exit",
             manager=self.manager
         )
         # Wifi Button
         self.UIElements["wifi_button"] = UIButton(
-            relative_rect=pygame.Rect((cornerOffset[0]+(CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, CAMERA_DISPLAY_SIZE[1]+yOffset), ((CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING)/2, buttonHeight)),
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (widgetWidth+offset, buttonHeight)),
             text="Wifi Restart",
             manager=self.manager
         )
@@ -125,63 +145,113 @@ class LCD_UI:
         else:
             xOffset = CAMERA_DISPLAY_SIZE[0] + 2*WIDGET_PADDING
             yOffset = WIDGET_PADDING
-            CAMERA_DISPLAY_SIZE = (LCD_RESOLUTION[0] - CAMERA_DISPLAY_SIZE[0] - 3*WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1])
+        widgetWidth = (LCD_RESOLUTION[0] - CAMERA_DISPLAY_SIZE[0] - 4*WIDGET_PADDING - self.componentResolution[0])//2
         # Classification Label
-        # self.UIElements["classification_label"] = UILabel(
-        #     relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
-        #     text="Classification:",
-        #     manager=self.manager
-        # )
+        _ = UILabel(
+            relative_rect=pygame.Rect((xOffset+offset, yOffset), (widgetWidth, sliderHeight)),
+            text="Class:",
+            manager=self.manager
+        )
+        self.UIElements["class_label"] = UILabel(
+            relative_rect=pygame.Rect((xOffset+widgetWidth, yOffset), (widgetWidth, sliderHeight)),
+            text="None",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
+        )
+        yOffset += offsetIncrement
+        # Confidence Label
+        _ = UILabel(
+            relative_rect=pygame.Rect((xOffset+offset, yOffset), (widgetWidth, sliderHeight)),
+            text="Conf:",
+            manager=self.manager
+        )
+        self.UIElements["confidence_label"] = UILabel(
+            relative_rect=pygame.Rect((xOffset+widgetWidth-textWidth, yOffset), (textWidth, sliderHeight)),
+            text="0%",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
+        )
+        # Value Label
+        _ = UILabel(
+            relative_rect=pygame.Rect((xOffset+offset+widgetWidth+WIDGET_PADDING, yOffset), (CAMERA_DISPLAY_SIZE[0]-widgetWidth, sliderHeight)),
+            text="Value:",
+            manager=self.manager
+        )
+        self.UIElements["value_label"] = UILabel(
+            relative_rect=pygame.Rect((xOffset+widgetWidth, yOffset), (widgetWidth, sliderHeight)),
+            text="N/A",
+            manager=self.manager,
+            object_id=ObjectID(class_id="label", object_id="#right_label")
+        )
+        yOffset += offsetIncrement
+        # Offload inference button
+        self.UIElements["offload_inference"] = CustomToggleButton(
+            relative_rect=pygame.Rect((xOffset, yOffset), ((widgetWidth*2)+offset, buttonHeight)),
+            text="Offload Inference?",
+            manager=self.manager
+        )
+        # Connection status
+        yOffset += buttonHeight + WIDGET_PADDING
+        self.UIElements["connection_status"] = UILabel(
+            relative_rect=pygame.Rect((xOffset, yOffset), (widgetWidth*2, sliderHeight)),
+            text="Compute: Not Connected",
+            manager=self.manager
+        )
+        yOffset += sliderHeight + WIDGET_PADDING
+        self.UIElements["wifi_status"] = UILabel(
+            relative_rect=pygame.Rect((xOffset, yOffset), (widgetWidth*2, sliderHeight)),
+            text="WiFi: Not Connected",
+            manager=self.manager
+        )
+        
 
+        widgetWidth = (LCD_RESOLUTION[0] - CAMERA_DISPLAY_SIZE[0] - 4*WIDGET_PADDING)//2
+        yOffset += offsetIncrement
+        # Colour strip
         self.UIElements["hue_slider_label"] = UILabel(
-            relative_rect=pygame.Rect((xOffset, yOffset), (labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+offset, yOffset), (widgetWidth, sliderHeight)),
             text="Hue: 90",
             manager=self.manager
         )
         self.UIElements["hue_slider"] = UIHorizontalSlider(
-            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset), (CAMERA_DISPLAY_SIZE[0]-labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+widgetWidth+WIDGET_PADDING, yOffset), (widgetWidth, sliderHeight)),
             value_range=(0, 180),
             start_value=90,
             click_increment=10,
             manager=self.manager
         )
         self.UIElements["saturation_slider_label"] = UILabel(
-            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement), (labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+offset, yOffset+offsetIncrement), (widgetWidth, sliderHeight)),
             text="Saturation: 50",
             manager=self.manager
         )
         self.UIElements["saturation_slider"] = UIHorizontalSlider(
-            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement), (CAMERA_DISPLAY_SIZE[0]-labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+widgetWidth+WIDGET_PADDING, yOffset+offsetIncrement), (widgetWidth, sliderHeight)),
             value_range=(0, 100),
             start_value=50,
             click_increment=10,
             manager=self.manager
         )
         self.UIElements["value_slider_label"] = UILabel(
-            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*2), (labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+offset, yOffset+offsetIncrement*2), (widgetWidth, sliderHeight)),
             text="Value: 50",
             manager=self.manager
         )
         self.UIElements["value_slider"] = UIHorizontalSlider(
-            relative_rect=pygame.Rect((xOffset+labelLength+WIDGET_PADDING, yOffset+offsetIncrement*2), (CAMERA_DISPLAY_SIZE[0]-labelLength, sliderHeight)),
+            relative_rect=pygame.Rect((xOffset+widgetWidth+WIDGET_PADDING, yOffset+offsetIncrement*2), (widgetWidth, sliderHeight)),
             value_range=(0, 100),
             start_value=50,
             click_increment=10,
             manager=self.manager
         )
-        self.UIElements["strip_reset_button"] = UIButton(
-            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*3), (CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING, buttonHeight)),
-            text="Reset Strip",
-            manager=self.manager
-        )
         self.UIElements["rgb_colour_code"] = UILabel(
-            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*4), (CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING, buttonHeight)),
+            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*3), (widgetWidth, buttonHeight)),
             text="RGB: ",
             manager=self.manager
         )
-        self.UIElements["hsv_colour_code"] = UILabel(
-            relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*5), (CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING, buttonHeight)),
-            text="HSV: ",
+        self.UIElements["strip_reset_button"] = UIButton(
+            relative_rect=pygame.Rect((xOffset+widgetWidth+WIDGET_PADDING, yOffset+offsetIncrement*3), (widgetWidth, buttonHeight)),
+            text="Reset Strip",
             manager=self.manager
         )
         self.UIElements["take_photo_button"] = UIButton(
@@ -195,7 +265,7 @@ class LCD_UI:
         Handle events from the UI
         """
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-            if event.ui_element == self.UIElements["conveyor_speed"]:
+            if event.ui_element == self.UIElements["system_speed"]:
                 self.UIElements["conveyor_speed_label"].set_text(f"Conveyor Speed: {(event.value)}")
                 self.conveyorSpeedCallback(event.value)
             # Colour sliders
@@ -215,17 +285,17 @@ class LCD_UI:
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
             ramUsage = psutil.virtual_memory().percent
-            self.UIElements["cpu_usage_label"].set_text(f"CPU Usage: {cpuUsage}%")
-            self.UIElements["ram_usage_label"].set_text(f"RAM Usage: {ramUsage}%")
+            self.UIElements["cpu_usage_label"].set_text(f"{cpuUsage}%")
+            self.UIElements["ram_usage_label"].set_text(f"{ramUsage}%")
         # Exit Button
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements["exit_button"]:
                 self.cameraFeed.vision.destroy()
                 self.running = False
-            if event.ui_element == self.UIElements["heatmap_toggle"]:
-                self.UIElements["heatmap_toggle"].toggle()
-            if event.ui_element == self.UIElements["roi_toggle"]:
-                self.UIElements["roi_toggle"].toggle()
+            if event.ui_element == self.UIElements["inference_once"]:
+                pass
+            if event.ui_element == self.UIElements["const_inference"]:
+                self.UIElements["const_inference"].toggle()
             if event.ui_element == self.UIElements["wifi_button"]:
                 wifi_restart()
             if event.ui_element == self.UIElements["strip_reset_button"]:
@@ -243,6 +313,7 @@ class LCD_UI:
         """
         self.display.fill(BG_COLOUR)
         self.display.blit(self.cameraSurface, (WIDGET_PADDING, WIDGET_PADDING))
+        self.display.blit(self.componentSurface, (LCD_RESOLUTION[0]-self.componentResolution[0]-WIDGET_PADDING, WIDGET_PADDING))
 
     def update_colour(self, colour) -> None:
         """

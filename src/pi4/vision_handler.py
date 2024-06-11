@@ -92,6 +92,12 @@ class Vision_Handler:
                 self.set_camera()
         return self.currentFrame
 
+    def get_component_frame(self) -> pygame.Surface:
+        """
+        Get the component frame
+        """
+        return self.currentFrame
+
     def inference(self) -> list:
         """
         Perform inference on the current frame
