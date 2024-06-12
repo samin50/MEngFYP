@@ -122,11 +122,6 @@ class Vision_Handler:
                 self.currentFrame.blit(label, (box[0], box[1]))
         return classList
 
-    def capture_window(self) -> None:
-        """
-        Perform inference on multiple frames and compute the mode
-        """
-
     def destroy(self) -> None:
         """
         Destroy the camera
@@ -137,7 +132,7 @@ class Vision_Handler:
 
 if __name__ == "__main__":
     INFERENCE = True
-    CAPTURE_VNC = True
+    CAPTURE_VNC = False
     TRAINING_MODE = True
     # Derived
     RES = TRAINING_MODE_CAMERA_SIZE if TRAINING_MODE else CAMERA_RESOLUTION

@@ -59,24 +59,41 @@ As shown in \autoref{code:simulate-gpio}, the \texttt{simulate.py} file contains
 
 The Pi uses Git \cite{git} for version control, and the repository is hosted on GitHub \cite{github}, with a dedicated branch for the Pi that is regularly updated with the main branch. The vision system and the laptop also maintain their own Git branches which are regularly updated with the main branch, ensuring that all systems are running the same code. This is crucial as it enables development on a more powerful laptop, and then synchronises the changes to the Pi, without having to manually copy any files over. The repository can be found in the Appendix \ref{app:github}.
 \subsubsection{User Interface}
-The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. From here, the user is able to\dots
+The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. 
+
+Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
+
+\todo{include the profiler evaluation}
 
 \begin{figure}[H]
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[height=8cm]{example-image-a}
+      \includegraphics[height=8cm]{imgs/software/screenresistor.jpg}
       \caption{User Interface}
       \label{fig:ui}
     \end{minipage}
 \end{figure}
 
-As shown in \autoref{fig:ui}, the user interface consists\dots
+As shown in \autoref{fig:ui}, the user interface consists of a multitude of features that allow the user to interact with the system. The user is able to view the live camera feed, where a resistor is clearly shown on screen. The user is able to adjust the overall system speed by adjusting the slider, which directly affects the System Controller. The CPU and RAM usage of the system is also shown on screen as these can help to judge the load of the system during development, and especially during inference. 
 
-Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{\textwidth}
+      \centering
+      \includegraphics[height=8cm]{example-image-b}
+      \caption{Inference Example}
+      \label{fig:uiinference}
+    \end{minipage}
+\end{figure}
 
-The user interface also supports a "training mode", where the camera feed is enlarged in order to capture images of components to be used for training the computer vision system, done programmatically by toggling a flag called \texttt{TRAININGMODE} in the \texttt{LCD UI} class. This is only used during the dataset collection phase of the project, and is not used during the normal operation of the system. This is discussed in more detail in \autoref{sec:dataset-collection}.
+As explained \autoref{sec:software}, the Pi is connected to a more powerful machine with SSH to facilitate faster development. For this reason, a Wi-Fi button is present on the UI to allow it to attempt to reconnect in the event of connection issues. On the right side of the screen is information relating to the vision system, for example, what the classification of the component is, its value, and the confidence of the model in its inference. The component is typically displayed in the red area, as shown in \autoref{fig:uiinference}.
 
+As the Pi is sometimes connected to a more powerful machine, the user interface also supports streaming frames to the machine where inference can be done much quicker, due to the presence of a GPU. This is done by toggling the "Offload Inference?" button. The "Const. Inference?" button means the Vision system is constantly processing frames rather than whenever a beam break is detected.
+
+Additionally, during the development of the system, the WS2812B needed to be calibrated as explained in \autoref{sec:ws2812b-led-strip}. Due to this, there are HSV sliders for the user to adjust the colour of the LED strip, allowing for easy calibration of the LED strip. There is also a "Reset Strip" button to reinitialise the LED strip and display the LED start up sequence as shown in \autoref{fig:ledreset}.
+
+The user interface also supports a "training mode" as discussed in \autoref{sec:dataset-collection}, which is done programmatically by toggling a flag called \texttt{TRAININGMODE} in the \texttt{LCD UI} class.
 \begin{figure}[H]
     \hfill
     \begin{minipage}[t]{\textwidth}
@@ -109,8 +126,8 @@ The Vision Handler is responsible for managing the camera feed, and performs the
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[height=8cm]{example-image-b}
-      \caption{Camera disconnect error}
+      \includegraphics[height=8cm]{imgs/software/screen.jpg}
+      \caption{Seamless camera disconnect handling}
       \label{fig:camera-disconnect}
     \end{minipage}
 \end{figure}
@@ -166,8 +183,8 @@ Upon launch, the user is able to select which mode they would like to use, as sh
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[height=8cm]{example-image-c}
-      \caption{Training mode screen}
+      \includegraphics[height=8cm]{imgs/software/trainingmode.jpg}
+      \caption{Training Mode Screen}
       \label{fig:training-mode}
     \end{minipage}
 \end{figure}

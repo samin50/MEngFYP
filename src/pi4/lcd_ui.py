@@ -326,19 +326,19 @@ class LCD_UI:
         Handle events from the UI
         """
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-            if event.ui_element == self.UIElements["system_speed"]:
+            if event.ui_element == self.UIElements.get("system_speed", None):
                 self.UIElements["conveyor_speed_label"].set_text(f"Conveyor Speed: {(event.value)}")
                 self.conveyorSpeedCallback(event.value)
             # Colour sliders
-            if event.ui_element == self.UIElements["hue_slider"]:
+            if event.ui_element == self.UIElements.get("hue_slider", None):
                 colour = self.colourCallback((event.value, None, None))
                 self.UIElements["hue_slider_label"].set_text(f"Hue: {event.value}")
                 self.update_colour(colour)
-            if event.ui_element == self.UIElements["saturation_slider"]:
+            if event.ui_element == self.UIElements.get("saturation_slider", None):
                 colour = self.colourCallback((None, event.value, None))
                 self.UIElements["saturation_slider_label"].set_text(f"Saturation: {event.value}")
                 self.update_colour(colour)
-            if event.ui_element == self.UIElements["value_slider"]:
+            if event.ui_element == self.UIElements.get("value_slider", None):
                 colour = self.colourCallback((None, None, event.value))
                 self.UIElements["value_slider_label"].set_text(f"Value: {event.value}")
                 self.update_colour(colour)
@@ -350,18 +350,20 @@ class LCD_UI:
             self.UIElements["ram_usage_label"].set_text(f"{ramUsage}%")
         # Exit Button
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == self.UIElements["exit_button"]:
+            if event.ui_element == self.UIElements.get("exit_button", None):
                 self.cameraFeed.vision.destroy()
                 self.running = False
-            if event.ui_element == self.UIElements["inference_once"]:
-                pass
-            if event.ui_element == self.UIElements["const_inference"]:
+            if event.ui_element == self.UIElements.get("enable_button", None):
+                self.UIElements["enable_button"].toggle()
+            if event.ui_element == self.UIElements.get("offload_inference", None):
+                self.UIElements["offload_inference"].toggle()
+            if event.ui_element == self.UIElements.get("const_inference", None):
                 self.UIElements["const_inference"].toggle()
-            if event.ui_element == self.UIElements["wifi_button"]:
+            if event.ui_element == self.UIElements.get("wifi_button", None):
                 wifi_restart()
-            if event.ui_element == self.UIElements["strip_reset_button"]:
+            if event.ui_element == self.UIElements.get("strip_reset_button", None):
                 self.stripResetCallback()
-            if event.ui_element == self.UIElements["take_photo_button"]:
+            if event.ui_element == self.UIElements.get("take_photo_button", None):
                 image = self.cameraFeed.vision.get_frame()
                 imageCounter = 0
                 while os.path.exists(f"./src/vision/photos/image-{imageCounter:03}.jpg"):

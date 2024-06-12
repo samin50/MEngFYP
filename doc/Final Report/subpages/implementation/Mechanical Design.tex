@@ -182,14 +182,41 @@ The conveyor belt is a key component of the system, as it is used to transport c
 \begin{figure}[H]
     \begin{minipage}[h]{0.95\textwidth}
         \centering
-        \includegraphics[height=7cm]{imgs/freecad/adjustablerollers.jpg}
+        \includegraphics[height=8cm]{imgs/freecad/adjustablerollers.jpg}
         \caption{Adjustable Conveyor Rollers}
         \label{fig:adjustablerollers}
     \end{minipage}
 \end{figure}
 
-On the other side of the conveyor belt, the belt tensioner is used to ensure the belt is taut. 
-\todo{explain belt tensioner design}
+On the other side of the conveyor belt, the belt tensioner is used to ensure the belt is taut as shown in \autoref{fig:belttensioner}.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/belttensioner.jpg}
+        \caption{Belt tensioner design}
+        \label{fig:belttensioner}
+    \end{minipage}
+\end{figure}
+
+As usual, the belt tensioner is mounted to the 2020 extrusion frame using M3 screws and T-nuts. The tensioner is made of 4 distinct parts;
+\begin{mylist}
+    \item \textbf{Belt Tensioner Mount}: The mount is used to attach the tensioner to the 2020 extrusion frame. The mount contains a bevelled edge to allow the tensioner to slide in and out of the mount.
+    \item \textbf{Belt Tensioner}: The tensioner is used to tension the conveyor belt. It slots into the mount, and features a 608ZZ bearing to allow the rollers to rotate freely. It is threaded to allow the belt tensioner nut to be screwed in.
+    \item \textbf{Belt Tensioner Cover}: The cover is used to ensure that the tensioner does not slip out, and provides something for the nut to press against to tension the belt.
+    \item \textbf{Belt Tensioner Nut}: The nut is used to tension the belt. It is screwed into the tensioner cover, and presses against the tensioner to tension the belt.
+\end{mylist}
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/tensionerapplication.jpg}
+        \caption{Belt tensioner in use}
+        \label{fig:belttensioneractive}
+    \end{minipage}
+\end{figure}
+
+To tension the belt, the nut is simply turned which forces the tensioner to retract or extend in the mount, tensioning the belt. As shown in \autoref{fig:belttensioneractive}, tightening the nut would force the tensioner to move in the direction of the arrow, causing the belt to be tensioned.
 
 \subsubsection{Sweeping Mechanism}
 \todo{show nema17 mount and endstop}

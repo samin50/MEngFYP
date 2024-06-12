@@ -327,26 +327,11 @@ Common Computer Vision architectures typically draw AABBs (Axis Aligned Bounding
     \label{tab:yoloperformanceobb}
 \end{table}
 
-The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which contains 15 classes of objects, including components. Pretrained models are useful as they have already learnt useful features from a large dataset, and can be fine-tuned on a smaller dataset to improve performance \cite{pretrainedmodels}. The performance of the different sized YOLOv8-obb models is shown in \autoref{tab:yoloperformanceobb}. The most crucial parameters to take into consideration is the mAPval (mean average precision) and the CPU ONNX (inference latency). The mean average precision is defined by the following formula:
-
-{\fontsize{14pt}{11pt}\selectfont
-\begin{align*}
-    \text{mAP} &= \frac{1}{n} \sum_{i=1}^{n} \text{AP}_i % Extra & to move the equation to the right
-\end{align*}
-}
-
-Where $n$ is the number of classes, and $\texttt{AP}_i$ is the average precision for class $i$. The average precision is defined as the area under the precision-recall curve, and is an objective measure of the model's performance. For mAP\raisebox{-1pt}{\textsuperscript{50}}, the IoU (Intersection over Union) threshold is defined as being 50\%, meaning that as long as there is at least 50\% overlap between the predicted bounding box and the ground truth bounding box, the prediction is considered correct. In the formula below, $\text{A}$ is the ground truth bounding box, and $\text{B}$ is the predicted bounding box, with $\text{A} \cap \text{B}$ being the intersection of the two bounding boxes, and $\text{A} \cup \text{B}$ being the union of the two bounding boxes.
-
-{\fontsize{14pt}{11pt}\selectfont
-\begin{align*}
-    \text{IoU} &= \frac{\text{A} \cap \text{B}}{\text{A} \cup \text{B}} % 
-\end{align*}
-}
+The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which contains 15 classes of objects, including components. Pretrained models are useful as they have already learnt useful features from a large dataset, and can be fine-tuned on a smaller dataset to improve performance \cite{pretrainedmodels}. The performance of the different sized YOLOv8-obb models is shown in \autoref{tab:yoloperformanceobb}. The most crucial parameters to take into consideration is the mAP (mean average precision, explained in \autoref{sec:background-computer-vision}) and the CPU ONNX (inference latency). 
 
 From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 81.36 and a CPU ONNX of 1759.10ms. The YOLOv8n-obb model has the worst performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 78.0 and a CPU ONNX of 204.77ms. However, the Pi is likely significantly slower than the CPU used in the benchmarks, so the actual inference latency will be higher, making the ~0.5 FPS of the YOLOv8x-obb model infeasible, but the ~5 FPS of the YOLOv8n-obb model more promising, a 9x improvement in speed for only a 3.1\% decrease in mAP\raisebox{-1pt}{\textsuperscript{50}}. 
 
 As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break beam sensor to detect the presence of objects on the conveyor belt, reducing the potential of the Vision Handler to be a bottleneck due to constant inference. With the promising performance increase of using the DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} libraries to optimise the model for the Raspberry Pi, the YOLOv8n-obb model will be used for the project.
-
 
 \todo{justify why training component detcection and resistor detection model}
 \todo{flow diagram of cv pipeline?}

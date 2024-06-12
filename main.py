@@ -50,9 +50,9 @@ def run(trainingMode:bool) -> None:
     Run the main application
     """
     keepRunning = True
+    pygame.init()
     while keepRunning:
         try:
-            pygame.init()
             systemObj = Component_Sorter(trainingMode)
             start_ui(
                 loopConditionFunc=systemObj.lcdUI.is_running,
