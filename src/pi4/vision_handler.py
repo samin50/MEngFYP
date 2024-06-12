@@ -4,48 +4,35 @@ Hooks onto the pygame camera and performs inference.
 """
 import numpy
 import cv2
+import pygame
+import pygame.camera as pycam
 import pyautogui
 import pygetwindow
 try:
     from ultralytics import YOLO
+    print("Using ultralytics YOLO!")
 except ImportError:
     from src.common.simulate import YOLO
-import pygame
-import pygame.camera as pycam
-from src.common.simulate import FakeCamera
-from src.common.constants import CAMERA_RESOLUTION, CLASSIFIER_PATH, TRAINING_MODE_CAMERA_SIZE
+    print("Using simulated YOLO!")
+from src.pi4.display_feed_pygame import CameraFeed
+from src.common.helper_functions import start_ui
+from src.common.constants import CAMERA_RESOLUTION, CLASSIFIER_PATH, TRAINING_MODE_CAMERA_SIZE, CAMERA_DISPLAY_SIZE
 from src.vision.vsrc.constants import DATA, REALVNC_WINDOW_NAME, BORDER_WIDTH, LOWER_THRESHOLD, UPPER_THRESHOLD
 class Vision_Handler:
-    def __init__(self, enableInference:bool=False, captureVNC:bool=False, resolution:tuple=CAMERA_RESOLUTION) -> None:
+    def __init__(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False) -> None:
+        self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
         self.enableInference = enableInference
-        self.captureVNC = captureVNC
-        self.currentFrame = pygame.Surface(resolution)
+        self.componentDisplay = componentDisplay
         if self.enableInference:
             self.model = YOLO(CLASSIFIER_PATH)
         else:
             self.model = None
         # Camera setup
-        self.fakeCamera = FakeCamera(0)
-        self.realCamera = None
-        self.inferencing = False
+        self.cameraFeed = CameraFeed(self.resolution, cameraDisplay, trainingMode=trainingMode)
         # Class label font
         self.labelMap = {k["num_label"] : k["label"] for k in DATA.values()}
         self.labelFont = pygame.font.SysFont("Roboto", 20)
         pycam.init()
-
-    def set_camera(self) -> None:
-        """
-        Set the camera if it becomes unavailable
-        """
-        camList = pycam.list_cameras()
-        if len(camList) != 0:
-            if self.realCamera is None:
-                self.realCamera = pycam.Camera(camList[0])
-            try:
-                self.realCamera.start()
-            except:
-                self.realCamera = None
-        return
 
     def capture_vnc(self) -> None:
         """
@@ -133,21 +120,17 @@ class Vision_Handler:
 if __name__ == "__main__":
     INFERENCE = True
     CAPTURE_VNC = False
-    TRAINING_MODE = True
-    # Derived
-    RES = TRAINING_MODE_CAMERA_SIZE if TRAINING_MODE else CAMERA_RESOLUTION
-    FRAMERATE = 30
+    TRAINING_MODE = False
     pygame.init()
-    vision = Vision_Handler(INFERENCE, CAPTURE_VNC, RES)
-    display = pygame.display.set_mode(RES, (pygame.RESIZABLE | pygame.SCALED))
     clk = pygame.time.Clock()
-    while True:
-        clk.tick(FRAMERATE)
-        vision.inference()
-        display.blit(vision.currentFrame, (0, 0))
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                vision.destroy()
-                pygame.quit()
-                exit()
+    display = pygame.display.set_mode((CAMERA_RESOLUTION[0]//3+CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]), 0)
+    camera = pygame.Surface((CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]))
+    compDisplay = pygame.Surface((CAMERA_RESOLUTION[0]//3, CAMERA_RESOLUTION[1]))
+    vision = Vision_Handler(camera, compDisplay, INFERENCE, TRAINING_MODE)
+    start_ui(
+        loopConditionFunc=lambda: True,
+        loopFunction=[lambda: display.blit(camera, (0,0)), lambda: display.blit(compDisplay, (CAMERA_RESOLUTION[0], 0))],
+        eventFunction=[vision.cameraFeed.event_handler],
+        exitFunction=[],
+        clock=clk,
+    )

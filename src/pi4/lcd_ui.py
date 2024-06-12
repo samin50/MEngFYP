@@ -27,7 +27,7 @@ class LCD_UI:
         self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
         self.componentSurface = pygame.Surface(self.componentResolution)
-        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, self.componentSurface, visionHandler, trainingMode=trainingMode)
+        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, trainingMode=trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
@@ -351,7 +351,6 @@ class LCD_UI:
         # Exit Button
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements.get("exit_button", None):
-                self.cameraFeed.vision.destroy()
                 self.running = False
             if event.ui_element == self.UIElements.get("enable_button", None):
                 self.UIElements["enable_button"].toggle()
@@ -390,16 +389,16 @@ class LCD_UI:
         self.UIElements["hsv_colour_code"].set_text(f"HSV: {hsvColour}")
 
 if __name__ == "__main__":
-    TRAININGMODE = True
+    TRAININGMODE = False
     clk = pygame.time.Clock()
     pygame.init()
-    vision = Vision_Handler(enableInference=True, captureVNC=False)
-    systemObj = LCD_UI(clk, vision, trainingMode=TRAININGMODE)
+    # vision = Vision_Handler(enableInference=True, captureVNC=False)
+    systemObj = LCD_UI(clk, None, trainingMode=TRAININGMODE)
     start_ui(
         loopConditionFunc=systemObj.is_running,
         loopFunction=[systemObj.draw],
         eventFunction=[systemObj.handle_events, systemObj.cameraFeed.event_handler],
-        exitFunction=[systemObj.cameraFeed.vision.destroy],
+        exitFunction=[],
         clock=clk,
         manager=systemObj.manager,
         screen=systemObj.display
