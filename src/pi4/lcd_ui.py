@@ -12,7 +12,6 @@ from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
 from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
 from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
-from src.pi4.display_feed_pygame import CameraFeed
 from src.pi4.vision_handler import Vision_Handler
 
 class LCD_UI:
@@ -27,7 +26,7 @@ class LCD_UI:
         self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
         self.componentSurface = pygame.Surface(self.componentResolution)
-        self.cameraFeed = CameraFeed(self.resolution, self.cameraSurface, trainingMode=trainingMode)
+        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=True, trainingMode=self.trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
@@ -392,12 +391,12 @@ if __name__ == "__main__":
     TRAININGMODE = False
     clk = pygame.time.Clock()
     pygame.init()
-    # vision = Vision_Handler(enableInference=True, captureVNC=False)
-    systemObj = LCD_UI(clk, None, trainingMode=TRAININGMODE)
+    vision = Vision_Handler()
+    systemObj = LCD_UI(clk, vision, trainingMode=TRAININGMODE)
     start_ui(
         loopConditionFunc=systemObj.is_running,
         loopFunction=[systemObj.draw],
-        eventFunction=[systemObj.handle_events, systemObj.cameraFeed.event_handler],
+        eventFunction=[systemObj.handle_events, vision.event_handler],
         exitFunction=[],
         clock=clk,
         manager=systemObj.manager,

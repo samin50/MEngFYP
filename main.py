@@ -25,7 +25,7 @@ class Component_Sorter:
         GPIO.cleanup()
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
-        self.visionHandler = Vision_Handler(enableInference=True, captureVNC=False)
+        self.visionHandler = Vision_Handler()
         self.systemController = System_Controller(self.visionHandler)
         # LCD Setup
         callbacks = {
@@ -57,7 +57,7 @@ def run(trainingMode:bool) -> None:
             start_ui(
                 loopConditionFunc=systemObj.lcdUI.is_running,
                 loopFunction=[systemObj.lcdUI.draw],
-                eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.cameraFeed.event_handler],
+                eventFunction=[systemObj.lcdUI.handle_events, systemObj.lcdUI.visionHandler.event_handler],
                 exitFunction=[systemObj.close],
                 clock=systemObj.clk,
                 manager=systemObj.lcdUI.manager,
