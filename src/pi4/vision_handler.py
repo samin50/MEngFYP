@@ -3,6 +3,7 @@ Responsible for handling the vision system.
 Hooks onto the pygame camera and performs inference.
 """
 # pylint: disable=attribute-defined-outside-init
+import time
 import multiprocessing
 import numpy
 import cv2
@@ -10,36 +11,27 @@ import pygame
 import pygame.camera as pycam
 import pyautogui
 import pygetwindow
-try:
-    from ultralytics import YOLO
-    print("Using ultralytics YOLO!")
-except ImportError:
-    from src.common.simulate import YOLO
-    print("Using simulated YOLO!")
 from src.pi4.display_feed_pygame import CameraFeed
+from src.pi4.multiprocessinghandlers import *
 from src.common.helper_functions import start_ui
 from src.common.constants import CAMERA_RESOLUTION, CLASSIFIER_PATH, TRAINING_MODE_CAMERA_SIZE, CAMERA_DISPLAY_SIZE, FPS_FONT_SIZE, CAMERA_FRAMERATE
 from src.vision.vsrc.constants import DATA, REALVNC_WINDOW_NAME, BORDER_WIDTH, LOWER_THRESHOLD, UPPER_THRESHOLD
 class Vision_Handler:
-    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False) -> None:
+    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False, captureVNC:bool=False):
         """
         Initialise the vision handler
         """
+        self.labelFont = pygame.font.SysFont("Roboto", 20)
         # Constants
         self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
         self.enableInference = enableInference
         self.trainingMode = trainingMode
         self.cameraDisplay = cameraDisplay
         self.componentDisplay = componentDisplay
+        self.captureVNC = captureVNC
         # Surface setup
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
         self.resizedFrame = pygame.Surface(self.resolution)
-        # Inference and locks
-        if self.enableInference:
-            self.model = YOLO(CLASSIFIER_PATH)
-        else:
-            self.model = None
-        self.labelFont = pygame.font.SysFont("Roboto", 20)
         # Camera setup
         self.cameraFeed = CameraFeed(self.cameraDisplay, trainingMode)
         # Class label font
@@ -51,15 +43,27 @@ class Vision_Handler:
         self.drawFPSEvent = pygame.USEREVENT + 100
         pygame.time.set_timer(self.drawFPSEvent, 1000 // CAMERA_FRAMERATE)
         pycam.init()
+        # Inference and locks
+        self.processingEvent = False
+        modelPath = CLASSIFIER_PATH if enableInference else None
+        if self.enableInference:
+            modelPath = CLASSIFIER_PATH
+            self.frameQueue = multiprocessing.Queue(maxsize=1)
+            self.resultQueue = multiprocessing.Queue(maxsize=1)
+            self.inferenceComplete = multiprocessing.Event()
+            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.inferenceComplete, modelPath))
+            self.inferenceProcess.start()
         return self
 
     def update_frame(self) -> pygame.Surface:
         """
         Get the current frame from the camera
         """
+        startTime = time.time()
         _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
         # Get the frame
         self.currentFrame = self.get_frame()
+        print(f"Took {time.time()-startTime:.2f}s to get the frame")
         # Resize the frame and draw FPS in the bottom right corner
         if not self.trainingMode:
             self.resizedFrame = pygame.transform.scale(self.currentFrame, self.resolution)
@@ -86,16 +90,39 @@ class Vision_Handler:
         """
         Get the current frame
         """
-        return self.cameraFeed.get_frame()
+        # Capture the frame
+        if self.captureVNC:
+            frame = self.capture_vnc()
+        else:
+            frame = self.cameraFeed.get_frame()
+        # Decide whether to perform inference
+        if self.enableInference:
+            self.inferenceComplete.clear()
+            frameArray = pygame.surfarray.array3d(frame).transpose(1, 0, 2)  # Convert to (height, width, channels)
+            # Try to put the frame in the queue, removing the old frame if necessary
+            try:
+                self.frameQueue.put_nowait(frameArray)
+            except multiprocessing.queues.Full:
+                try:
+                    # Remove the old frame and put the new frame
+                    self.frameQueue.get_nowait()
+                    self.frameQueue.put_nowait(frameArray)
+                except multiprocessing.queues.Full:
+                    print("Queue is still full after removing an old frame.")
+            # Wait for the inference to complete with a timeout to avoid blocking indefinitely
+            if self.inferenceComplete.wait(timeout=1.0):
+                if not self.resultQueue.empty():
+                    processedFrameArray = self.resultQueue.get_nowait()
+                    frame = pygame.surfarray.make_surface(processedFrameArray.transpose(1, 0, 2))  # Convert back to (width, height, channels)
+        return frame
 
-    def inference(self, frame:pygame.Surface) -> list:
+    def inference(self, frame:numpy.ndarray) -> pygame.Surface:
         """
         Perform inference on the current frame
         """
         classList = []
         # Classifier
-        imgData = pygame.surfarray.array3d(frame)
-        results = self.model.predict(imgData, verbose=False)
+        results = self.model.predict(frame, verbose=False)
         for result in results:
             clsList = result.obb.cls.tolist()
             # For every box
@@ -148,9 +175,10 @@ class Vision_Handler:
         return
 
 if __name__ == "__main__":
-    INFERENCE = True
+    INFERENCE = False
     CAPTURE_VNC = False
     TRAINING_MODE = False
+    CAMERA_FRAMERATE = 30
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode((CAMERA_RESOLUTION[0]//3+CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]), 0)
@@ -163,4 +191,5 @@ if __name__ == "__main__":
         eventFunction=[vision.event_handler],
         exitFunction=[],
         clock=clk,
+        framerate=CAMERA_FRAMERATE
     )

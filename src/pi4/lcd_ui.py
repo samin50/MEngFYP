@@ -26,7 +26,7 @@ class LCD_UI:
         self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
         self.componentSurface = pygame.Surface(self.componentResolution)
-        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=True, trainingMode=self.trainingMode)
+        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=False, trainingMode=self.trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event

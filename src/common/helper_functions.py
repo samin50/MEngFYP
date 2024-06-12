@@ -6,7 +6,7 @@ import time
 import pygame
 from src.common.constants import UI_FRAMERATE
 
-def start_ui(loopConditionFunc:callable, loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None, resolution:tuple=(0, 1)) -> None:
+def start_ui(loopConditionFunc:callable, loopFunction:list, eventFunction:list=None, exitFunction:list=None, manager:callable=None, screen:pygame.display=None, clock:pygame.time.Clock=None, resolution:tuple=(0, 1), framerate:int=UI_FRAMERATE) -> None:
     """
     Provide an event loop for standalone UIs
     """
@@ -14,7 +14,7 @@ def start_ui(loopConditionFunc:callable, loopFunction:list, eventFunction:list=N
     aspectRatio = resolution[0] / resolution[1]
     while loopConditionFunc() and active:
         events = pygame.event.get()
-        delta = clock.tick(UI_FRAMERATE) / 1000.0
+        delta = clock.tick(framerate) / 1000.0
         # Deal with events
         for e in events:
             if e.type == pygame.QUIT or (e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE):

@@ -57,7 +57,7 @@ class CameraFeed:
 
 if __name__ == '__main__':
     TRAINING_MODE = False
-    CAMERA_FRAMERATE = 30
+    CAMERA_FRAMERATE = 60
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
@@ -68,4 +68,5 @@ if __name__ == '__main__':
         eventFunction=[],
         exitFunction=[],
         clock=clk,
+        framerate=CAMERA_FRAMERATE
         )
