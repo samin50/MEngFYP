@@ -35,6 +35,12 @@ class CustomToggleButton(UIButton):
             self.colours["normal_bg"] = pygame.Color(TOGGLE_FALSE_COLOUR)
         self.rebuild()
 
+    def get_value(self) -> bool:
+        """
+        Get the current value of the button
+        """
+        return self.toggled
+
 class StyleBuilder:
     """
     This class is used to update the Theme.json file with the constants defined in this file.

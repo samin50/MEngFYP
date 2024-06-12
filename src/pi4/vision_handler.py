@@ -3,7 +3,6 @@ Responsible for handling the vision system.
 Hooks onto the pygame camera and performs inference.
 """
 # pylint: disable=attribute-defined-outside-init
-import time
 import multiprocessing
 import numpy
 import cv2
@@ -17,7 +16,7 @@ from src.common.helper_functions import start_ui
 from src.common.constants import CAMERA_RESOLUTION, CLASSIFIER_PATH, TRAINING_MODE_CAMERA_SIZE, CAMERA_DISPLAY_SIZE, FPS_FONT_SIZE, CAMERA_FRAMERATE
 from src.vision.vsrc.constants import DATA, REALVNC_WINDOW_NAME, BORDER_WIDTH, LOWER_THRESHOLD, UPPER_THRESHOLD
 class Vision_Handler:
-    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False, captureVNC:bool=False):
+    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False, captureVNC:bool=False, enableKeyboard:bool=False) -> None:
         """
         Initialise the vision handler
         """
@@ -26,10 +25,13 @@ class Vision_Handler:
         self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
         self.enableInference = enableInference
         self.trainingMode = trainingMode
+        self.captureVNC = captureVNC
+        self.enableKeyboard = enableKeyboard
+        # Surface setup
         self.cameraDisplay = cameraDisplay
         self.componentDisplay = componentDisplay
-        self.captureVNC = captureVNC
-        # Surface setup
+        self.obbDisplay = pygame.Surface(CAMERA_RESOLUTION)
+        self.obbDisplay.set_colorkey((0, 0, 0))
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
         self.resizedFrame = pygame.Surface(self.resolution)
         # Camera setup
@@ -44,14 +46,15 @@ class Vision_Handler:
         pygame.time.set_timer(self.drawFPSEvent, 1000 // CAMERA_FRAMERATE)
         pycam.init()
         # Inference and locks
-        self.processingEvent = False
+        self.doInference = multiprocessing.Event()
+        self.constInference = multiprocessing.Event()
+        self.busyInference = multiprocessing.Event()
+        self.frameQueue = multiprocessing.Queue(maxsize=1)
+        self.resultQueue = multiprocessing.Queue(maxsize=1)
         modelPath = CLASSIFIER_PATH if enableInference else None
         if self.enableInference:
             modelPath = CLASSIFIER_PATH
-            self.frameQueue = multiprocessing.Queue(maxsize=1)
-            self.resultQueue = multiprocessing.Queue(maxsize=1)
-            self.inferenceComplete = multiprocessing.Event()
-            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.inferenceComplete, modelPath))
+            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath))
             self.inferenceProcess.start()
         return self
 
@@ -59,11 +62,10 @@ class Vision_Handler:
         """
         Get the current frame from the camera
         """
-        startTime = time.time()
         _ = self.cameraclock.tick(CAMERA_FRAMERATE) / 1000.0
         # Get the frame
         self.currentFrame = self.get_frame()
-        print(f"Took {time.time()-startTime:.2f}s to get the frame")
+        self.currentFrame.blit(self.obbDisplay, (0,0))
         # Resize the frame and draw FPS in the bottom right corner
         if not self.trainingMode:
             self.resizedFrame = pygame.transform.scale(self.currentFrame, self.resolution)
@@ -85,6 +87,32 @@ class Vision_Handler:
         if event.type == self.drawFPSEvent:
             self.update_frame()
             self.fps = self.fpsFont.render(f"FPS: {self.cameraclock.get_fps():.0f}", True, (255,255,255))
+        if event.type == pygame.KEYDOWN and self.enableKeyboard:
+            if event.key == pygame.K_i:
+                print("Inference once")
+                self.doInference.set()
+            if event.key == pygame.K_c:
+                if self.constInference.is_set():
+                    print("Inference off")
+                    self.constInference.clear()
+                else:
+                    print("Inference on")
+                    self.constInference.set()
+
+    def set_do_inference(self) -> None:
+        """
+        Set the do inference flag
+        """
+        self.doInference.set()
+
+    def set_const_inference(self, constInference:bool) -> None:
+        """
+        Set the constant inference flag
+        """
+        if constInference:
+            self.constInference.set()
+        else:
+            self.constInference.clear()
 
     def get_frame(self) -> pygame.Surface:
         """
@@ -95,25 +123,23 @@ class Vision_Handler:
             frame = self.capture_vnc()
         else:
             frame = self.cameraFeed.get_frame()
-        # Decide whether to perform inference
+        # Perform inference
         if self.enableInference:
-            self.inferenceComplete.clear()
-            frameArray = pygame.surfarray.array3d(frame).transpose(1, 0, 2)  # Convert to (height, width, channels)
-            # Try to put the frame in the queue, removing the old frame if necessary
-            try:
-                self.frameQueue.put_nowait(frameArray)
-            except multiprocessing.queues.Full:
-                try:
-                    # Remove the old frame and put the new frame
-                    self.frameQueue.get_nowait()
-                    self.frameQueue.put_nowait(frameArray)
-                except multiprocessing.queues.Full:
-                    print("Queue is still full after removing an old frame.")
-            # Wait for the inference to complete with a timeout to avoid blocking indefinitely
-            if self.inferenceComplete.wait(timeout=1.0):
-                if not self.resultQueue.empty():
-                    processedFrameArray = self.resultQueue.get_nowait()
-                    frame = pygame.surfarray.make_surface(processedFrameArray.transpose(1, 0, 2))  # Convert back to (width, height, channels)
+            # Consume the result
+            if not self.resultQueue.empty():
+                dis, croppedImage, _, _ = self.resultQueue.get()
+                self.obbDisplay = pygame.surfarray.make_surface(dis)
+                self.obbDisplay.set_colorkey((0, 0, 0))
+                if croppedImage is not None:
+                    croppedImage = pygame.surfarray.make_surface(croppedImage)
+                    croppedImage = pygame.transform.scale(croppedImage, (self.resolution[0]//3, self.resolution[1]))
+                    self.componentDisplay.blit(croppedImage, (0,0))
+            # Produce a frame
+            if (self.doInference.is_set() or self.constInference.is_set()) and not self.busyInference.is_set():
+                self.busyInference.set()
+                if self.frameQueue.empty():
+                    self.frameQueue.put(pygame.surfarray.array3d(frame).swapaxes(0,1))
+                    self.doInference.clear()
         return frame
 
     def inference(self, frame:numpy.ndarray) -> pygame.Surface:
@@ -175,16 +201,17 @@ class Vision_Handler:
         return
 
 if __name__ == "__main__":
-    INFERENCE = False
+    INFERENCE = True
     CAPTURE_VNC = False
     TRAINING_MODE = False
+    ENABLE_KEYBOARD = True
     CAMERA_FRAMERATE = 30
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode((CAMERA_RESOLUTION[0]//3+CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]), 0)
     camera = pygame.Surface((CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]))
     compDisplay = pygame.Surface((CAMERA_RESOLUTION[0]//3, CAMERA_RESOLUTION[1]))
-    vision = Vision_Handler().init(camera, compDisplay, INFERENCE, TRAINING_MODE)
+    vision = Vision_Handler().init(camera, compDisplay, INFERENCE, TRAINING_MODE, CAPTURE_VNC, ENABLE_KEYBOARD)
     start_ui(
         loopConditionFunc=lambda: True,
         loopFunction=[lambda: display.blit(camera, (0,0)), lambda: display.blit(compDisplay, (CAMERA_RESOLUTION[0], 0))],

@@ -26,7 +26,7 @@ class LCD_UI:
         self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
         self.componentSurface = pygame.Surface(self.componentResolution)
-        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=False, trainingMode=self.trainingMode)
+        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=True, trainingMode=self.trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
@@ -357,6 +357,9 @@ class LCD_UI:
                 self.UIElements["offload_inference"].toggle()
             if event.ui_element == self.UIElements.get("const_inference", None):
                 self.UIElements["const_inference"].toggle()
+                self.visionHandler.set_const_inference(self.UIElements["const_inference"].get_value())
+            if event.ui_element == self.UIElements.get("inference_once", None):
+                self.visionHandler.set_do_inference()
             if event.ui_element == self.UIElements.get("wifi_button", None):
                 wifi_restart()
             if event.ui_element == self.UIElements.get("strip_reset_button", None):
@@ -374,6 +377,7 @@ class LCD_UI:
         """
         self.display.fill(BG_COLOUR)
         self.display.blit(self.cameraSurface, (WIDGET_PADDING, WIDGET_PADDING))
+        self.display.blit(self.componentSurface, (LCD_RESOLUTION[0]-self.componentResolution[0]-WIDGET_PADDING, WIDGET_PADDING))
         if not self.trainingMode:
             self.display.blit(self.componentSurface, (LCD_RESOLUTION[0]-self.componentResolution[0]-WIDGET_PADDING, WIDGET_PADDING))
 
