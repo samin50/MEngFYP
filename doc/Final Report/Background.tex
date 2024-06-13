@@ -2,17 +2,39 @@
 \label{sec:background}
 This chapter will delve into the background of the project, exploring the existing literature on computer vision systems for component identification, real-time computer vision architectures, and the mechanical design of existing sorting machines. This research will inform the design of the project and its various systems. Research into these topics will inform the decisions made in the design of the project and its various systems.
 
-\subsection{Existing Computer Vision Techniques}
-A range of computer vision techniques have been explored in the literature, ranging from PCA (Principle Component Analysis) by \citet{Dhenge2013MechanicalNS} to more modern computer vision techniques like CNNs as used by \citet{Xu2020,s22239079}. However, given the rate of advancement of computer vision techniques, the techniques used in the literature reflect the state of the art at the time of writing, and so are not necessarily the most viable current techniques for the project, but they inspire novel approaches to the problem of component identification.
+\subsection{Computer Vision Techniques}
+A range of computer vision techniques have been explored in the literature, ranging from PCA (Principle Component Analysis) by \citet{Dhenge2013MechanicalNS} to more modern computer vision techniques like CNNs as used by \citet{Xu2020,s22239079}, and very recently, Vision Transformers (ViTs) by \citet{dosovitskiy2021image}. Given the rate of advancement of computer vision techniques, the techniques used in the literature reflect the state of the art at the time of writing, and so are not necessarily the most viable current techniques for the project, but they inspire novel approaches to the problem of component identification.
 
-PCA with ANN (Artificial Neural Networks) as used by \citet{Dhenge2013MechanicalNS} is a relatively simple but outdated statistical technique that was successful in identifying nuts and bolts, which are very distinct components. In this paper, PCA is used as a feature extractor and then fed directly into, though not explicitly mentioned, an FCL (Fully Connected Layer), as the classifier. Although a valid approach, CNNs (Convolutional Neural Networks) are known to be much more effective at feature extraction, and do not "have the problem of low recall and accuracy", as mentioned by \citet{Xu2020}, that PCA may suffer from, so this approach may not be the most viable for the project. PCA excels at identifying components that are very distinct, like nuts and bolts, but may struggle with components that are more similar, like different types of capacitors, which is a problem that the project may face. To support this claim, \citet{Xu2020} use the SqueezeNet CNN architecture to identify 22 different subcategories of electronic components, specifically resistors, capacitors, and inductors, which is directly applicable to the project. They achieve a TPR (True Positive Rate) of 99.999\% with only a 2.67ms average inference time on a GTX 1050 2GB GPU (released in 2016), which would translate to ~374 FPS (Frames Per Second); a very impressive result. This work helps to support the claim that a CNN is a more viable approach to the problem of component identification, and so this will inform the design of the project's computer vision system.
+\begin{figure}[H]
+  \hfill
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/articles/pca.jpg}
+    \caption{Resistor Test Set \cite{pcaexplained}}
+    \label{fig:pca}
+  \end{minipage}
+\end{figure}
+
+PCA with ANN (Artificial Neural Networks) as used by \citet{Dhenge2013MechanicalNS} is a relatively simple but outdated statistical technique that was successful in identifying nuts and bolts, which are very distinct components. Principal Component Analysis (PCA) is a widely used unsupervised machine learning algorithm primarily for dimensionality reduction, data compression, and noise reduction. PCA works by identifying the principal components, or orthogonal vectors, that best represent the data, in order to reduce the data's dimensionality, as shown in \autoref{fig:pca}. The dataset is then projected onto these principal components, which can then be used for training a classifier. The paper by \citet{Dhenge2013MechanicalNS} uses PCA for feature extraction, and then uses an ANN (Artificial Neural Netowrk) to classify the components, achieving an accuracy of 95\%. This is a very promising result, as it shows that PCA is a viable approach to component identification. However, it is important to note that PCA is a relatively outdated technique, and may not be the most viable approach to the problem of component identification, as more advanced techniques like CNNs are known to be much more effective at feature extraction.
+
+\begin{figure}[H]
+  \hfill
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/articles/squeezenet.jpg}
+    \caption{Faster SqueezeNet CNN architecture \cite{Xu2020}}
+    \label{fig:pca}
+  \end{minipage}
+\end{figure}
+
+Although a valid approach by \citet{Dhenge2013MechanicalNS}, CNNs (Convolutional Neural Networks) are known to be much more effective at feature extraction, and do not "have the problem of low recall and accuracy", as mentioned by \citet{Xu2020}, that PCA may suffer from. PCA excels at identifying components that are very distinct, like nuts and bolts, but may struggle with components that are more similar, like different types of capacitors, for example. Convolutional Neural Networks (CNNs) make use of convolutional layers to extract features from the image, which are then used to classify the image, often layering multiple convolutional filters to extract more complex features. They are an ever-evolving field, with new architectures being developed frequently, meaning that they are always at the cutting edge of computer vision research. To support the claim of CNNs effectiveness at feature extraction over PCA, \citet{Xu2020} use the Faster SqueezeNet CNN architecture to identify 22 different subcategories of electronic components, specifically resistors, capacitors, and inductors, which is directly applicable to the project. They achieve a TPR (True Positive Rate) of 99.999\% with only a 2.67ms average inference time on a GTX 1050 2GB GPU (released in 2016), which would translate to ~374 FPS (Frames Per Second); a very impressive result. This work helps to support the claim that a CNN is a more viable approach to the problem of component identification, and so this will inform the design of the project's computer vision system.
 
 \begin{figure}[H]
   \hfill
   \begin{minipage}[t]{\textwidth}
     \centering
     \includegraphics[height=8cm]{imgs/articles/resistordata.jpg}
-    \caption{Resistor Test Set \cite{8939034}}
+    \caption{Resistor Test Set \citet{8939034}}
     \label{fig:resistordata}
   \end{minipage}
 \end{figure}
@@ -21,9 +43,33 @@ The paper by \citet{8939034} discusses the use of an SVM (Support Vector Machine
 
 The inference time seems to be incredibly fast, only being ~0.7ms, although it is important to note this was run on an Intel® Core™ i5-6200U CPU, rather than an edge device like the Raspberry Pi 4, which may have a slower inference time. In any case, it shows that the SVM is a viable approach to consider for the project.
 
-\subsection{Computer Vision Architectures}
+\begin{figure}[H]
+  \hfill
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/articles/visiontransformer.jpg}
+    \caption{Vision Transformer \cite{dosovitskiy2021image}}
+    \label{fig:visiontransformer}
+  \end{minipage}
+\end{figure}
+
+Vision Transformers, as discussed by \citet{dosovitskiy2021image}, are a novel approach to computer vision that has shown to be very effective at image classification tasks, achieving an accuracy of 88.5\% on the ImageNet dataset, which is a very challenging dataset for image classification. As described by the authors, they make use of self-attention mechanisms, as shown in \autoref{fig:visiontransformer}, to allow the model to learn long-range dependencies in the image, which is a key advantage of the Vision Transformer over CNNs. This is a very promising result, as it shows that Vision Transformers are a viable approach to computer vision tasks, and may be a viable approach to the problem of component identification. However, it is important to note that the Vision Transformer is a very new architecture, and so may not be as well-supported as CNNs, which may make it more difficult to implement in the project. Due to their novelty, they also tend to be more computationally expensive that other architectures as explained by the authors \citet{li2022efficientformer}, who compare and optimise the Vision Transformer architecture to make it more in-line with the efficiency of CNNs. This is a key consideration for the project, as the system must be able to run in real-time on the Raspberry Pi 4, which may not be possible with the traditional Vision Transformer architecture.
+
+\begin{figure}[H]
+  \hfill
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \includegraphics[height=12cm]{imgs/articles/cnncomparison.jpg}
+    \caption{CNN architecture comparisons \cite{electronics11060945}}
+    \label{fig:cnncomparison}
+  \end{minipage}
+\end{figure}
+
+Although all the approaches outlined above have potential for the project, the most viable approach is a CNN, as it is a well-established technique for computer vision tasks, and is known to be very effective at feature extraction. The paper by \citet{electronics11060945} explores the efficiency of different CNN architectures, as shown in \autoref{fig:cnncomparison}, and details different methods to optimise the architectures for real-time inferencing. The sheer number of different CNN architectures shows the complexity of the field, and the difficulty in choosing the most appropriate architecture for the project,  but also demonstrates their flexibility and ability to be tailored to the specific requirements of the project. The paper also explores the use of different optimisation techniques to reduce the computational complexity of the models, which is a key requirement of the project, as the system must be able to run in real-time on the Raspberry Pi 4. 
+
+\subsection{Convolutional Neural Networks Architectures}
 \label{sec:background-computer-vision}
-For the problem of component identification, the computer vision system must be able to identify components in real-time, as the components may eventually be moving on a conveyor belt, captured using a camera facing down at the components. This means that the computer vision system must be able to identify components in a very short amount of time, or in other words, have a short inference time, and so the system must be computationally efficient. The envisioned system is designed to be self-contained, and as described in \autoref{sec:design-and-system-architecture}, the system will run on a Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4}, and must also be accurate and able to control the other systems in the project in real-time. This requires the Computer Vision system to be both computationally efficient and accurate, which is a difficult balance to strike.
+This section will explore the different CNN architectures that are commonly used in computer vision tasks, and their effectiveness at identifying objects in real-time. A requirement for the chosen architecture is that it must be able to run in real-time on the Raspberry Pi 4, which has a 1.8GHz quad-core 64-bit ARM Cortex-A72 CPU and up to 8GB of RAM \cite{pi4}, however the Pi must not be overwhelmed by the computational complexity of the model, as other subsystems in the project must also run concurrently. This requires the Computer Vision system to be both computationally efficient and accurate, which is a difficult balance to strike.
 
 For the explicit purpose of identifying electronic components, the paper by \citet{s22239079} compares a range of different object detection architectures, including YOLOv3, YOLOv4 and Faster SqueezeNet, with YOLOv4 achieving a mAP (mean Average Precision) of 98.6\%. The mean average precision is defined by the following formula:
 
@@ -41,9 +87,7 @@ Where $n$ is the number of classes, and $\texttt{AP}_i$ is the average precision
 \end{align*}
 }
 
-YOLO (You Only Look Once) is a real-time object detection architecture, that is used very commonly in computer vision applications and is very effective at identifying objects in real-time \citet{yolo}. It makes use of a single CNN that takes in an image and outputs a list of bounding boxes and class probabilities for each bounding box. This is in contrast to other object detection architectures, such as R-CNN, which uses a CNN to propose regions of interest and then uses a second CNN to classify the regions of interest.
-
-Other papers like \citet{Guo2021} also comment on YOLOv4's effectiveness at identifying electronic components, achieving 93.94\% mAP on a dataset of 20 different components, and the paper also comments on YOLOv4's ability to run in real-time, achieving 67 FPS, albeit on a powerful NVIDIA TITAN Xp GPU. For the Raspberry Pi 3B, the paper by \citet{9166199} has shown to run YOLOv3 at a very low 1 FPS, with an IoU (Intersection over Union) accuracy of 86.7\%, which is relatively low.
+YOLO (You Only Look Once) is a real-time object detection architecture, that is used very commonly in computer vision applications and is very effective at identifying objects in real-time \citet{yolo}. It makes use of a single CNN that takes in an image and outputs a list of bounding boxes and class probabilities for each bounding box. This is in contrast to other object detection architectures, such as R-CNN, which uses a CNN to propose regions of interest and then uses a second CNN to classify the regions of interest. Other papers like \citet{Guo2021} also comment on YOLOv4's effectiveness at identifying electronic components, achieving 93.94\% mAP on a dataset of 20 different components, and the paper also comments on YOLOv4's ability to run in real-time, achieving 67 FPS, albeit on a powerful NVIDIA TITAN Xp GPU. For the Raspberry Pi 3B, the paper by \citet{9166199} has shown to run YOLOv3 at a very low 1 FPS, with an IoU (Intersection over Union) accuracy of 86.7\%, which is relatively low.
 
 \begin{figure}[H]
   \begin{minipage}[t]{0.49\textwidth}
@@ -102,9 +146,6 @@ The components then separate into two chutes, one for nuts and one for bolts, us
 Other approaches include vibratory feeders \cite{s21217280}, which use precise vibrations to orientate and transport components, and pneumatic systems from \citet{ASEC2023-16267} (also suggested by project Supervisor Dr. Stott when dicussing transporting mechanisms in project meetings), use air pressure in tubes to transport components. These approaches require more complex hardware, and lack the easily achievable precision of the conveyor belt system, for example in the case of the pneumatic system, a complex network of tubes and valves and an air compressor is required, which is not practical for the project. Robotic arms are commonly used in the industry for sorting, however, this is not viable as this would either require an expensive robotic arm, or a complex system of motors and actuators to move the components.
 
 From the approaches above, it seems that a conveyor belt with a down-facing camera is the most viable approach to transporting the components.
-
-% Initially, the aim was for the system to be semi-autonomous, with a design allowing the camera to face upwards. This configuration would enable the user to place the component on an acrylic plate directly above the camera for immediate identification, enabling easy user interaction as the view of the component is not obstructed. Having the camera face-down would block the user's view of the component, which would be an inconvenience, and as such, the current design of the system features an up-facing camera. However, this will be changed to reflect the research outlined above, in the next stage of the project.
-
 \subsubsection{Bowl Feeders}
 While researching for this project, and especially in videos \cite{videobowlfeeder}, it seems most industrial sorting machines use a Vibratory Bowl Feeder (VBF) to help feed components into the sorting system.
 

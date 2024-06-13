@@ -38,7 +38,7 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
     """
     blackBackground = numpy.zeros_like(frame)
     frameHeight, frameWidth = frame.shape[:2]
-    clsList = []
+    cls = ""
     conf = 0
     croppedImage = None
     # For every box

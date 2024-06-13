@@ -3,14 +3,6 @@
 The motivation for this project is three-fold; to solve the problem of electronic waste and cluttered workspaces in the Level 1 Electrical Engineering Labs; to alleviate the time-consuming process of sorting electronic components from the Labs' technicians; and to bring the Lab closer to meeting the requirements for the LEAF (Laboratory Efficiency Assessment Framework) certification \cite{leaf} that the Lab is currently working towards. The LEAF certification is a framework that aims to improve the efficiency of laboratories by reducing waste, energy consumption, and costs.
 This project aligns with the LEAF certification's goals by reducing the amount of electronic waste produced by the Lab.
 
-The project aims to achieve these goals by employing state-of-the-art computer vision techniques to classify various electronic components, and then sort them into designated bins. The project's deliverables are as follows:
-\begin{mylist}
-  \item \textbf{Vision System:} A computer vision system capable of real-time classification of electrical components.
-  \item \textbf{Mechatronic System:} A mechatronic system that can sort the classified components into designated bins set by the user.
-  \item \textbf{User Interface:} An interface from which to observe and control the system's state.  
-\end{mylist} 
-\noindent
-Samples of the different electrical components commonly used in the Level 1 labs were collected, and they are as follows:
 \begin{multicols}{2}
   \begin{mylist}
     \item Resistors
@@ -25,21 +17,21 @@ Samples of the different electrical components commonly used in the Level 1 labs
     \item Integrated Circuits
   \end{mylist}
 \end{multicols}
+Examples of components that are commonly found in the Level 1 labs are shown in the above table.
 
-The repository can be found in the Appendix \ref{app:github}.
+\subsection{Project Goals}
+The project aims to achieve these goals by employing state-of-the-art computer vision techniques to classify various electronic components, and then sort them into designated bins. The project must be able to meet the following requirements:
 
-\todo{Conform more to fyp report guidelines}
-\todo{fix all pictures}
+\textbf{Vision System:} The system must be able to accurately classify the different electrical components used in the Level 1 labs. It should operate in real-time and be able to classify components as they move along the conveyor belt with reasonable accuracy. It is essential that the means of classification is not too computationally expensive, as the system must be able to classify components in real-time as they move along the conveyor belt.
 
-\noindent
-% For this initial stage of the project, the focus is on developing the foundation of the system that the project
-% will be built upon so that the development of the various systems can be done independently, in parallel, and in such a way that each system
-% is modular and easily extensible. For this reason, the project was initially split into three stages in accordance
-% with the three main deliverables of the project. 
+\textbf{Mechanical System:} The system must be able to sort the classified components into designated bins. The system will make use of a mechanical design to physically move the components into the correct bins, and its design must be easily producible and cost-effective. The mechanical design should be easy to disassemble and reassemble for maintenance purposes, and therefore it must also be robust and reliable. Standard parts should be used in the design where possible to reduce costs and increase the ease of maintenance.
 
-% However, during the initial stage, it was decided that the first stage would be split into two parts, with the first part focusing on the development of the foundation of the system, 
-% and the second part focusing on the development of the computer vision system, for a total of four distinct stages. This was because the development of the foundation of the
-% system took longer than expected, and the vision system needs to be trained on data that is representative of the conditions it will be used in, which requires the mechanical design to be finalised.
+\textbf{Electronics:} The electronics of the system should be able to control the mechanical system and the vision system, and must be safe for use in a laboratory environment. The electronics must be able to control the stepper motors and sensors used in the mechanical system, and the camera used in the vision system. Careful consideration must be given to the power requirements of the system, and the electronics must be able to handle the power requirements of the mechanical system and the vision system, to ensure that the system operates correctly and safely.
 
-% This approach was adopted to establish defined goals, ensuring that the project consistently progresses towards a deliverable product. 
-% Each stage extends the previous stage, so the project can be considered as a series of smaller projects. 
+\textbf{User Interface:} The system must have a user interface from which to observe and control the system's state. The user interface should be easy to use and intuitive, and should provide feedback to the user about the system's state. The user interface should also provide the user with the ability to control the system, for example, to start and stop the system.
+
+\textbf{Concurrency and Error Handling:} The system must be able to handle multiple components on the conveyor belt at once, and must be able to handle errors that may occur during operation. Due to the nature of the system, having multiple subsystems with cross dependencies, it is essential that the system can handle errors gracefully and recover from them without causing damage to the system or the components being sorted. It is essential that the system software employs multiprocessing or threading to handle the concurrent operation of the different subsystems to mitigate latency to the user.
+
+This report seeks to document the development of the project and provide justification for the design decisions made throughout the project. The report will also evaluate the project's performance in terms of accuracy, efficiency, and usability, and suggest areas for future work.
+
+Discussion of existing solutions and relevant literature is explored in \autoref{sec:background}, the design and system architecture of the project is discussed in \autoref{sec:design-and-system-architecture}, the implementation of the project is discussed in \autoref{sec:implementation}, and the evaluation of the project is discussed in \autoref{sec:evaluation}, with tests in \autoref{sec:testing}. The report concludes with a discussion of the project's limitations and suggestions for future work in \autoref{sec:conclusion}. The repository of this project, including all design files and code, can be found in the Appendix \ref{app:github}.

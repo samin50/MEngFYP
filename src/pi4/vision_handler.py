@@ -30,9 +30,11 @@ class Vision_Handler:
         self.trainingMode = trainingMode
         self.captureVNC = captureVNC
         self.enableKeyboard = enableKeyboard
+        self.forceImage = False
         # Surface setup
         self.cameraDisplay = cameraDisplay
         self.componentDisplay = componentDisplay
+        self.imgDisplay = pygame.Surface(CAMERA_RESOLUTION)
         self.obbDisplay = pygame.Surface(CAMERA_RESOLUTION)
         self.obbDisplay.set_colorkey((0, 0, 0))
         self.currentFrame = pygame.Surface(CAMERA_RESOLUTION)
@@ -57,9 +59,27 @@ class Vision_Handler:
         modelPath = CLASSIFIER_PATH if self.enableInference else None
         if self.enableInference:
             modelPath = CLASSIFIER_PATH
-            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath))
+            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath), daemon=True)
             self.inferenceProcess.start()
         return self
+
+    def force_image(self) -> None:
+        """
+        Force an image to be displayed
+        """
+        self.forceImage = True
+
+    def stop_force_image(self) -> None:
+        """
+        Unforce the image
+        """
+        self.forceImage = False
+
+    def set_image(self, imagePath:str) -> None:
+        """
+        Set the image to be displayed
+        """
+        self.imgDisplay = pygame.image.load(imagePath)
 
     def set_lcd_callbacks(self, callbacks:dict) -> None:
         """
@@ -130,6 +150,8 @@ class Vision_Handler:
         # Capture the frame
         if self.captureVNC:
             frame = self.capture_vnc()
+        elif self.forceImage:
+            frame = self.imgDisplay.copy()
         else:
             frame = self.cameraFeed.get_frame()
         # Perform inference

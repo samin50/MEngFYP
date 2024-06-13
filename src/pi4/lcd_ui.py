@@ -2,6 +2,7 @@
 Pygame Frontend for the Pi4
 Displays on the 7 inch Dfrobot LCD
 """
+import random
 import os
 import colorsys
 import psutil
@@ -15,9 +16,10 @@ from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.vision_handler import Vision_Handler
 
 class LCD_UI:
-    def __init__(self, clock:pygame.time.Clock, visionHandler:Vision_Handler, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False) -> None:
+    def __init__(self, clock:pygame.time.Clock, visionHandler:Vision_Handler, callbacks:dict={}, trainingMode:bool=False, resizeable:bool=False, forceImage:bool=False) -> None:
         self.running = True
         self.trainingMode = trainingMode
+        self.forceImage = forceImage
         # Setup UI
         self.display = pygame.display.set_mode(LCD_RESOLUTION, resizeable and (pygame.RESIZABLE | pygame.SCALED))
         pygame.display.set_caption("Component Sorter")
@@ -172,6 +174,8 @@ class LCD_UI:
             text="WiFi: Not Connected",
             manager=self.manager,
         )
+        self.UIElements["wifi_status"].text_colour = pygame.Color(COLOURS["yellow"])
+        self.UIElements["wifi_status"].rebuild()
         # Wifi Button
         self.UIElements["wifi_button"] = UIButton(
             relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, CAMERA_DISPLAY_SIZE[1]+yOffset), (widgetWidth+offset, buttonHeight)),
@@ -181,8 +185,14 @@ class LCD_UI:
         # Exit Button
         yOffset += buttonHeight + WIDGET_PADDING
         self.UIElements["exit_button"] = UIButton(
-            relative_rect=pygame.Rect((cornerOffset[0], LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (widgetWidth*2+WIDGET_PADDING+offset, buttonHeight)),
+            relative_rect=pygame.Rect((cornerOffset[0], LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (widgetWidth+offset, buttonHeight)),
             text="Exit",
+            manager=self.manager
+        )
+        # Reset strip
+        self.UIElements["strip_reset_button"] = UIButton(
+            relative_rect=pygame.Rect((cornerOffset[0]+widgetWidth+WIDGET_PADDING, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (widgetWidth+offset, buttonHeight)),
+            text="Reset Strip",
             manager=self.manager
         )
         ## RIGHT SIDE
@@ -302,12 +312,12 @@ class LCD_UI:
                 manager=self.manager,
                 object_id=ObjectID(class_id="label", object_id="#center_label")
             )
-            # Enable button
-            self.UIElements["enable_button"] = CustomToggleButton(
-                relative_rect=pygame.Rect((LCD_RESOLUTION[0]-WIDGET_PADDING-self.componentResolution[0]-offset, yOffset), (self.componentResolution[0]+2*offset, buttonHeight+2*offset)),
-                text="Enabled?",
-                manager=self.manager
-            )
+        # Enable button
+        self.UIElements["enable_button"] = CustomToggleButton(
+            relative_rect=pygame.Rect((LCD_RESOLUTION[0]-WIDGET_PADDING-self.componentResolution[0]-offset, yOffset+3.8*xModifier), (self.componentResolution[0]+2*offset, buttonHeight+2*offset)),
+            text="Enabled?",
+            manager=self.manager
+        )
         # Colour strip
         yOffset += buttonHeight + WIDGET_PADDING*2
         offsetIncrement = sliderHeight
@@ -359,12 +369,34 @@ class LCD_UI:
             manager=self.manager,
             object_id=ObjectID(class_id="label", object_id="#center_label")
         )
-        self.UIElements["strip_reset_button"] = UIButton(
-            relative_rect=pygame.Rect((xOffset, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING-sliderModifierHeight), (widgetWidth*2+WIDGET_PADDING-sliderModifier, buttonHeight)),
-            text="Reset Strip",
-            manager=self.manager
-        )
-        if self.trainingMode:
+        # Home and kinemetic position
+        if not self.trainingMode:
+            _ = UILabel(
+                relative_rect=pygame.Rect((xOffset, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (sliderWidth*2+WIDGET_PADDING-textWidth, sliderHeight)),
+                text="Kinematic Pos:",
+                manager=self.manager,
+                object_id=ObjectID(class_id="label", object_id="#top_label")
+            )
+            self.UIElements["kinematic_position"] = UILabel(
+                relative_rect=pygame.Rect((xOffset, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (sliderWidth*2+WIDGET_PADDING, buttonHeight)),
+                text="-",
+                manager=self.manager,
+                object_id=ObjectID(class_id="label", object_id="#topright_label")
+            )
+            self.UIElements["kinematic_status"] = UILabel(
+                relative_rect=pygame.Rect((xOffset, LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (sliderWidth*2+WIDGET_PADDING, buttonHeight)),
+                text="Not Homed",
+                manager=self.manager,
+                object_id=ObjectID(class_id="label", object_id="#bottomleft_label")
+            )
+            self.UIElements["kinematic_status"].text_colour = pygame.Color(COLOURS["yellow"])
+            self.UIElements["kinematic_status"].rebuild()
+            self.UIElements["home_button"] = UIButton(
+                relative_rect=pygame.Rect((xOffset+2*sliderWidth+2*WIDGET_PADDING-(2*sliderModifier), LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (sliderWidth, buttonHeight)),
+                text="Home",
+                manager=self.manager
+            )
+        else:
             self.UIElements["take_photo_button"] = UIButton(
                 relative_rect=pygame.Rect((xOffset, yOffset+offsetIncrement*6), (CAMERA_DISPLAY_SIZE[0]+WIDGET_PADDING, buttonHeight)),
                 text="Take Photo",
@@ -426,6 +458,13 @@ class LCD_UI:
                 self.running = False
             if event.ui_element == self.UIElements.get("enable_button", None):
                 self.UIElements["enable_button"].toggle()
+                # If FORCE_IMAGE is enabled, allow a random photo
+                if self.forceImage:
+                    enable = self.UIElements["enable_button"].get_value()
+                    if enable:
+                        self.visionHandler.force_image()
+                    else:
+                        self.visionHandler.stop_force_image()
             if event.ui_element == self.UIElements.get("offload_inference", None):
                 self.UIElements["offload_inference"].toggle()
             if event.ui_element == self.UIElements.get("const_inference", None):
@@ -437,6 +476,11 @@ class LCD_UI:
                 wifi_restart()
             if event.ui_element == self.UIElements.get("strip_reset_button", None):
                 self.stripResetCallback()
+                # If FORCE_IMAGE is enabled, allow a random photo
+                if self.forceImage and self.UIElements["enable_button"].get_value():
+                    path = "src/vision/datasets/full/current/images/test"
+                    randomFile = random.choice(os.listdir(path))
+                    self.visionHandler.set_image(f"{path}/{randomFile}")
             if event.ui_element == self.UIElements.get("take_photo_button", None):
                 image = self.cameraFeed.vision.get_frame()
                 imageCounter = 0
@@ -450,7 +494,6 @@ class LCD_UI:
         """
         self.display.fill(BG_COLOUR)
         self.display.blit(self.cameraSurface, (WIDGET_PADDING, WIDGET_PADDING))
-        self.display.blit(self.componentSurface, (LCD_RESOLUTION[0]-self.componentResolution[0]-WIDGET_PADDING, WIDGET_PADDING))
         if not self.trainingMode:
             self.display.blit(self.componentSurface, (LCD_RESOLUTION[0]-self.componentResolution[0]-WIDGET_PADDING, WIDGET_PADDING))
 
@@ -465,12 +508,13 @@ class LCD_UI:
         self.UIElements["hsv_colour_code"].set_text(f"HSV: {hsvColour}")
 
 if __name__ == "__main__":
-    TRAININGMODE = False
-    INFERENCE = False
+    TRAININGMODE = True
+    INFERENCE = True
+    FORCE_IMAGE = True
     clk = pygame.time.Clock()
     pygame.init()
-    vision = Vision_Handler(INFERENCE)
-    systemObj = LCD_UI(clk, vision, trainingMode=TRAININGMODE)
+    vision = Vision_Handler(INFERENCE and not TRAININGMODE)
+    systemObj = LCD_UI(clk, vision, trainingMode=TRAININGMODE, forceImage=FORCE_IMAGE)
     start_ui(
         loopConditionFunc=systemObj.is_running,
         loopFunction=[systemObj.draw],
