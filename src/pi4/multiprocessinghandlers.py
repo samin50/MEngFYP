@@ -39,13 +39,12 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
     blackBackground = numpy.zeros_like(frame)
     frameHeight, frameWidth = frame.shape[:2]
     clsList = []
-    speed = 0
+    conf = 0
     croppedImage = None
     # For every box
     for result in results:
         # Get the class
         clsList = result.obb.cls.tolist()
-        speed = result.speed
         if len(clsList) == 0:
             continue
         box = numpy.array(result.obb.xyxyxyxy[0].cpu(), dtype=numpy.int0)
@@ -61,7 +60,9 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
         # Draw the class
         fontScale = 1.5
         fontThickness = 2
-        label = f"{MAP[clsList[0]]}:{result.obb.conf[0]:.2f}"
+        conf = result.obb.conf[0]
+        cls = MAP[clsList[0]]
+        label = f"{cls}:{conf:.2f}"
         labelSize, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, fontScale, fontThickness)
         x, y = box[0]
         topLeftCorner = (x, y - labelSize[1] - 10)
@@ -74,7 +75,9 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
         cv2.rectangle(blackBackground, topLeftCorner, bottomRightCorner, BOUNDING_BOX_COLOR, cv2.FILLED)
         # Draw the label text
         cv2.putText(blackBackground, label, (topLeftCorner[0], topLeftCorner[1] + labelSize[1]), cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255, 255, 255), fontThickness)
-    return (frame.swapaxes(0, 1), croppedImage, clsList, speed)
+        print(f"{conf:.2f} {cls}")
+        conf = float(f"{conf:.2f}")*100
+    return (frame.swapaxes(0, 1), croppedImage, conf, cls)
 
 def crop_image(frame: numpy.ndarray, box: numpy.ndarray) -> numpy.ndarray:
     """

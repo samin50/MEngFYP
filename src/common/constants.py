@@ -14,6 +14,11 @@ THEMEPARAMS = {
     "labelTextColour" : "#FFFFFF"
 }
 SHOW_CURSOR = True
+COLOURS = {
+    "red" : "#FF0000",
+    "yellow" : "#FFA500",
+    "green" : "#00FF00",
+}
 # Vision Parameters
 CAMERA_RESOLUTION = (640, 480)
 CAMERA_DISPLAY_SIZE = (480, 360)

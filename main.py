@@ -15,17 +15,16 @@ from src.pi4.fail_screen import FailScreen_UI
 from src.common.helper_functions import start_ui
 from src.pi4.mechanics_controller import System_Controller
 from src.pi4.vision_handler import Vision_Handler
-
 class Component_Sorter:
     """
     Component Sorter class
     """
-    def __init__(self, trainingMode:bool=False) -> None:
+    def __init__(self, trainingMode:bool=False, enableInference:bool=True) -> None:
         self.lcdUI = None
         GPIO.cleanup()
         # GPIO Setup
         GPIO.setmode(GPIO.BCM)
-        self.visionHandler = Vision_Handler()
+        self.visionHandler = Vision_Handler(enableInference)
         self.systemController = System_Controller(self.visionHandler)
         # LCD Setup
         callbacks = {
@@ -45,7 +44,7 @@ class Component_Sorter:
         self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
-def run(trainingMode:bool) -> None:
+def run(trainingMode:bool, enableInference:bool=True) -> None:
     """
     Run the main application
     """
@@ -53,7 +52,7 @@ def run(trainingMode:bool) -> None:
     pygame.init()
     while keepRunning:
         try:
-            systemObj = Component_Sorter(trainingMode)
+            systemObj = Component_Sorter(trainingMode, enableInference)
             start_ui(
                 loopConditionFunc=systemObj.lcdUI.is_running,
                 loopFunction=[systemObj.lcdUI.draw],
@@ -90,6 +89,7 @@ if __name__ == "__main__":
     TRAINING_MODE = False
     PROFILER = False
     SNAKEVIZ = True
+    INFERENCE = True
     # Run and optionally profile the application
     if PROFILER:
         import cProfile
@@ -101,4 +101,4 @@ if __name__ == "__main__":
         if SNAKEVIZ:
             subprocess.Popen("snakeviz ./profiles/profile.prof", shell=True)
     else:
-        run(TRAINING_MODE)
+        run(TRAINING_MODE, INFERENCE)

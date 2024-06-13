@@ -3,6 +3,7 @@ Responsible for handling the vision system.
 Hooks onto the pygame camera and performs inference.
 """
 # pylint: disable=attribute-defined-outside-init
+import time
 import multiprocessing
 import numpy
 import cv2
@@ -16,14 +17,16 @@ from src.common.helper_functions import start_ui
 from src.common.constants import CAMERA_RESOLUTION, CLASSIFIER_PATH, TRAINING_MODE_CAMERA_SIZE, CAMERA_DISPLAY_SIZE, FPS_FONT_SIZE, CAMERA_FRAMERATE
 from src.vision.vsrc.constants import DATA, REALVNC_WINDOW_NAME, BORDER_WIDTH, LOWER_THRESHOLD, UPPER_THRESHOLD
 class Vision_Handler:
-    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, enableInference:bool=False, trainingMode:bool=False, captureVNC:bool=False, enableKeyboard:bool=False) -> None:
+    def __init__(self, enableInference:bool=True):
+        self.enableInference = enableInference
+
+    def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, trainingMode:bool=False, captureVNC:bool=False, enableKeyboard:bool=False) -> None:
         """
         Initialise the vision handler
         """
-        self.labelFont = pygame.font.SysFont("Roboto", 20)
+        self.startTime = time.time()
         # Constants
         self.resolution = TRAINING_MODE_CAMERA_SIZE if trainingMode else CAMERA_DISPLAY_SIZE
-        self.enableInference = enableInference
         self.trainingMode = trainingMode
         self.captureVNC = captureVNC
         self.enableKeyboard = enableKeyboard
@@ -51,12 +54,18 @@ class Vision_Handler:
         self.busyInference = multiprocessing.Event()
         self.frameQueue = multiprocessing.Queue(maxsize=1)
         self.resultQueue = multiprocessing.Queue(maxsize=1)
-        modelPath = CLASSIFIER_PATH if enableInference else None
+        modelPath = CLASSIFIER_PATH if self.enableInference else None
         if self.enableInference:
             modelPath = CLASSIFIER_PATH
             self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath))
             self.inferenceProcess.start()
         return self
+
+    def set_lcd_callbacks(self, callbacks:dict) -> None:
+        """
+        Set the LCD callbacks
+        """
+        self.lcdCallbacks = callbacks
 
     def update_frame(self) -> pygame.Surface:
         """
@@ -127,7 +136,12 @@ class Vision_Handler:
         if self.enableInference:
             # Consume the result
             if not self.resultQueue.empty():
-                dis, croppedImage, _, _ = self.resultQueue.get()
+                dis, croppedImage, conf, cls = self.resultQueue.get()
+                endTime = time.time()
+                # Update the inference time
+                self.lcdCallbacks.get("update_inference_time", lambda _: None)(endTime-self.startTime)
+                self.lcdCallbacks.get("update_confidence", lambda _: None)(conf)
+                self.lcdCallbacks.get("update_class", lambda _: None)(cls)
                 self.obbDisplay = pygame.surfarray.make_surface(dis)
                 self.obbDisplay.set_colorkey((0, 0, 0))
                 if croppedImage is not None:
@@ -138,29 +152,9 @@ class Vision_Handler:
             if (self.doInference.is_set() or self.constInference.is_set()) and not self.busyInference.is_set():
                 self.busyInference.set()
                 if self.frameQueue.empty():
+                    self.startTime = time.time()
                     self.frameQueue.put(pygame.surfarray.array3d(frame).swapaxes(0,1))
                     self.doInference.clear()
-        return frame
-
-    def inference(self, frame:numpy.ndarray) -> pygame.Surface:
-        """
-        Perform inference on the current frame
-        """
-        classList = []
-        # Classifier
-        results = self.model.predict(frame, verbose=False)
-        for result in results:
-            clsList = result.obb.cls.tolist()
-            # For every box
-            for i, _ in enumerate(clsList):
-                box = result.obb.xyxyxyxy[i].tolist()
-                classList.append(clsList[i])
-                conf = result.obb.conf[i].tolist()
-                # Draw the bounding box
-                pygame.draw.lines(frame, (255, 0, 0), True, box, 2)
-                # Draw the class
-                label = self.labelFont.render(f"{self.labelMap[clsList[i]]}:{conf:.2f}", True, (255, 0, 0))
-                frame.blit(label, (box[0], box[1]))
         return frame
 
     def capture_vnc(self) -> None:
@@ -211,7 +205,7 @@ if __name__ == "__main__":
     display = pygame.display.set_mode((CAMERA_RESOLUTION[0]//3+CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]), 0)
     camera = pygame.Surface((CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]))
     compDisplay = pygame.Surface((CAMERA_RESOLUTION[0]//3, CAMERA_RESOLUTION[1]))
-    vision = Vision_Handler().init(camera, compDisplay, INFERENCE, TRAINING_MODE, CAPTURE_VNC, ENABLE_KEYBOARD)
+    vision = Vision_Handler(INFERENCE).init(camera, compDisplay, TRAINING_MODE, CAPTURE_VNC, ENABLE_KEYBOARD)
     start_ui(
         loopConditionFunc=lambda: True,
         loopFunction=[lambda: display.blit(camera, (0,0)), lambda: display.blit(compDisplay, (CAMERA_RESOLUTION[0], 0))],

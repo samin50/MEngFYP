@@ -9,7 +9,7 @@ import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
-from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE
+from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, COLOURS
 from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.vision_handler import Vision_Handler
@@ -26,12 +26,16 @@ class LCD_UI:
         self.componentResolution = self.resolution[0]//3, self.resolution[1]
         self.cameraSurface = pygame.Surface(self.resolution)
         self.componentSurface = pygame.Surface(self.componentResolution)
-        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, enableInference=True, trainingMode=self.trainingMode)
+        self.visionHandler = visionHandler.init(self.cameraSurface, self.componentSurface, trainingMode=self.trainingMode)
         self.manager = pygame_gui.UIManager(LCD_RESOLUTION, theme_path=THEMEJSON, enable_live_theme_updates=False)
         self.UIElements = dict()
         # Setup Event
         self.statUpdateEvent = pygame.USEREVENT + 101
         pygame.time.set_timer(self.statUpdateEvent, STAT_REFRESH_INTERVAL)
+        self.cpuColour = ""
+        self.ramColour = ""
+        self.latencyColour = ""
+        self.confidenceColour = ""
         # Training mode setup
         self.init_ui_widgets()
         # Cursor
@@ -41,6 +45,51 @@ class LCD_UI:
         self.stripResetCallback = callbacks.get("strip_reset_callback", lambda: None)
         self.colourCallback = callbacks.get("colour_callback", lambda _: None)
         self.conveyorSpeedCallback = callbacks.get("conveyor_speed_callback", lambda _: None)
+        # Callbacks
+        self.visionHandler.set_lcd_callbacks({
+            "update_inference_time" : self.set_latency,
+            "update_confidence" : self.set_confidence,
+            "update_class" : self.set_class,
+        })
+
+    def set_latency(self, latency:int) -> None:
+        """
+        Set the latency
+        """
+        latency = latency*1000
+        self.UIElements["inference_latency"].set_text(f"{latency:.2f}ms")
+        if latency > 1000:
+            latencyColour = COLOURS["red"]
+        elif latency > 500:
+            latencyColour = COLOURS["yellow"]
+        else:
+            latencyColour = COLOURS["green"]
+        if self.latencyColour != latencyColour:
+            self.UIElements["inference_latency"].text_colour = pygame.Color(latencyColour)
+            self.UIElements["inference_latency"].rebuild()
+            self.latencyColour = latencyColour
+
+    def set_confidence(self, confidence:float) -> None:
+        """
+        Set the confidence
+        """
+        if confidence > 80:
+            confidenceColour = COLOURS["green"]
+        elif confidence > 60:
+            confidenceColour = COLOURS["yellow"]
+        else:
+            confidenceColour = COLOURS["red"]
+        self.UIElements["confidence_label"].set_text(f"{int(confidence)}%")
+        if self.confidenceColour != confidenceColour:
+            self.UIElements["confidence_label"].text_colour = pygame.Color(confidenceColour)
+            self.UIElements["confidence_label"].rebuild()
+            self.confidenceColour = confidenceColour
+
+    def set_class(self, cls:str) -> None:
+        """
+        Set the class
+        """
+        self.UIElements["class_label"].set_text(cls)
 
     def is_running(self) -> bool:
         """
@@ -166,7 +215,7 @@ class LCD_UI:
             )
             self.UIElements["confidence_label"] = UILabel(
                 relative_rect=pygame.Rect((xOffset+widgetWidth-textWidth, yOffset), (textWidth, sliderHeight)),
-                text="0%",
+                text="-%",
                 manager=self.manager,
                 object_id=ObjectID(class_id="label", object_id="#right_label")
             )
@@ -217,8 +266,8 @@ class LCD_UI:
                 manager=self.manager
             )
             self.UIElements["inference_latency"] = UILabel(
-                relative_rect=pygame.Rect((xOffset+widgetWidth*2-textWidth, yOffset), (textWidth, sliderHeight)),
-                text="0ms",
+                relative_rect=pygame.Rect((xOffset+widgetWidth*2-textWidth*2, yOffset), (2*textWidth, sliderHeight)),
+                text="-ms",
                 manager=self.manager,
                 object_id=ObjectID(class_id="label", object_id="#right_label")
             )
@@ -245,6 +294,8 @@ class LCD_UI:
                 manager=self.manager,
                 object_id=ObjectID(class_id="label", object_id="#topright_label")
             )
+            self.UIElements["status_label"].text_colour = pygame.Color(COLOURS["yellow"])
+            self.UIElements["status_label"].rebuild()
             self.UIElements["status_description"] = UILabel(
                 relative_rect=pygame.Rect((xOffset, yOffset+WIDGET_PADDING+3), (LCD_RESOLUTION[0] - CAMERA_DISPLAY_SIZE[0] - 4*WIDGET_PADDING-self.componentResolution[0], buttonHeight)),
                 text="System Inactive",
@@ -345,8 +396,30 @@ class LCD_UI:
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
             ramUsage = psutil.virtual_memory().percent
+            # Colour thresholds
+            cpuColour = self.cpuColour
+            if cpuUsage > 80:
+                cpuColour = COLOURS["red"]
+            elif cpuUsage > 60:
+                cpuColour = COLOURS["yellow"]
+            else:
+                cpuColour = COLOURS["green"]
+            if ramUsage > 80:
+                ramColour = COLOURS["red"]
+            elif ramUsage > 60:
+                ramColour = COLOURS["yellow"]
+            else:
+                ramColour = COLOURS["green"]
             self.UIElements["cpu_usage_label"].set_text(f"{cpuUsage}%")
             self.UIElements["ram_usage_label"].set_text(f"{ramUsage}%")
+            if self.cpuColour != cpuColour:
+                self.UIElements["cpu_usage_label"].text_colour = pygame.Color(cpuColour)
+                self.UIElements["cpu_usage_label"].rebuild()
+                self.cpuColour = cpuColour
+            if self.ramColour != ramColour:
+                self.UIElements["ram_usage_label"].text_colour = pygame.Color(ramColour)
+                self.UIElements["ram_usage_label"].rebuild()
+                self.ramColour = ramColour
         # Exit Button
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements.get("exit_button", None):
@@ -393,9 +466,10 @@ class LCD_UI:
 
 if __name__ == "__main__":
     TRAININGMODE = False
+    INFERENCE = False
     clk = pygame.time.Clock()
     pygame.init()
-    vision = Vision_Handler()
+    vision = Vision_Handler(INFERENCE)
     systemObj = LCD_UI(clk, vision, trainingMode=TRAININGMODE)
     start_ui(
         loopConditionFunc=systemObj.is_running,
