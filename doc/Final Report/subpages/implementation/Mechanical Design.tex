@@ -128,20 +128,20 @@ Due to the concern of electrical safety,  the power supply has been PAT tested b
 
 As shown in \autoref{fig:psuenclosure}, the final PSU enclosure is shown to be working with the 5V and 12V outputs connected to the mounted USB breakout boards.
 
-\subsubsection{LCD Mount}
+\subsubsection{LCD and Camera Mounts}
 \label{sec:lcd-mount}
 For the DFRobot 7" LCD, a mount was designed to hold the LCD in place on the front of the system. The LCD is affixed at a 15$^{\circ}$ angle to the front of the system, allowing for easy viewing by the user. The mount is designed to be attached to the 2020 extrusion frame of the system, using M3 screws and T-nuts.
 
 \begin{figure}[ht]
-    \centering
-    \begin{minipage}{0.45\textwidth}
+    \begin{minipage}{0.6\textwidth}
         \centering
-        \includegraphics[height=6cm]{imgs/freecad/lcd_mount2.jpg}
+        \includegraphics[height=8cm]{imgs/freecad/lcd_mount2.jpg}
         \caption{LCD Mount}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
         \centering
-        \includegraphics[height=6cm]{imgs/design/unbracedscreen.jpeg}
+        \includegraphics[height=8cm]{imgs/design/unbracedscreen.jpeg}
         \caption{Unbraced LCD Mount}
         \label{fig:brokenlcd}
     \end{minipage}
@@ -153,6 +153,21 @@ The design consists of two parts;
     \item \textbf{LCD Extrusion Mount}: The LCD extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains screw holes for the LCD Cover to be attached to, and screw holes for the 2020 extrusion frame. It also contains a support for the LCD cover to rest on, preventing it from breaking off, as it did in previous iterations, as shown in \autoref{fig:brokenlcd}.
 \end{mylist}
 
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/cameraplate.jpg}
+        \caption{Camera mount and plate}
+        \label{fig:cameraplate}
+    \end{minipage}
+\end{figure}
+
+For the Okdo OV5647 Camera, a mount was designed to hold the camera face down above the conveyor belt. The camera is mounted on the top of the system, with LED lights inside the camera mount. The mount consists of two parts as shown in \autoref{fig:cameraplate};
+\begin{mylist}
+    \item \textbf{Extrusion Mount}: The extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains a hole for the WS2812B LED strip wires to pass through, and screw holes for the camera plate to be attached to. The mount fits onto the extrusion, however this is not strictly necessary as the camera mount is able to fit on the extrusion without falling off.
+    \item \textbf{Camera Plate}: The camera plate is designed to hold the camera in place. It contains four holes for the Okdo OV5647 Camera to be attached to, and a slot for the camera ribbon cable to pass through, ensuring that the camera remains flat.
+\end{mylist}
 \subsubsection{Conveyor Belt}
 \label{sec:conveyor-belt}
 The conveyor belt is a key component of the system, as it is used to transport components from the input side to the bins. As such, it is the largest component of the system, and so makes use of 2020 aluminium extrusion as its skeleton. The conveyor belt has two rollers; one actively driven by a NEMA17 stepper motor, and the other is a free roller. The conveyor belt relies on friction to turn the idle roller, so it is essential that the belt is taut. To ensure this, belt tensioners are used on the idler side of the conveyor belt.
@@ -180,7 +195,7 @@ The conveyor belt is a key component of the system, as it is used to transport c
 \autoref{fig:conveyorrollers} shows the rollers themselves, with non-driven end rollers on the left, the adjustable-length roller body in the middle, and the motor-coupled roller on the right. During initial development, it was unsure what the width of the conveyor belt would be, so a design was made to allow for the length of the rollers to be adjusted. This is done by using a screw on the roller ends to adjust where it locks onto the roller body, enabling the length of the roller to be adjusted. The roller is coupled to the motor by screwing an M3 screw into the side of the roller which pushes against the motor shaft, allowing the motor to drive the roller. \autoref{fig:adjustablerollers} shows the adjustable roller design.
 
 \begin{figure}[H]
-    \begin{minipage}[h]{0.95\textwidth}
+    \begin{minipage}[h]{\textwidth}
         \centering
         \includegraphics[height=8cm]{imgs/freecad/adjustablerollers.jpg}
         \caption{Adjustable Conveyor Rollers}
@@ -193,7 +208,7 @@ On the other side of the conveyor belt, the belt tensioner is used to ensure the
 \begin{figure}[H]
     \begin{minipage}[h]{0.95\textwidth}
         \centering
-        \includegraphics[height=8cm]{imgs/freecad/belttensioner.jpg}
+        \includegraphics[width=\textwidth]{imgs/freecad/belttensioner.jpg}
         \caption{Belt tensioner design}
         \label{fig:belttensioner}
     \end{minipage}
@@ -219,9 +234,80 @@ As usual, the belt tensioner is mounted to the 2020 extrusion frame using M3 scr
 To tension the belt, the nut is simply turned which forces the tensioner to retract or extend in the mount, tensioning the belt. As shown in \autoref{fig:belttensioneractive}, tightening the nut would force the tensioner to move in the direction of the arrow, causing the belt to be tensioned.
 
 \subsubsection{Sweeping Mechanism}
-\todo{show nema17 mount and endstop}
-\todo{show belt driven arm design, inspired by 3D printer designs}
-\todo{show off gantry, ender 3 design inspiration with v rollers}
-\todo{show belt tensioner design}
-\todo{show adjustable arm height design}
-\todo{show bin design}
+The sweeping mechanism of the system contains many intricate parts. It is responsible for pushing components off the conveyor belt into the sorting bins. The mechanism is driven by a NEMA17 stepper motor, which is mounted to the 2020 extrusion frame of the system. The motor then drives a GT2 belt, which is connected to the sweeping arm, allowing it to move linearly down the length of the conveyor belt. 
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/fullsweeper.jpg}
+        \caption{Full Sweeping Mechanism}
+        \label{fig:sweeperfull}
+    \end{minipage}
+\end{figure}
+
+The arm makes use of v-rollers to move smoothly along the 2020 extrusion frame, inspired by traditional x-gantry designs of 3D printers, as shown in \autoref{fig:ender3}. The arm is mounted to the v-rollers using M3 screws and T-nuts, allowing it to be adjusted to the correct height.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/ender_3_assembly_x_axis_complete.jpg}
+        \caption{Ender 3 X-Gantry \cite{brett_2018}}
+        \label{fig:ender3}
+    \end{minipage}
+\end{figure}
+
+The sweeper contains several parts;
+
+\textbf{Motor and Endstop Mount}: The mount is used to attach the NEMA17 stepper motor to the 2020 extrusion frame. It contains four screw holes for the motor, and two screw holes for the endstop. The endstop is used to detect when the sweeper arm has reached the end of its travel, and is used to prevent the motor from damaging the system. This allows precise control of the sweeper arm's position. In \autoref{fig:motorandtensioner}, the motor and endstop mount is shown on the far left.
+\par
+\textbf{Belt Tensioner}: The belt tensioner is used to tension the GT2 belt that drives the sweeper arm. It is mounted to the 2020 extrusion frame using M3 screws and T-nuts, and contains a 608ZZ bearing to allow the belt to rotate freely. The tensioner is used to tension the belt, ensuring that the belt is taut and does not slip. This design is similar to the conveyor belt tensioner in that it uses a nut to tension the belt. Inside the tensioner, there is a GT2 gear that the belt wraps around, and it is affixed to a 5mm shaft that is allowed to rotate freely using two 608ZZ bearings. The tensioner is allowed to move in only direction as it is housed in a "container" --- similar to the conveyor belt tensioner. This is clearly shown in \autoref{fig:motorandtensioner}.
+
+\begin{figure}[H]
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+      \centering
+      \includegraphics[height=7cm]{imgs/freecad/motorandtensioner.jpg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+      \centering
+      \includegraphics[height=7cm]{imgs/freecad/tensionermountreal.jpeg}
+    \end{minipage}
+    \hfill
+    \caption{Motor and endstop mount, and belt tensioner}
+    \label{fig:motorandtensioner}
+\end{figure}
+
+\textbf{Gantry}: The gantry rolls along the 2020 extrusion frame using v-rollers, and provides a mount for the sweeper arm and also triggers the endstop. The design is inspired by the Ender 3 as shown in \autoref{fig:ender3}, and is used to provide a smooth linear motion for the sweeper arm. Three M4 holes are present in the gantry to mount the v-rollers, and there are slots for the timing belt to be inserted into. Four M3 holes are present to mount the sweeper arm, and the gantry has a large bumper on the end to trigger the endstop. The gantry is shown in \autoref{fig:gantry}.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/gantry.jpg}
+        \caption{Gantry}
+        \label{fig:gantry}
+    \end{minipage}
+\end{figure}
+
+\textbf{Sweeper Arm}: The sweeper arm is the part of the system that pushes components off the conveyor belt into the sorting bins. In \autoref{fig:sweeperarm}, it attaches vertically to a mount using M3 screws and T-nuts, and mounts directly to the gantry. The v-rollers on the gantry are also visible for reference.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/sweeperarm.jpg}
+        \caption{Sweeper arm with v-rollers}
+        \label{fig:sweeperarm}
+    \end{minipage}
+\end{figure}
+
+\textbf{Bin}: The bin is used to catch components that are pushed off the conveyor belt by the sweeper arm. There are two parts to the bin; the bin itself and the extrusion mount. Originally, it was designed to have the extrusion mount be secured to the extrusion using M3 screws and T-nuts, but this was found to be unnecessary as the tight fit of the extrusion mount was sufficient to hold it in place. The bin is shown in \autoref{fig:bin}.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{0.95\textwidth}
+        \centering
+        \includegraphics[height=8cm]{imgs/freecad/bin.jpg}
+        \caption{Bin and extrusion mount}
+        \label{fig:bin}
+    \end{minipage}
+\end{figure}
+
+As shown in \autoref{fig:bin}, the bin simply slides into the extrusion mount due to the triangle insets, constraining it to only move directly up and down. There are also countersunk holes in the bin to allow for M3 screws to be inserted to secure the bin to the extrusion mount, but this was found to be unnecessary.

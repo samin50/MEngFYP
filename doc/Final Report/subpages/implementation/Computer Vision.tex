@@ -212,7 +212,7 @@ Similiar to the component identification model, the resistor value detection mod
   \end{minipage}
 \end{figure}
 
-\subsection{Sparsification and Deployment}
+\subsubsection{Sparsification and Deployment}
 \todo{talk about sparsification and deployment}
 
 Unfortunately, although SparseML is an incredibly powerful tool, it is not yet compatible with the YOLOv8-OBB model; usually, the SparseML framework integrates with Ultralytics' YOLO models, providing a wrapper that neatly allows sparsification to happen with minimal effort, however sparsification from scratch requires that the optimiser be exposed and a manual training and validation loop be written. This would be possible, however the YOLOv8-OBB model does not expose the optimiser during training, so it would be necessary to rewrite the training loop from scratch, and given the complexity of having to manage the three seperate losses (classification, bounding box, and dfl loss), this would be a significant amount of work. Given the time constraints of the project, it was decided that the model would not be sparsified. This was one of the major design decisions that was made during the project due to the OBB model only being released in January 2024 \cite{obbrelease}, after the Background Research phase had been completed. 

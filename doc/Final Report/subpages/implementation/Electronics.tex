@@ -57,6 +57,9 @@ The SIG pin of the LED strip is connected to GPIO18 on the Pi, which is used to 
   \end{minipage}
 \end{figure}
 
+As shown in \autoref{fig:ledreset}, the LED strip has a rainbow startup sequence, which is used to indicate that the system is ready to start. This was added as there were previously issues with the SPI interface, which caused the LEDs to not light up correctly. The rainbow sequence was added to indicate that the LEDs are working correctly, and that the system is ready to start.
+\todo{add in problems and changes}
+
 \subsubsection{Motor Control}
 As mentioned in \autoref{sec:stepper-motors}, the system requires two NEMA17 stepper motors 
 to control the conveyor belt and sweeper arm, and they controlled by TMC2209s as shown in \autoref{fig:nema17} and \autoref{fig:tmc2209}. The TMC2209 requires the following connections:
@@ -110,6 +113,7 @@ After designing the schematic, the connections were then realised on a prototypi
       \centering
       \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{imgs/real/tmc2209-1.jpeg}
     \end{minipage}
+    \hfill
     \caption{PCB for NEMA17 Stepper Motor Control}
 \end{figure}
 

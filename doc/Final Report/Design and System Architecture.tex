@@ -165,8 +165,6 @@ Firstly, the power supply must be able to drive all components in the system wit
 
 In the early stages of the project, with only the Raspberry Pi, the DFRobot 7" Touchscreen Display, WS2812B and Okdo Camera, the power consumption was measured to be under 20W, recorded using a smart plug with a power meter as shown in \autoref{fig:powermeter}. It was thought that the addition of the NEMA17 motors and TMC2209 stepper motors would contribute ~50W (running at 2A 12V) to the power consumption, making for a power consumption of under 70W. A 30W overhead would have been added to the power supply, resulting in a 100W power supply. However, a 150W power supply was used instead due to an overestimation on the power consumption of the system before finalising the design. In hindsight, the 150W power supply was excessive, and a 100W power supply would have been sufficient.
 
-\todo{add power consumption measurements from usb for complete power - implementation maybe?}
-
 Additionally, the voltage of the power supply must be greater than or equal to the highest voltage of any component in the system to enable the use of step down convertors to power the components. The highest voltage of any component in the system is 12V and the lowest is 5V. Initially, 24V components were a possibility due to the variety of LEDs and stepper motors, so a 24V power supply was chosen.
 
 This resulted in selecting a 24V DC 6.25A Power Supply Unit.
@@ -186,6 +184,33 @@ The DFRobot and Camera is powered directly from the Pi, however it is necessary 
 
 The XL4015 High Power Step Down Convertor was chosen as it is capable of handling the current draw of the components, and is adjustable, allowing for fine-tuning of the output voltage. It is able to draw up to 75W, which is more than enough for the two 5V and 12V systems.
 
+\subsubsection{2020 Aluminium Extrusion}
+To provide a sturdy frame for the system, 2020 aluminium extrusion was chosen as it is lightweight, strong, and cost-effective. It is also easy to work with, as it can be easily cut to size and assembled using standard M3 screws and T-nuts and FDM printed parts. The 2020 aluminium extrusion is used to provide a frame for the conveyor system, which every system attaches to.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/parts/aluminium2020.jpg}
+        \caption{2020 aluminium extrusion \cite{aluminium2020}}
+    \end{minipage}
+\end{figure}
+
+Other options like 2040 or 2060 extrusion were considered, however, they were found to be too large and heavy for the system, and would have added unnecessary weight and cost. 2020 extrusion was found to be the best compromise between strength, weight, and cost. Cylinder extrusion like rods would not be suitable as they would not provide a flat surface for the components to be mounted on, and would not provide a frame for the system.
+
+\subsubsection{GT2 Timing Belt}
+To drive the sweeper arm, a timing belt is needed to transfer the rotational motion of the stepper motor to the linear motion of the sweeper arm. The GT2 Timing Belt was chosen as it is widely used in 3D printers and is compatible with the NEMA17 stepper motor. It is also easy to source and is cost-effective. The belt is also easy to cut to size and is easy to attach to the stepper motor and the sweeper arm.
+
+\begin{figure}[H]
+    \begin{minipage}[h]{\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imgs/parts/gt2.jpg}
+        \caption{GT2 timing belt and pulley \cite{gt2}}
+        \label{fig:gt2belt}
+    \end{minipage}
+\end{figure}
+
+The reduction gear shown in \autoref{fig:gt2belt} (used to increase torque at the cost of speed) was not used as the NEMA17 stepper motor was found to be powerful enough to drive the sweeper arm without the need for a reduction gear.
+ 
 \subsection{Mechanical Design and Electronics}
 \label{sec:mechanical-design}
 As the system has a major physical component, the mechanical design is a crucial aspect of the project. The mechanical design is responsible for the physical structure of the system, including the conveyor system, the sweeper, bins, the housing for the LCD and PSU (Power Supply Unit), and the camera mount. It provides the foundation for the system to operate and interact with the environment, and as such it is important to ensure that the mechanical design is robust and reliable.
@@ -343,6 +368,8 @@ The software of the system is responsible for controlling the hardware component
 Each component has the capability to run independently to facilitate debugging and maintenance, and communicates with the System Controller to receive commands. The System Controller is responsible for managing the communication between the components, and is the central hub of the system.
 
 The software is written in Python \cite{python}, due to its ease of use and large amount of support and libraries available, and will be run entirely on the Raspberry Pi. Git \cite{git} is used for version control to ensure that changes to the software can be tracked and reverted if necessary, Pylint \cite{pylint} is used for code linting to ensure that the code is clean and readable, RealVNC \cite{realvnc} is used for remote access to the Raspberry Pi, and Visual Studio Code \cite{vscode} is used as the IDE for development. As mentioned in \autoref{sec:mechanical-design}, FreeCAD \cite{freecad} has been used for the mechanical design of the system.
+
+As outlined in \autoref{sec:project-specification}, the system will need to employ multiprocessing or threading to ensure that the system can run concurrently without issues. The software will be designed to be thread-safe to ensure it can run in real-time with no obvious latency to the user. The software will also be designed to be fault-tolerant, with error handling and logging to ensure that the system can recover from errors and continue to operate.
 
 \subsubsection{LCD UI}
 The LCD UI is responsible for displaying the status of the system, such as the current state of the system, the status of the conveyor belt and sweeper, and the classification of components. It also allows the user to interact with the system, such as starting and stopping the system, and manually controlling the conveyor belt and sweeper. The LCD UI communicates with the System Controller to receive status updates and send commands.
