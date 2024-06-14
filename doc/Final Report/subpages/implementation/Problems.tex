@@ -47,11 +47,22 @@ Originally, the system was to use a face-up camera with components mounted on an
  The bin sweeper also had several design iterations, however the main working principle was that the motor would drive a GT2 timing belt to move some other mechanism that would sweep the components, and this remained unchanged. The original design had several sweepers positioned at the bin locations, and would 'activate' like gates when the driven arm moved passed it. A flexible polyurethane rod was going to be used to allow the gates to be 'opened' by the arm, however the sweeper would then have to translate horizontal motion to vertical motion, which requires a complex mechanism using linkages as shown in \autoref{fig:linkage}. This was then simplified to a moving sweeper arm that was angled to use the conveyor belt speed to move the components off the belt, and was effective.
  
 \subsubsection{Electronics and Wiring}
-The WS2812B LED strip experienced communication issues when connected to the Raspberry Pi, often not responding to commands or flickering when attempting to do so. Originally, the strip was controlled via PWM (Pulse Width Modulation) however this requires root privileges and is not conventional. The solution was to use the SPI (Serial Peripheral Interface) protocol to control the strip, which does not require root privileges, however there was still flickering issues. After several attempts to debug the issue programmatically, an oscilloscope was used to analyse the signal, and it was found that severely beneath the expected 5V signal, which was causing the flickering.
+The WS2812B LED strip experienced communication issues when connected to the Raspberry Pi, often not responding to commands or flickering when attempting to do so. Originally, the strip was controlled via PWM (Pulse Width Modulation) however this requires root privileges and is not conventional. The solution was to use the SPI (Serial Peripheral Interface) protocol to control the strip, which does not require root privileges, however there was still flickering issues.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{imgs/graphs/oscilloscope.png}
+    \caption{PicoScope signal analysis}
+    \label{fig:oscilloscope}
+  \end{figure}
 
-
-
+After several attempts to debug the issue programmatically, a PicoScope \cite{picoscope} was used to analyse the signal, and it was found that it was severely beneath the expected 5V signal, which was causing the flickering and general unresponsiveness of the strip. This can be seen in \autoref{fig:oscilloscope} (note the image has been edited to allow for better readability), with a maximum voltage of only 4.68V. The solution was to simply use thicker wires to connect the Raspberry Pi to the PSU, which solved the issue; despite the step-down converters display 5V, the voltage drop across the wires was causing the Pi to be undervolted, which was also shown on the display of the Pi itself in the corner as as lightning bolt symbol as shown in \autoref{fig:pi-undervolt}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=8cm]{imgs/software/undervolt.jpg}
+    \caption{Pi under-voltage warning}
+    \label{fig:pi-undervolt}.
+  \end{figure}
 
 \subsubsection{Computer Vision}
 
@@ -86,3 +97,20 @@ However, this poses a problem; there are no images in the dataset without a comp
   
 
 \todo{oritented boxes}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[height=6cm]{imgs/cv/numberedboundingbox.jpg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[height=6cm]{imgs/cv/resistor label.jpg}
+    \end{minipage}
+    \caption{Annotated resistor with orientation and vertex numbers on the same resistor during inference}
+    \label{fig:obb-oritentation}
+  \end{figure}
+
+Also, it was discovered late into development that the OBB model does not learn the orientation of the components and encode it into the bounding box data. For instance, the line drawn between the first and second point does not indicate the orientation of the component, it is simply a line of the bounding box. This is shown more clearly in \autoref{fig:obb-oritentation}, where the resistor is annotated, with the first line drawn is an orange arrow to indicate the resistor's orientation, but during inference, the first line is a completely different line. At the time, this was an issue as to determine resistor values, it was necessary to know which way the resistor was facing to read the bands in the correct order. This was circumvented by adding a "stem" class for the resistor model to predict, where it would attempt to predict whether the first band of the resistor was. This is shown in \autoref{fig:resistorannotate} as the large yellow box that is drawn on the base of the resistor.
