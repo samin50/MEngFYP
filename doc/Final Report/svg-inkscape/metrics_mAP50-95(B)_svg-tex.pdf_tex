@@ -66,16 +66,19 @@
     \put(0.02891232,0.429194){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.8\end{tabular}}}}%
     \put(0.02891232,0.47428021){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.9\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{metrics_mAP50-95(B)_svg-tex.pdf}}%
-    \put(0.04087153,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}%
-    \put(0.1474856,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}5\end{tabular}}}}%
-    \put(0.25409968,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10\end{tabular}}}}%
+    \put(0.04087153,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-5\end{tabular}}}}%
+    \put(0.12083209,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}%
+    \put(0.20079265,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}5\end{tabular}}}}%
+    \put(0.28075321,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10\end{tabular}}}}%
     \put(0.36071377,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}15\end{tabular}}}}%
-    \put(0.46732784,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}20\end{tabular}}}}%
-    \put(0.57394194,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}25\end{tabular}}}}%
-    \put(0.68055601,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}30\end{tabular}}}}%
-    \put(0.78717011,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}35\end{tabular}}}}%
-    \put(0.89378415,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}40\end{tabular}}}}%
-    \put(1.00039825,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}45\end{tabular}}}}%
+    \put(0.44067433,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}20\end{tabular}}}}%
+    \put(0.52063489,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}25\end{tabular}}}}%
+    \put(0.60059545,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}30\end{tabular}}}}%
+    \put(0.68055601,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}35\end{tabular}}}}%
+    \put(0.76051657,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}40\end{tabular}}}}%
+    \put(0.84047713,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}45\end{tabular}}}}%
+    \put(0.92043769,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}50\end{tabular}}}}%
+    \put(1.00039825,0.01385071){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}55\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=3]{metrics_mAP50-95(B)_svg-tex.pdf}}%
   \end{picture}%
 \endgroup%
