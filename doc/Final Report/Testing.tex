@@ -84,7 +84,8 @@ In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is sho
 
 This again is an exceptional result with no false positives or false negatives, and an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\%. The model is able to detect all components in the test set, and is able to classify them correctly. The model is able to generalise well to the test set, and is able to detect components that it has not seen before. In terms of the requirements of the project, the model is able to classify components with a high degree of accuracy.
 
-  
+A mosaic of inferences on the test set is shown in Appendix \autoref{app:mosaic} for a visual representation of the model's performance. 
+
   \todo{talk about tensor board}
   \todo{show metrics}
   
@@ -95,7 +96,7 @@ Interestingly, if Class Loss is set to 1.0, Box Loss is set to 4.0, and DFL is s
 \todo{show pictures of model in action}
 
 \subsubsection{Resistor Value Detection Model}
-As discussed in \autoref{sec:resistor-value-detection}, the resistor value detection model is a standard YOLOn model trained on images produced by running inference on all resistor images with the component detection model and then cropping the bounding boxes. This meant that there were only 259 images in the dataset, which was then split 80-20 for training and validation; a test set was not used as the dataset was too small. This left only 207 images for training, and 52 images for validation.
+As discussed in \autoref{sec:resistor-value-detection}, the resistor value detection model is a standard YOLOn model trained on images produced by running inference on all resistor images with the component detection model and then cropping the bounding boxes. This meant that there were only 259 images in the dataset, which was then split 80-20 for training and validation; a test set was not used as the dataset was too small. This left only 208 images for training, and 51 images for validation.
 
 \begin{figure}[H]
   \centering
@@ -105,10 +106,96 @@ As discussed in \autoref{sec:resistor-value-detection}, the resistor value detec
 \end{figure}
 
 As the images are generated from the component detection model, the image size is no longer fixed, but instead varies based on the size of the bounding box. The distribution of image sizes is shown in \autoref{fig:pixel-distrib}, where the image sizes vary from 32x65 to 53x98. Due to this, a training parameter was set that would resize all images to a larger size of 128x128, to ensure that the model always works with the same size images.
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|X|X|X|X|X|X|X|}
+    \hline
+    \textbf{Class} & \textbf{Images} & \textbf{Instances} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50-95}}}\\
+    \hline
+    all & 51 & 326 & 0.731 & 0.774 & 0.837 & 0.457\\
+    \hline
+    black & 51 & 61 & 0.839 & 0.967 & 0.956 & 0.488\\
+    \hline
+    brown & 47 & 91 & 0.886 & 0.989 & 0.981 & 0.53\\
+    \hline
+    red & 31 & 31 & 0.859 & 0.968 & 0.98 & 0.577\\
+    \hline
+    orange & 17 & 17 & 0.64 & 0.882 & 0.837 & 0.454\\
+    \hline
+    yellow & 19 & 19 & 0.919 & 1 & 0.993 & 0.599\\
+    \hline
+    green & 12 & 12 & 0.852 & 0.75 & 0.903 & 0.417\\
+    \hline
+    blue & 5 & 5 & 0.577 & 0.4 & 0.567 & 0.275\\
+    \hline
+    violet & 8 & 8 & 0.769 & 1 & 0.995 & 0.654\\
+    \hline
+    grey & 2 & 2 & 0 & 0 & 0.199 & 0.0562\\
+    \hline
+    white & 10 & 10 & 0.527 & 0.9 & 0.81 & 0.348\\
+    \hline
+    gold & 13 & 13 & 0.87 & 0.769 & 0.779 & 0.382\\
+    \hline
+    silver & 6 & 6 & 1 & 0.43 & 0.885 & 0.593\\
+    \hline
+    stem & 51 & 51 & 0.763 & 1 & 0.995 & 0.572\\
+    \hline
 
-However, due to the small image sizes and the small dataset, the model only achieved
+  \end{tabularx}
+  \caption{Resistor value detection model metrics}
+  \label{tab:resistor-value-metrics}
+\end{table}
+
+
+However, due to the small image sizes and the small dataset, the model only achieved an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 45.7\% and an mAP\raisebox{-1pt}{\textsuperscript{50}} of 83.7\% as shown in \autoref{tab:resistor-value-metrics}. As we are more concerned about classifiying the resistor values correctly rather than the exact bounding box location, the mAP\raisebox{-1pt}{\textsuperscript{50}} is more important in this context. The model is able to classify some bands with high accuracy, such as brown, yellow, and violet, but struggles with others, such as blue and grey. After observing these results, the generated dataset was inspected more closely.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/cv/obb_resistor_grey_orange_black_silver_brown_red_830E-2-1_11.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/cv/obb_resistor_orange_white_black_brown_brown_390E1-1_21.png}
+  \end{minipage}
+  \par\medskip
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/cv/banddetectbad.jpg}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/cv/banddetect.jpg}
+  \end{minipage}
+  \caption{Smallest and largest images in the resistor value dataset with inference results}
+  \label{fig:resistor-value-dataset-sizes}
+\end{figure}
+
+In \autoref{fig:resistor-value-dataset-sizes}, the smallest image in the dataset is on the left and the largest on the right. The resolution difference is obvious with the left images exhibiting more pixelation. For the low resolution image, the model was able to identify the red, brown, black and orange band as well as the stem, but fails to correctly determine the silver and grey bands. To human eye, the silver band actually seems white, and the grey band is hardly visible (it is at the top of the resistor). This shows that maybe the dataset itself is not very good, and the model is not at fault --- observing a full 640x480 image of the resistor as seen in \autoref{fig:full-resistor}, the resistor is very small and in terms of pixels, only takes up 0.74\% of the pixels in the original image.\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/cv/fullresistor.png}
+  \caption{Raw image from camera of the smallest resistor in the dataset}
+  \label{fig:full-resistor}
+\end{figure}
+
+This is a very small amount of pixels, and it is clear that the model is struggling to classify the bands due to the low resolution of the image, and clearly performs better on the larger image. This would be fixed by moving the camera closer to the belt to increase the relative size of the components of the image at the cost of a smaller field of view, and then a new dataset would have to be generated. Due to time constraints, this is not possible at the time of the report being written, but the model itself is performing well given the constraints of the dataset.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/graphs/confusion_matrix_bands.png}
+  \caption{Confusion matrix for the resistor value detection model}
+  \label{fig:resistor-value-confusion-matrix}
+\end{figure}
+
+For completeness, the confusion matrix of the resistor detection model was shown in \autoref{fig:resistor-value-confusion-matrix},and shows a strong diagonal but with many false negatives; multiple bands not being identified at all, as shown by the row on the bottom. There is also severe class imbalance, with 91 total brown bands across the test set but only 2 gray and 5 blue.
+
+Objectively, the model is performing well given the constraints of the dataset, and is able to classify resistor values with a high degree of accuracy. However, the performance of the model is not adequate enough to be deployed in the system as of the time of writing, and further work is needed to improve the model's to an acceptable standard.
 
 \subsubsection{Inference Latency}
+\label{sec:inference-latency-evaluation}
 The inference latency of the model is crucial to the system's performance, as the system must be able to classify components in real-time. The Ultralytics and DeepSparse Python libraries come with their own benchmarking capabilities, and they were used to measure the model's performance. The benchmarks were performed on the Raspberry Pi 4, as this is the intended deployment platform for the system. The benchmarks were performed on the YOLO-OBB model, as it more complex than the standard YOLO model used for the resistor value classification model, and thus should be on the lower end of the performance spectrum.
 
  % Code block
