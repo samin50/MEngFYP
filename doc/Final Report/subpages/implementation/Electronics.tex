@@ -27,8 +27,7 @@ As the system requires the use of moving parts, such as the conveyor belt and sw
     \label{tab:component-connections}
 \end{table}
 
-\todo{show wiring diagram}
-
+For signal connections, standard 28AWG jumper wire is used to connect the components to the Pi.
 \subsubsection{Power Supply}
 
 As mentioned in \autoref{sec:power-supply}, there are two XL4015 buck converters used to reduce the 24V output of the power supply to 5V and 12V. 18 AWG wire is used to both connect the 24V input to the buck converters, and to connect the output of the converters to the USB breakout boards. A standard 3-pin power cable connects the PSU's IEC C14 socket to the mains power.
@@ -40,22 +39,13 @@ To illuminate the components on the conveyor belt, a WS2812B LED strip was used.
   \hfill
   \begin{minipage}[t]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=5cm, keepaspectratio]{example-image-a}
-    \caption{WS2812B LED Strip}
-  \end{minipage}
-\end{figure}
-
-The SIG pin of the LED strip is connected to GPIO18 on the Pi, which is used to control the colour of the LEDs. The GND pin is connected to the GND pin on the Pi, and the 5V pin is connected to the 5V output of the power supply. It has been cut into a square shape to fit around the camera, allowing it to uniformly illuminate the components on the conveyor belt.
-
-\begin{figure}[H]
-  \hfill
-  \begin{minipage}[t]{\textwidth}
-    \centering
     \includegraphics[height=8cm]{example-image-a}
     \caption{LED rainbow startup sequence}
     \label{fig:ledreset}
   \end{minipage}
 \end{figure}
+
+The SIG pin of the LED strip is connected to GPIO18 on the Pi, which is used to control the colour of the LEDs. The GND pin is connected to the GND pin on the Pi, and the 5V pin is connected to the 5V output of the power supply. It has been cut into a square shape to fit around the camera, allowing it to uniformly illuminate the components on the conveyor belt. A USB-C breakout board is used to connect the LED strip to the power supply, and a USB hub is used to power both the Pi and the LED strip from the same USB port on the power supply.
 
 As shown in \autoref{fig:ledreset}, the LED strip has a rainbow startup sequence, which is used to indicate that the system is ready to start. This was added as there were previously issues with the SPI interface, which caused the LEDs to not light up correctly. The rainbow sequence was added to indicate that the LEDs are working correctly, and that the system is ready to start.
 \todo{add in problems and changes}
@@ -115,6 +105,7 @@ After designing the schematic, the connections were then realised on a prototypi
     \end{minipage}
     \hfill
     \caption{PCB for NEMA17 Stepper Motor Control}
+    \label{fig:tmc2209-pcb}
 \end{figure}
 
-Two of these PCBs were produced due to the need for two stepper motors, and they were then connected to the Pi using the GPIO pins as shown in \autoref{tab:component-connections}.
+Two of these PCBs were produced due to the need for two stepper motors, and they were then connected to the Pi using the GPIO pins as shown in \autoref{tab:component-connections}. The boards receive power using standard USB-C cables from the PSU's 12V USB output, and the motors are connected to the boards using standard 4-pin stepper motor cables.

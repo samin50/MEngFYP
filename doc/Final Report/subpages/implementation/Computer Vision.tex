@@ -1,3 +1,4 @@
+
 As mentioned in \autoref{sec:background} and \autoref{sec:computer-vision-system}, the YOLO-OBB model \cite{yolov8} is used to classify and detect the electrical components, and the regular YOLO model was used for resistor value detection.
 
 \subsubsection{YOLO Format and Dataset Collection Process}
@@ -76,7 +77,7 @@ root/
 The images and labels must have the same basename (i.e. the same filename excluding the extension) to ensure that the labels are correctly matched to the images. The images must be organised in folders similiar to the above structure.
 
 \subsubsection{Component Identification}
-Using the dataset collection tool discussed in \autoref{sec:dataset-collection}, a total of 974 images were collected across 7 classes. The distribution of the dataset is shown in the following table:
+Using the dataset collection tool discussed in \autoref{sec:dataset-collection}, a total of 974 + 100 background images were collected across 8 classes. The distribution of the dataset is shown in the following table:
 \begin{table}[H]
   \centering
   \begin{tabularx}{0.5\textwidth}{|X|X|}
@@ -97,12 +98,14 @@ Using the dataset collection tool discussed in \autoref{sec:dataset-collection},
     \hline
     Wires & 75 \\
     \hline
+    Background & 100 \\
+    \hline
   \end{tabularx}
   \caption{Distribution of the dataset}
   \label{tab:dataset-distribution}
 \end{table}
 
-It is important to note that the 7 classes shown above are not the same type of components that were discussed in \autoref{sec:project-specification}. It was decided to do a smaller subset of classes due to the time it takes to collect a dataset, and the fact that the model can be extended to include more classes in the future. This model therefore serves as a proof of concept, and the model can be easily extended to include more classes in the future, due to the flexibility of the dataset collection tool and the YOLOv8 models.
+It is important to note that the 7 classes, and background, shown above are not the same type of components that were discussed in \autoref{sec:project-specification}. It was decided to do a smaller subset of classes due to the time it takes to collect a dataset, and the fact that the model can be extended to include more classes in the future. This model therefore serves as a proof of concept, and the model can be easily extended to include more classes in the future, due to the flexibility of the dataset collection tool and the YOLOv8 models.
 
 A notebook called \texttt{detection-trainer.ipynb} was developed that handled the organisation of the dataset (include train-val-test splitting), the training of the model, the evaluation of the model, and the ability to run inference on a particular dataset to see how the model performs. The notebook makes it incredibly trivial to adjust hyperparameters and change specifically what the model is trained on. The notebook ensures that the original dataset remains untouched and organises the desired images and labels into a folder called 'current' to ensure that there is no risk of accidental data deletion, which could be catastrophic given the time it takes to collect a dataset. The notebook also automatically saves the best model weights and leverages the TensorBoard support that YOLOv8 provides to visualise the training process.
 
@@ -163,7 +166,6 @@ The model was trained using an NVIDIA GTX 3080 Ti GPU with 16GB of VRAM, which i
 \end{figure}
 
 For greater clarity, the accuracy of the above inferences are shown in the following table:
-
 \begin{table}[H]
   \centering
   \begin{tabularx}{0.9\textwidth}{|X|X|X|}
@@ -183,6 +185,11 @@ For greater clarity, the accuracy of the above inferences are shown in the follo
 
 Clearly, the YOLO-OBB model is able to identify and classify the components with a high degree of accuracy with tight, properly oriented bounding boxes. The model is also able to detect components at different orientations and scales, and is able to detect multiple components in the same image. A comprehensive evaluation is conducted in \autoref{sec:computer-vision-evaluation}.
 
+\subsubsection{Component Value Identification}
+\label{sec:component-value-identification}
+While the YOLOv8-obb model can identify components, it cannot determine the value of the component, for example the resistance of a resistor or the capacitance of a capacitor. Originally, the plan was to use the YOLO-OBB model to properly orient the component so that they could be passed into another model for value identification.
+
+Originally, the plan was to use the YOLO-OBB model to properly orient the component so that they could be passed into another model for value identification. For regular components, like ceramic capacitors, the value is printed on the component in a standard format, which can be read using OCR (Optical Character Recognition) models and some image preprocessing. However, for resistors, the value is encoded in the colour bands on the resistor, which are relatively small. For this reason, a regular YOLO model was trained to detect and classify colour bands on resistors, and then programmatically determine the value of the resistor, as done in the resistor band data annotation tool discussed in \autoref{fig:resistorannotate}.
 
 \subsubsection{Resistor Value Detection}
 In order to generate the images for the resistor value detection model, the model from the previous section was used to detect the resistors in the images. The generated bounding boxes were then used to crop the images and generate a dataset of resistor images, which were already labelled with the resistor values as explained in \autoref{sec:dataset-collection}.

@@ -75,21 +75,23 @@ Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user in
     \end{minipage}
 \end{figure}
 
-As shown in \autoref{fig:ui}, the user interface consists of a multitude of features that allow the user to interact with the system. The user is able to view the live camera feed, where a resistor is clearly shown on screen. The user is able to adjust the overall system speed by adjusting the slider, which directly affects the System Controller. The CPU and RAM usage of the system is also shown on screen as these can help to judge the load of the system during development, and especially during inference. 
+As shown in \autoref{fig:ui}, the user interface consists of a multitude of features that allow the user to interact with the system. The user is able to view the live camera feed, where an inductor is clearly shown on screen. The user is able to adjust the overall system speed by adjusting the slider, which directly affects the System Controller. The CPU and RAM usage of the system is also shown on screen as these can help to judge the load of the system during development, and especially during inference. The colours of important system elements change depending on their value to indicate the state of the system, for example, the CPU and RAM usage are coloured red when they are high, and green when they are low. 
 
 \begin{figure}[H]
     \hfill
     \begin{minipage}[t]{\textwidth}
       \centering
-      \includegraphics[height=8cm]{example-image-b}
+      \includegraphics[height=8cm]{imgs/software/screeninference.jpg}
       \caption{Inference Example}
       \label{fig:uiinference}
     \end{minipage}
 \end{figure}
 
-As explained \autoref{sec:software}, the Pi is connected to a more powerful machine with SSH to facilitate faster development. For this reason, a Wi-Fi button is present on the UI to allow it to attempt to reconnect in the event of connection issues. On the right side of the screen is information relating to the vision system, for example, what the classification of the component is, its value, and the confidence of the model in its inference. The component is typically displayed in the red area, as shown in \autoref{fig:uiinference}.
+On the right side of the screen is information relating to the vision system, for example, what the classification of the component is, its value, and the confidence of the model in its inference. The component is typically displayed in the black area in the top right, as shown in \autoref{fig:uiinference}. As shown in \autoref{fig:uiinference}, the inductor from \autoref{fig:ui} from the live camera feed has been classified as an inductor with a confidence of 98\%. The user interface also shows that inference latency is 200ms. The component is then cropped from its bounding box and then displayed in the top right corner of the screen.
 
-As the Pi is sometimes connected to a more powerful machine, the user interface also supports streaming frames to the machine where inference can be done much quicker, due to the presence of a GPU. This is done by toggling the "Offload Inference?" button. The "Const. Inference?" button means the Vision system is constantly processing frames rather than whenever a beam break is detected.
+As explained \autoref{sec:software}, the Pi is connected to a more powerful machine with SSH to facilitate faster development. For this reason, a Wi-Fi button is present on the UI to allow it to attempt to reconnect in the event of connection issues. The user interface also supports streaming frames to the machine where inference can be done much quicker, due to the presence of a GPU. This is done by toggling the "Offload Inference?" button. The "Const. Inference?" button means the Vision system is constantly processing frames rather than only when a beam break is detected. The "Inference Once" button allows the user to manually trigger inference, and performs inference on the current frame. 
+
+\todo{explain connection to laptop}
 
 Additionally, during the development of the system, the WS2812B needed to be calibrated as explained in \autoref{sec:ws2812b-led-strip}. Due to this, there are HSV sliders for the user to adjust the colour of the LED strip, allowing for easy calibration of the LED strip. There is also a "Reset Strip" button to reinitialise the LED strip and display the LED start up sequence as shown in \autoref{fig:ledreset}.
 

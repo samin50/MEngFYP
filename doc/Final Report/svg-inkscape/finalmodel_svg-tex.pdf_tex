@@ -1,0 +1,90 @@
+%% Creator: Inkscape 1.3.2 (091e20e, 2023-11-25, custom), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'finalmodel_svg-tex.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{628.83691406bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.47936479)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{finalmodel_svg-tex.pdf}}%
+    \put(0.0315454,0.02337554){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.54\end{tabular}}}}%
+    \put(0.0315454,0.05549265){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.56\end{tabular}}}}%
+    \put(0.0315454,0.08760978){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.58\end{tabular}}}}%
+    \put(0.0315454,0.11972688){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.6\end{tabular}}}}%
+    \put(0.0315454,0.15184402){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.62\end{tabular}}}}%
+    \put(0.0315454,0.18396112){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.64\end{tabular}}}}%
+    \put(0.0315454,0.21607824){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.66\end{tabular}}}}%
+    \put(0.0315454,0.24819536){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.68\end{tabular}}}}%
+    \put(0.0315454,0.28031248){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.7\end{tabular}}}}%
+    \put(0.0315454,0.3124296){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.72\end{tabular}}}}%
+    \put(0.0315454,0.34454671){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.74\end{tabular}}}}%
+    \put(0.0315454,0.37666383){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.76\end{tabular}}}}%
+    \put(0.0315454,0.40878094){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.78\end{tabular}}}}%
+    \put(0.0315454,0.44089806){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.8\end{tabular}}}}%
+    \put(0.0315454,0.47301518){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.82\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{finalmodel_svg-tex.pdf}}%
+    \put(0.04347218,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}%
+    \put(0.11182397,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}2\end{tabular}}}}%
+    \put(0.18017576,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}4\end{tabular}}}}%
+    \put(0.24852753,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}6\end{tabular}}}}%
+    \put(0.31687933,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}8\end{tabular}}}}%
+    \put(0.38523109,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10\end{tabular}}}}%
+    \put(0.45358288,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}12\end{tabular}}}}%
+    \put(0.52193468,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}14\end{tabular}}}}%
+    \put(0.59028647,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}16\end{tabular}}}}%
+    \put(0.65863827,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}18\end{tabular}}}}%
+    \put(0.72698999,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}20\end{tabular}}}}%
+    \put(0.79534179,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}22\end{tabular}}}}%
+    \put(0.86369358,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}24\end{tabular}}}}%
+    \put(0.93204538,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}26\end{tabular}}}}%
+    \put(1.00039717,0.01383412){\color[rgb]{0.12941176,0.12941176,0.12941176}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}28\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{finalmodel_svg-tex.pdf}}%
+  \end{picture}%
+\endgroup%

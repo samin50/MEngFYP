@@ -250,7 +250,7 @@ class RPIDatasetBuilder:
         """
         Save the image.
         """
-        if len(self.points) != 4:
+        if len(self.points) != 4 and self.currentComponent != "background":
             return
         #Resistors
         if self.currentComponent == "resistors" and (len(self.selectedResistors) <= 3 or self.screenshot is None):
@@ -274,6 +274,9 @@ class RPIDatasetBuilder:
         # transform the image to the correct size
         self.screenshot = self.screenshot.resize(IMG_SIZE, Image.NEAREST)
         self.screenshot.save(os.path.join(f"{filename}_{str(num)}.png"))
+        if self.currentComponent == "background":
+            self.save_indicator()
+            return
         # Save label.txt
         classNum = DATA[self.currentComponent]["num_label"]
         points = [(round(x / DISPLAY_IMG_SIZE[0], PRECISION), round(y / DISPLAY_IMG_SIZE[1], PRECISION)) for x, y in self.points]

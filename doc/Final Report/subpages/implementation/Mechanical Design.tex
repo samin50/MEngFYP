@@ -1,21 +1,25 @@
 As discussed in \autoref{sec:design-and-system-architecture}, the system is designed in FreeCAD \cite{freecad}, a parametric 3D modelling software. The below figures show the system in its entirety, with the front and back views of the system.
 
 \begin{figure}[H]
+    \hfill
     \begin{minipage}[h]{0.95\textwidth}
         \centering
-        \includegraphics[height=8cm]{imgs/freecad/wholefront.jpg}
+        \includegraphics[width=\textwidth]{imgs/freecad/wholefront.jpg}
         \caption{Front View of the Mechanical Design}
     \end{minipage}
+    \hfill
 \end{figure}
 
 The conveyor belt with the direction of travel is indicated with arrows. The camera is mounted on the top of the system, with LED lights inside the camera mount. The LCD mount for the DFRobot 7" LCD is clearly visible at the front, with a NEMA17 stepper motor mount positioned next to it for the driven conveyor rollers. The sorting bins are clearly present in the front of the system for easy user access.
 
 \begin{figure}[H]
+    \hfill
     \begin{minipage}[h]{0.95\textwidth}
         \centering
-        \includegraphics[height=8cm]{imgs/freecad/wholeback.jpg}
+        \includegraphics[width=\textwidth]{imgs/freecad/wholeback.jpg}
         \caption{Back View of the Mechanical Design}
     \end{minipage}
+    \hfill
 \end{figure}
 
 From the back view of the system, the PSU enclosure is clearly visible with mounting plates for the step-down converters. A belt-driven arm is visible on the back, making use of another NEMA17 motor to drive it and a belt tensioner to ensure the belt is taut. The belt-driven arm is used to push components off the conveyor belt into the sorting bins. The tensioners for the conveyor belt itself are also visible in the back view on the right side.
@@ -54,24 +58,28 @@ As the system is using FDM printed parts, it is necessary to ensure that the par
 \subsubsection{Power Supply Unit Enclosure}
 \label{sec:power-supply-unit-enclosure}
 
-Due to the potential of high-current carrying wires, the PSU has been enclosed in a 3D printed case, which prevents accidental contact with the PSU's terminals.
+Due to the potential of high-current carrying wires, the PSU has been enclosed in an FDM printed case, which prevents accidental contact with the PSU's terminals.
 
 \begin{figure}[H]
+    \hfill
     \begin{minipage}[h]{0.95\textwidth}
         \centering
         \includegraphics[height=8cm]{imgs/freecad/psu_mount.jpg}
         \caption{PSU Enclosure}
     \end{minipage}
+    \hfill
 \end{figure}
 
 The PSU enclosure contains several components;
-\begin{mylist}
-    \item \textbf{PSU Container}: The PSU container is designed to house the 24V 6.25A power supply unit, and provides mounting holes for the other components. It attaches to the PSU using M3 screws.
-    \item \textbf{Step-Down Converter Mounts}: The step-down converters are mounted on the PSU container using M3 screws. The step-down converters are used to convert the 24V output from the PSU to 12V and 5V for the system, shown by the two mounts at the top of the PSU container.
-    \item \textbf{USB Breakout Mount}: For the 12V and 5V power outputs, a USB breakout board is used to provide power to the components, allowing standard cables to be used for power distribution. The USB breakout board is mounted on the right side of the PSU container, connecting to the step-down converters.
-    \item \textbf{PSU Switch Housing}: For safety reasons, the connections between the switch and the PSU are enclosed in a housing to prevent accidental contact with the high voltage connections. There is a slot in the Switch Housing for the power cable to pass through to the step-down converters, and a switch snap-fit mount to hold the switch in place on the side.
-    \item \textbf{PSU Mount}: The PSU mount is used to mount the PSU container to the 2020 extrusion frame of the system. The mount is screwed into the top of the PSU container and the 2020 extrusion frame, using M3 screws and T-nuts.
-\end{mylist}
+\textbf{PSU Container}: The PSU container is designed to house the 24V 6.25A power supply unit, and provides mounting holes for the other components. It attaches to the PSU using M3 screws.
+\par
+\textbf{Step-Down Converter Mounts}: The step-down converters are mounted on the PSU container using M3 screws. The step-down converters are used to convert the 24V output from the PSU to 12V and 5V for the system, shown by the two mounts at the top of the PSU container.
+\par
+\textbf{USB Breakout Mount}: For the 12V and 5V power outputs, a USB breakout board is used to provide power to the components, allowing standard cables to be used for power distribution. The USB breakout board is mounted on the right side of the PSU container, connecting to the step-down converters.
+\par
+\textbf{PSU Switch Housing}: For safety reasons, the connections between the switch and the PSU are enclosed in a housing to prevent accidental contact with the high voltage connections. There is a slot in the Switch Housing for the power cable to pass through to the step-down converters, and a switch snap-fit mount to hold the switch in place on the side.
+\par
+\textbf{PSU Mount}: The PSU mount is used to mount the PSU container to the 2020 extrusion frame of the system. The mount is screwed into the top of the PSU container and the 2020 extrusion frame, using M3 screws and T-nuts.
 
 \begin{figure}[H]
     \hfill
@@ -148,10 +156,9 @@ For the DFRobot 7" LCD, a mount was designed to hold the LCD in place on the fro
 \end{figure}
 
 The design consists of two parts;
-\begin{mylist}
-    \item \textbf{LCD Cover}: The LCD cover is designed to hold the LCD in place. It contains a small gap that the LCD fits into, preventing it from falling out with the help of friction.
-    \item \textbf{LCD Extrusion Mount}: The LCD extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains screw holes for the LCD Cover to be attached to, and screw holes for the 2020 extrusion frame. It also contains a support for the LCD cover to rest on, preventing it from breaking off, as it did in previous iterations, as shown in \autoref{fig:brokenlcd}.
-\end{mylist}
+\textbf{LCD Cover}: The LCD cover is designed to hold the LCD in place. It contains a small gap that the LCD fits into, preventing it from falling out with the help of friction.
+\par
+\textbf{LCD Extrusion Mount}: The LCD extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains screw holes for the LCD Cover to be attached to, and screw holes for the 2020 extrusion frame. It also contains a support for the LCD cover to rest on, preventing it from breaking off, as it did in previous iterations, as shown in \autoref{fig:brokenlcd}.
 
 
 \begin{figure}[H]
@@ -164,10 +171,9 @@ The design consists of two parts;
 \end{figure}
 
 For the Okdo OV5647 Camera, a mount was designed to hold the camera face down above the conveyor belt. The camera is mounted on the top of the system, with LED lights inside the camera mount. The mount consists of two parts as shown in \autoref{fig:cameraplate};
-\begin{mylist}
-    \item \textbf{Extrusion Mount}: The extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains a hole for the WS2812B LED strip wires to pass through, and screw holes for the camera plate to be attached to. The mount fits onto the extrusion, however this is not strictly necessary as the camera mount is able to fit on the extrusion without falling off.
-    \item \textbf{Camera Plate}: The camera plate is designed to hold the camera in place. It contains four holes for the Okdo OV5647 Camera to be attached to, and a slot for the camera ribbon cable to pass through, ensuring that the camera remains flat.
-\end{mylist}
+\textbf{Extrusion Mount}: The extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains a hole for the WS2812B LED strip wires to pass through, and screw holes for the camera plate to be attached to. The mount fits onto the extrusion, however this is not strictly necessary as the camera mount is able to fit on the extrusion without falling off.
+\par
+textbf{Camera Plate}: The camera plate is designed to hold the camera in place. It contains four holes for the Okdo OV5647 Camera to be attached to, and a slot for the camera ribbon cable to pass through, ensuring that the camera remains flat.
 \subsubsection{Conveyor Belt}
 \label{sec:conveyor-belt}
 The conveyor belt is a key component of the system, as it is used to transport components from the input side to the bins. As such, it is the largest component of the system, and so makes use of 2020 aluminium extrusion as its skeleton. The conveyor belt has two rollers; one actively driven by a NEMA17 stepper motor, and the other is a free roller. The conveyor belt relies on friction to turn the idle roller, so it is essential that the belt is taut. To ensure this, belt tensioners are used on the idler side of the conveyor belt.
@@ -181,7 +187,7 @@ The conveyor belt is a key component of the system, as it is used to transport c
     \end{minipage}
 \end{figure}
 
-\autoref{fig:conveyordriven} shows the mounts for the driven conveyor roller, the right side mounting the NEMA17 stepper through four M3 screws, and the left side mounting the other side of the roller by allowing it to rotate freely in the mount. The left side contains a space for a 608ZZ bearing to be inserted, which allows the roller to rotate freely without friction (8x22x7mm). There is a clear 20x20mm slot for the 2020 extrusion frame to be inserted into, allowing the mounts to attach to the frame, securing it in place. 
+\autoref{fig:conveyordriven} shows the mounts for the driven conveyor roller, the right mount will mount the NEMA17 stepper through four M3 screws, and the left mount holds the other side of the roller by allowing it to rotate freely in the mount. The left mount contains a space for a 608ZZ bearing to be inserted, which allows the roller to rotate freely without friction (8x22x7mm). There is a clear 20x20mm slot for the 2020 extrusion frame to be inserted into, allowing the mounts to attach to the frame, securing it in place. The left mount can also be disassembled to allow for the belt and roller to  be inserted into the system easily.
 
 \begin{figure}[H]
     \begin{minipage}[h]{0.95\textwidth}
@@ -215,12 +221,13 @@ On the other side of the conveyor belt, the belt tensioner is used to ensure the
 \end{figure}
 
 As usual, the belt tensioner is mounted to the 2020 extrusion frame using M3 screws and T-nuts. The tensioner is made of 4 distinct parts;
-\begin{mylist}
-    \item \textbf{Belt Tensioner Mount}: The mount is used to attach the tensioner to the 2020 extrusion frame. The mount contains a bevelled edge to allow the tensioner to slide in and out of the mount.
-    \item \textbf{Belt Tensioner}: The tensioner is used to tension the conveyor belt. It slots into the mount, and features a 608ZZ bearing to allow the rollers to rotate freely. It is threaded to allow the belt tensioner nut to be screwed in.
-    \item \textbf{Belt Tensioner Cover}: The cover is used to ensure that the tensioner does not slip out, and provides something for the nut to press against to tension the belt.
-    \item \textbf{Belt Tensioner Nut}: The nut is used to tension the belt. It is screwed into the tensioner cover, and presses against the tensioner to tension the belt.
-\end{mylist}
+\textbf{Belt Tensioner Mount}: The mount is used to attach the tensioner to the 2020 extrusion frame. The mount contains a bevelled edge to allow the tensioner to slide in and out of the mount.
+\par
+\textbf{Belt Tensioner}: The tensioner is used to tension the conveyor belt. It slots into the mount, and features a 608ZZ bearing to allow the rollers to rotate freely. It is threaded to allow the belt tensioner nut to be screwed in.
+\par
+\textbf{Belt Tensioner Cover}: The cover is used to ensure that the tensioner does not slip out, and provides something for the nut to press against to tension the belt.
+\par
+\textbf{Belt Tensioner Nut}: The nut is used to tension the belt. It is screwed into the tensioner cover, and presses against the tensioner to tension the belt.
 
 \begin{figure}[H]
     \begin{minipage}[h]{0.95\textwidth}

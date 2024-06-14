@@ -14,6 +14,7 @@ test/
 wandb/
 photos
 logs
+runs
 
 yolov8*.pt
 profiles

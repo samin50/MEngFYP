@@ -23,7 +23,7 @@ MAX_ROWS = 5
 RESISTOR_BODY_COLOUR = "#00CCFF"
 PRECISION = 3
 # Dataset
-DATASET_PATH = "./src/vision/dataset"
+DATASET_PATH = "./datasets/full"
 DATA = {
     "resistors": {
         "label": "resistor",
@@ -94,5 +94,10 @@ DATA = {
         "label": "film_capacitor",
         "num_label" : 10,
         "shortcut" : "-",
-    }
+    },
+    "background": {
+        "label": "background",
+        "num_label" : 11,
+        "shortcut" : "b",
+    },
 }

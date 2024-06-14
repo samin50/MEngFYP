@@ -97,7 +97,7 @@ Originally, a 12V COB ring light was considered, as it could produce a uniform l
 
 \subsubsection{Stepper Motors}
 \label{sec:stepper-motors}
-Stepper motors possess the ability to move in precise increments, making them ideal for the Sweeper System which requires precise control. The Conveyor System is not as demanding, but stepper motors were chosen for consistency across the system. The NEMA17 series of stepper motors were chosen \cite{nema17} as they are widely used and have a large amount of support and documentation, also typically used in FDM printers. With the ability to rotate at 1200RPM/900RPM at 12V, and a holding torque 48/63Ncm (for single/double stack motors), they are more than capable of driving the conveyor belt and sweeper arm.
+Stepper motors possess the ability to move in precise increments, making them ideal for the Sweeper System which requires precise control. The Conveyor System is not as demanding, but stepper motors were chosen for consistency across the system. The NEMA17 series of stepper motors were chosen \cite{nema17} as they are widely used and have a large amount of support and documentation, also typically used in FDM printers (fused deposition modelling, or more commonly, 3D printers). With the ability to rotate at 1200RPM/900RPM at 12V, and a holding torque 48/63Ncm (for single/double stack motors), they are more than capable of driving the conveyor belt and sweeper arm.
 
 \begin{figure}[H]
     \hfill
@@ -118,7 +118,7 @@ Stepper motors possess the ability to move in precise increments, making them id
 \end{figure}
 
 For driving the motors, TMC2209s were selected due to their silent operation, and microstepping features, although not required for the system, a method of allowing the motors to achieve higher precision and more silent operation. Due to their popularity in FDM printing and the ease of use, they have a large amount of support and documentation. They are also capable of driving the NEMA17 series of stepper motors, and are compatible with the Raspberry Pi. Originally, the DRV8825 was considered \cite{drv8825}, however they added significant noise to the system and were unpleasant to use.
-
+\todo{include nema17 and tmc2209 specs}
 \subsubsection{Break Beam Sensor}
 \label{sec:break-beam-sensor}
 
@@ -249,7 +249,6 @@ The belt will be made of thick paper as it is cost-effective, easy to replace, a
 The foundation of the conveyor system will be 2020 aluminium extrusion, which is lightweight, strong, and cost-effective. Custom-designed FDM printed PLA parts will be used to fulfil the requirements of the conveyor system. To facilitate smooth rotation on the idlers and driven roller, ball bearings will be used. A NEMA17 stepper motor will be used to drive the driven roller, as it is powerful enough to drive the belt and is easy to source; torque is not a concern as the belt is lightweight and the speed of the NEMA17 series of stepper motors is sufficient to not require a reduction gear. The stepper motor will be controlled by a TMC2209 stepper motor driver, a silent, and efficient stepper motor driver that is easy to use and is compatible with the NEMA17 stepper motor.
 
 NEMA17 stepper motors typically require 12V, meaning a separate means of delivering power to the motors from the Pi is required. 
-\todo{include nema17 and tmc2209 specs}
 
 \subsubsection{Sweeper}
 \label{sec:sweeper-design}
@@ -357,9 +356,6 @@ The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which conta
 From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 81.36 and a CPU ONNX of 1759.10ms. The YOLOv8n-obb model has the worst performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 78.0 and a CPU ONNX of 204.77ms. However, the Pi is likely significantly slower than the CPU used in the benchmarks, so the actual inference latency will be higher, making the ~0.5 FPS of the YOLOv8x-obb model infeasible, but the ~5 FPS of the YOLOv8n-obb model more promising, a 9x improvement in speed for only a 3.1\% decrease in mAP\raisebox{-1pt}{\textsuperscript{50}}. 
 
 As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break beam sensor to detect the presence of objects on the conveyor belt, reducing the potential of the Vision Handler to be a bottleneck due to constant inference. With the promising performance increase of using the DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} libraries to optimise the model for the Raspberry Pi, the YOLOv8n-obb model will be used for the project.
-
-\todo{justify why training component detcection and resistor detection model}
-\todo{flow diagram of cv pipeline?}
 
 \subsection{Software}
 \label{sec:electronics-and-software-integration}
