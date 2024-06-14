@@ -4,9 +4,61 @@ This chapter will focus on the results of the project, and the testing that was 
 
 \subsection{Mechanical Design}
 \label{sec:mechanical-design-evaluation}
+The mechanical design was tested for stability, durability, and ease of use. During its design, it was kept in mind what components would be under stress and how they would be used in the system. Several tweaks were made to some designs to increase their stability and durability, so that they are fit for purpose, as described in \autoref{sec:implementation-problems-and-changes}. 
+
+The system was observed while in operation and did not exhibit any signs of instability or wobbling, and the system was able to sort components effectively. Where points of failure were identified, they would be replaced with a more robust design, such as the LCD cover, which was braced to prevent wobbling, and increases in thickness were made to certain parts to resist mechanical stress. For example all mounts that attach to aluminium extrusion were increased in thickness from 3mm to 5mm to prevent them from cracking when a screw was tightened on top of them, a common failure from previous iterations.
+
+Additionally, mechanical failure was prevented by using parts such as bearings to facilitate the movement of the rollers and prevent friction from wearing down the FDM printed parts. Screws and heat-set inserts were used to attach parts to other parts, preventing threads from being stripped with repeated use. The system was also designed to be easily assembled and disassembled, with the use of T-slot nuts and bolts to attach parts to the aluminium extrusion, and screws to attach parts to other parts. This allows for easy maintenance and repair of the system, as parts can be easily replaced if they fail. The mechanical design of the system was successful in achieving its goals, and provides a strong foundation for the rest of the system.
 
 \subsection{Electronics and Software}
 \label{sec:electronics-and-software-evaluation}
+As mentioned in \autoref{sec:design-and-system-architecture}, the system is designed to be modular to facilitate easy development and debugging, with each system being able to be tested independently. Each part of the software, the System Controller, LCD UI, Vision Handler, Camera Feed, etc are all able to be run independently by simply running the Python script that contains the code for that part of the system.
+
+This allows for easy debugging and development of the system, as each part can be tested independently, and any issues can be isolated to a single part of the system. This makes it easier to identify and fix issues, as the issue is likely to be in the part of the system that is being tested. The system was tested by running each part of the system independently, and then running the system as a whole to ensure that all parts of the system work together.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=8cm]{imgs/software/pygamecamera.jpg}
+  \caption{Camera Feed in Pygame running standalone}
+  \label{fig:pygame-camera}
+\end{figure}
+
+For example, the Camera Feed is shown in \autoref{fig:pygame-camera}, where the camera feed is displayed in a Pygame window completely on its own without any other parts of the system running. It is responsible for handling when the camera disconnects, so that no other part of the system is affected. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/software/visionhandler.jpg}
+  \caption{Vision Handler running standalone}
+  \label{fig:pygame-camera}
+\end{figure}
+
+Likewise, the Vision Handler is shown in \autoref{fig:pygame-camera}, where the Vision Handler is running standalone, and is responsible for handling the inference of the component detection model. It is able to operate without the LCD UI, and is able to handle the inference of the model without any other parts of the system running. The Vision Handler detects that it is being run standalone, and enables keypresses for controlling it, which are detailed in the following table:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|X|X|}
+    \hline
+    \textbf{Key} & \textbf{Action} \\
+    \hline
+    i & Inference once \\
+    \hline
+    c & Toggle continuous inference \\
+    \hline
+    f & Toggle force image \\
+    \hline
+    v & Toggle capture VNC \\
+    \hline
+    r & Select random file \\
+    \hline
+  \end{tabularx}
+  \caption{Vision Handler standalone keypresses}
+  \label{tab:vision-handler-keypresses}
+\end{table}
+
+Unit testing of all parts of the system was carried out to ensure that each part of the system works as expected as shown in the above examples. To test the system as a whole, a profiler was used to examine the system's performance, and to identify any bottlenecks in the system. The profiler was used to measure the time taken to run each part of the system, and to identify any parts of the system that were taking a long time to run. The profiler was used to identify any parts of the system that were taking a long time to run, and to optimise those parts of the system to improve the system's performance.
+
+
+
 \todo{lcd ui profiling}
 \todo{add power consumption measurements from usb for complete power - implementation maybe?}
 

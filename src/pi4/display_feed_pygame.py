@@ -61,6 +61,7 @@ if __name__ == '__main__':
     pygame.init()
     clk = pygame.time.Clock()
     display = pygame.display.set_mode(CAMERA_RESOLUTION, 0)
+    pygame.display.set_caption("Camera Feed")
     camera = CameraFeed(display, TRAINING_MODE)
     start_ui(
         loopConditionFunc=lambda: True,

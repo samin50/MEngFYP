@@ -11,6 +11,8 @@ import pygame
 import pygame.camera as pycam
 import pyautogui
 import pygetwindow
+import random
+from os import listdir
 from src.pi4.display_feed_pygame import CameraFeed
 from src.pi4.multiprocessinghandlers import *
 from src.common.helper_functions import start_ui
@@ -19,6 +21,7 @@ from src.vision.vsrc.constants import DATA, REALVNC_WINDOW_NAME, BORDER_WIDTH, L
 class Vision_Handler:
     def __init__(self, enableInference:bool=True):
         self.enableInference = enableInference
+        self.lcdCallbacks = {}
 
     def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, trainingMode:bool=False, captureVNC:bool=False, enableKeyboard:bool=False) -> None:
         """
@@ -127,6 +130,19 @@ class Vision_Handler:
                 else:
                     print("Inference on")
                     self.constInference.set()
+            if event.key == pygame.K_f:
+                self.forceImage = not self.forceImage
+                print(f"Force image: {self.forceImage}")
+            if event.key == pygame.K_v:
+                self.captureVNC = not self.captureVNC
+                print(f"Capture VNC: {self.captureVNC}")
+            if event.key == pygame.K_r:
+                # Select random file
+                filePath = "./datasets/full/current/images/train"
+                files = listdir(filePath)
+                randomFile = random.choice(files)
+                self.set_image(f"{filePath}/{randomFile}")
+                print("Random image selected")
 
     def set_do_inference(self) -> None:
         """
@@ -223,6 +239,7 @@ if __name__ == "__main__":
     ENABLE_KEYBOARD = True
     CAMERA_FRAMERATE = 30
     pygame.init()
+    pygame.display.set_caption("Vision Handler")
     clk = pygame.time.Clock()
     display = pygame.display.set_mode((CAMERA_RESOLUTION[0]//3+CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]), 0)
     camera = pygame.Surface((CAMERA_RESOLUTION[0], CAMERA_RESOLUTION[1]))

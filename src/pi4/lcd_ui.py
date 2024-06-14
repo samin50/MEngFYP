@@ -478,7 +478,7 @@ class LCD_UI:
                 self.stripResetCallback()
                 # If FORCE_IMAGE is enabled, allow a random photo
                 if self.forceImage and self.UIElements["enable_button"].get_value():
-                    path = "src/vision/datasets/full/current/images/test"
+                    path = "datasets/full/current/images/test"
                     randomFile = random.choice(os.listdir(path))
                     self.visionHandler.set_image(f"{path}/{randomFile}")
             if event.ui_element == self.UIElements.get("take_photo_button", None):
@@ -508,7 +508,7 @@ class LCD_UI:
         self.UIElements["hsv_colour_code"].set_text(f"HSV: {hsvColour}")
 
 if __name__ == "__main__":
-    TRAININGMODE = True
+    TRAININGMODE = False
     INFERENCE = True
     FORCE_IMAGE = True
     clk = pygame.time.Clock()
