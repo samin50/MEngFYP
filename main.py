@@ -1,6 +1,7 @@
 """
 Main entry point for the application.
 """
+from viztracer import log_sparse
 import traceback
 import pygame
 # Allow development on non-Raspberry Pi devices
@@ -44,6 +45,7 @@ class Component_Sorter:
         self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
+@log_sparse
 def run(trainingMode:bool=False, enableInference:bool=True, forceImage:bool=False) -> None:
     """
     Run the main application
@@ -88,7 +90,7 @@ def run(trainingMode:bool=False, enableInference:bool=True, forceImage:bool=Fals
 if __name__ == "__main__":
     TRAINING_MODE = False
     FORCE_IMAGE = True
-    PROFILER = True
+    PROFILER = False
     INFERENCE = True
     # Run and optionally profile the application
     if PROFILER:

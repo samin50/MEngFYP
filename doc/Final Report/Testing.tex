@@ -57,10 +57,16 @@ Likewise, the Vision Handler is shown in \autoref{fig:pygame-camera}, where the 
 
 Unit testing of all parts of the system was carried out to ensure that each part of the system works as expected as shown in the above examples. To test the system as a whole, a profiler was used to examine the system's performance, and to identify any bottlenecks in the system. The profiler was used to measure the time taken to run each part of the system, and to identify any parts of the system that were taking a long time to run. The profiler was used to identify any parts of the system that were taking a long time to run, and to optimise those parts of the system to improve the system's performance.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/software/profiler.jpg}
+  \caption{Profiler output for the main process}
+  \label{fig:profiler}
+\end{figure}
 
+SnakeViz \cite{snakeviz} and cProfiler were used to profile the main process of the system, and the output is shown in \autoref{fig:profiler}. Highlighted in purple is the \texttt{Pygame.time.Clock tick} function, which is used to control the frame rate of the system. This function simply waits until the next frame is ready to be displayed, and the fact that it takes up 86\% of the time in the main process is a good indication that the LCD UI is responsive, as it is not being held up by other parts of the system.
 
-\todo{lcd ui profiling}
-\todo{add power consumption measurements from usb for complete power - implementation maybe?}
+The other parts of the system are shown in green, and take up a small amount of time in the main process, which is a good indication that the system is running efficiently. The second and third largest functions are the \texttt{pygame.display.flip} function and \texttt{pygame\_gui}'s \texttt{ui\_manager.update} function, both of which are necessary for \texttt{pygame} to display the UI, and are expected to take up a large amount of time in the main process. The largest function that is not responsible for the UI is the Vision Handler's \texttt{get\_frame} function, which takes a miniscule 1.32\% of the time in the main process, a good indication that the Vision Handler is running efficiently and using multiprocessing effectively.
 
 \subsection{Computer Vision}
 \label{sec:computer-vision-evaluation}

@@ -24,8 +24,6 @@ The conveyor belt with the direction of travel is indicated with arrows. The cam
 
 From the back view of the system, the PSU enclosure is clearly visible with mounting plates for the step-down converters. A belt-driven arm is visible on the back, making use of another NEMA17 motor to drive it and a belt tensioner to ensure the belt is taut. The belt-driven arm is used to push components off the conveyor belt into the sorting bins. The tensioners for the conveyor belt itself are also visible in the back view on the right side.
 
-\todo{show actual system}
-
 \subsubsection{FDM Printer Settings}
 \label{sec:3d-printer-settings}
 
@@ -71,6 +69,7 @@ Due to the potential of high-current carrying wires, the PSU has been enclosed i
 \end{figure}
 
 The PSU enclosure contains several components;
+\par
 \textbf{PSU Container}: The PSU container is designed to house the 24V 6.25A power supply unit, and provides mounting holes for the other components. It attaches to the PSU using M3 screws.
 \par
 \textbf{Step-Down Converter Mounts}: The step-down converters are mounted on the PSU container using M3 screws. The step-down converters are used to convert the 24V output from the PSU to 12V and 5V for the system, shown by the two mounts at the top of the PSU container.
@@ -124,18 +123,6 @@ A standard IEC C14 power connector and an RS Pro Snap-In Fused Rocker Switch \ci
 
 Due to the concern of electrical safety,  the power supply has been PAT tested by technicians in the Level 1 Labs and has been deemed safe for use. PAT (Portable Appliance Testing) is a process by which electrical appliances are routinely checked for safety \cite{patwiki, patspec}. The results of the PAT test are shown in \autoref{tab:pat}.
 
-\begin{figure}[H]
-    \begin{minipage}[h]{0.95\textwidth}
-        \centering
-        \includegraphics[height=8cm]{imgs/freecad/psu_mount.jpg}
-        \caption{Final PSU Enclosure}
-        \label{fig:psuenclosure}
-    \end{minipage}
-\end{figure}
-\todo{show actual PSU}
-
-As shown in \autoref{fig:psuenclosure}, the final PSU enclosure is shown to be working with the 5V and 12V outputs connected to the mounted USB breakout boards.
-
 \subsubsection{LCD and Camera Mounts}
 \label{sec:lcd-mount}
 For the DFRobot 7" LCD, a mount was designed to hold the LCD in place on the front of the system. The LCD is affixed at a 15$^{\circ}$ angle to the front of the system, allowing for easy viewing by the user. The mount is designed to be attached to the 2020 extrusion frame of the system, using M3 screws and T-nuts.
@@ -151,6 +138,7 @@ For the DFRobot 7" LCD, a mount was designed to hold the LCD in place on the fro
 \end{figure}
 
 The design consists of two parts;
+\par
 \textbf{LCD Cover}: The LCD cover is designed to hold the LCD in place. It contains a small gap that the LCD fits into, preventing it from falling out with the help of friction.
 \par
 \textbf{LCD Extrusion Mount}: The LCD extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains screw holes for the LCD Cover to be attached to, and screw holes for the 2020 extrusion frame. It also contains a support for the LCD cover to rest on, preventing it from breaking off.
@@ -166,9 +154,10 @@ The design consists of two parts;
 \end{figure}
 
 For the Okdo OV5647 Camera, a mount was designed to hold the camera face down above the conveyor belt. The camera is mounted on the top of the system, with LED lights inside the camera mount. The mount consists of two parts as shown in \autoref{fig:cameraplate};
+\par
 \textbf{Extrusion Mount}: The extrusion mount is designed to be attached to the 2020 extrusion frame of the system. It contains a hole for the WS2812B LED strip wires to pass through, and screw holes for the camera plate to be attached to. The mount fits onto the extrusion, however this is not strictly necessary as the camera mount is able to fit on the extrusion without falling off.
 \par
-textbf{Camera Plate}: The camera plate is designed to hold the camera in place. It contains four holes for the Okdo OV5647 Camera to be attached to, and a slot for the camera ribbon cable to pass through, ensuring that the camera remains flat.
+\textbf{Camera Plate}: The camera plate is designed to hold the camera in place. It contains four holes for the Okdo OV5647 Camera to be attached to, and a slot for the camera ribbon cable to pass through, ensuring that the camera remains flat.
 \subsubsection{Conveyor Belt}
 \label{sec:conveyor-belt}
 The conveyor belt is a key component of the system, as it is used to transport components from the input side to the bins. As such, it is the largest component of the system, and so makes use of 2020 aluminium extrusion as its skeleton. The conveyor belt has two rollers; one actively driven by a NEMA17 stepper motor, and the other is a free roller. The conveyor belt relies on friction to turn the idle roller, so it is essential that the belt is taut. To ensure this, belt tensioners are used on the idler side of the conveyor belt.
@@ -216,6 +205,7 @@ On the other side of the conveyor belt, the belt tensioner is used to ensure the
 \end{figure}
 
 As usual, the belt tensioner is mounted to the 2020 extrusion frame using M3 screws and T-nuts. The tensioner is made of 4 distinct parts;
+\par
 \textbf{Belt Tensioner Mount}: The mount is used to attach the tensioner to the 2020 extrusion frame. The mount contains a bevelled edge to allow the tensioner to slide in and out of the mount.
 \par
 \textbf{Belt Tensioner}: The tensioner is used to tension the conveyor belt. It slots into the mount, and features a 608ZZ bearing to allow the rollers to rotate freely. It is threaded to allow the belt tensioner nut to be screwed in.
@@ -258,7 +248,7 @@ The arm makes use of v-rollers to move smoothly along the 2020 extrusion frame, 
 \end{figure}
 
 The sweeper contains several parts;
-
+\par
 \textbf{Motor and Endstop Mount}: The mount is used to attach the NEMA17 stepper motor to the 2020 extrusion frame. It contains four screw holes for the motor, and two screw holes for the endstop. The endstop is used to detect when the sweeper arm has reached the end of its travel, and is used to prevent the motor from damaging the system. This allows precise control of the sweeper arm's position. In \autoref{fig:motorandtensioner}, the motor and endstop mount is shown on the far left.
 \par
 \textbf{Belt Tensioner}: The belt tensioner is used to tension the GT2 belt that drives the sweeper arm. It is mounted to the 2020 extrusion frame using M3 screws and T-nuts, and contains a 608ZZ bearing to allow the belt to rotate freely. The tensioner is used to tension the belt, ensuring that the belt is taut and does not slip. This design is similar to the conveyor belt tensioner in that it uses a nut to tension the belt. Inside the tensioner, there is a GT2 gear that the belt wraps around, and it is affixed to a 5mm shaft that is allowed to rotate freely using two 608ZZ bearings. The tensioner is allowed to move in only direction as it is housed in a "container" --- similar to the conveyor belt tensioner. This is clearly shown in \autoref{fig:motorandtensioner}.

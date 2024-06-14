@@ -1,4 +1,5 @@
 import multiprocessing
+from viztracer import log_sparse
 import numpy
 import time
 import cv2
@@ -14,6 +15,7 @@ except ImportError:
     print("Using simulated YOLO!")
 # pylint:disable=all
 
+@log_sparse
 def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiprocessing.Queue, busyInference: multiprocessing.Event, modelPath: str) -> None:
     """
     Process to handle inference
