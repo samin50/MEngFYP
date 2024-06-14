@@ -10,6 +10,8 @@ The system was observed while in operation and did not exhibit any signs of inst
 
 Additionally, mechanical failure was prevented by using parts such as bearings to facilitate the movement of the rollers and prevent friction from wearing down the FDM printed parts. Screws and heat-set inserts were used to attach parts to other parts, preventing threads from being stripped with repeated use. The system was also designed to be easily assembled and disassembled, with the use of T-slot nuts and bolts to attach parts to the aluminium extrusion, and screws to attach parts to other parts. This allows for easy maintenance and repair of the system, as parts can be easily replaced if they fail. The mechanical design of the system was successful in achieving its goals, and provides a strong foundation for the rest of the system.
 
+During testing, it was found that the movement of the system could keep up with the vision system, which requires frequent pauses to take clear pictures and perform inference. The system is bottlenecked by this speed.
+
 \subsection{Electronics and Software}
 \label{sec:electronics-and-software-evaluation}
 As mentioned in \autoref{sec:design-and-system-architecture}, the system is designed to be modular to facilitate easy development and debugging, with each system being able to be tested independently. Each part of the software, the System Controller, LCD UI, Vision Handler, Camera Feed, etc are all able to be run independently by simply running the Python script that contains the code for that part of the system.
@@ -55,7 +57,7 @@ Likewise, the Vision Handler is shown in \autoref{fig:pygame-camera}, where the 
   \label{tab:vision-handler-keypresses}
 \end{table}
 
-Unit testing of all parts of the system was carried out to ensure that each part of the system works as expected as shown in the above examples. To test the system as a whole, a profiler was used to examine the system's performance, and to identify any bottlenecks in the system. The profiler was used to measure the time taken to run each part of the system, and to identify any parts of the system that were taking a long time to run. The profiler was used to identify any parts of the system that were taking a long time to run, and to optimise those parts of the system to improve the system's performance.
+Unit testing of all parts of the system was carried out to ensure that each part of the system works as expected as shown in the above examples. To test the system as a whole, a profiler was used to examine the system's performance, and to identify any bottlenecks in the system.
 
 \begin{figure}[H]
   \centering
@@ -66,7 +68,7 @@ Unit testing of all parts of the system was carried out to ensure that each part
 
 SnakeViz \cite{snakeviz} and cProfiler were used to profile the main process of the system, and the output is shown in \autoref{fig:profiler}. Highlighted in purple is the \texttt{Pygame.time.Clock tick} function, which is used to control the frame rate of the system. This function simply waits until the next frame is ready to be displayed, and the fact that it takes up 86\% of the time in the main process is a good indication that the LCD UI is responsive, as it is not being held up by other parts of the system.
 
-The other parts of the system are shown in green, and take up a small amount of time in the main process, which is a good indication that the system is running efficiently. The second and third largest functions are the \texttt{pygame.display.flip} function and \texttt{pygame\_gui}'s \texttt{ui\_manager.update} function, both of which are necessary for \texttt{pygame} to display the UI, and are expected to take up a large amount of time in the main process. The largest function that is not responsible for the UI is the Vision Handler's \texttt{get\_frame} function, which takes a miniscule 1.32\% of the time in the main process, a good indication that the Vision Handler is running efficiently and using multiprocessing effectively.
+The other parts of the system are shown in green, and take up a small amount of time in the main process, which is a good indication that the system is running efficiently. The second and third largest functions are the \texttt{pygame.display.flip} function and \texttt{pygame\_gui}'s \texttt{ui\_manager.update} function, both of which are necessary for \texttt{pygame} to display the UI, and are expected to take up a large amount of time in the main process. The largest function that is not responsible for the UI is the Vision Handler's \texttt{get\_frame} function, which takes a miniscule 1.32\% of the time in the main process, a good indication that the Vision Handler is running efficiently and using multiprocessing effectively to perform inference.
 
 \subsection{Computer Vision}
 \label{sec:computer-vision-evaluation}
@@ -131,7 +133,7 @@ To properly evaluate a model's performance, it is important to consider the mode
   \label{fig:true-confusion-matrix}
 \end{figure}
 
-In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is shown, with only diagonal entries, which shows 100\% accuracy on the test set. This is a very good sign, however it is important to remember that the dataset is very small, so the validation and test set has then been used to evaluate the model, as shown in \autoref{fig:final-model-confusion-matrix}. Although the model does not learn on the validation set, it still has seen the validation set during training which may cause the model to learn features that are specific to the validation set, which is why the test set is used to evaluate the model's performance. However, showing the confusion matrix for the validation and test set will be useful in this context to show the model's performance.
+In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is shown, with only diagonal entries, which shows 100\% accuracy on the test set. This is a very good sign, however it is important to remember that the dataset is very small, so the validation and test set has then been used to evaluate the model, as shown in \autoref{fig:final-model-confusion-matrix}. Although the model does not learn on the validation set, it still has seen the validation set during training which may cause the model to learn features that are specific to the validation set, which is why the test set is used to evaluate the model's performance. However, showing the confusion matrix for the validation and test set will still be useful to gauge the model's real-world performance.
 
 \begin{figure}[H]
   \centering
@@ -143,15 +145,6 @@ In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is sho
 This again is an exceptional result with no false positives or false negatives, and an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\%. The model is able to detect all components in the test set, and is able to classify them correctly. The model is able to generalise well to the test set, and is able to detect components that it has not seen before. In terms of the requirements of the project, the model is able to classify components with a high degree of accuracy.
 
 A mosaic of inferences on the test set is shown in Appendix \autoref{app:mosaic} for a visual representation of the model's performance. 
-
-  \todo{talk about tensor board}
-  \todo{show metrics}
-  
-On the GTX 3080 Ti, 
-  
-Interestingly, if Class Loss is set to 1.0, Box Loss is set to 4.0, and DFL is set to 1.5, the model converges in around ~15 epochs, taking only ~2 minutes to train. However, the model's performance is slightly impacted, calculating metrics on the test set yields an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 77.8\%, but it was decided that the time savings were not worth it given it was only a few minutes of training time.
-
-\todo{show pictures of model in action}
 
 \subsubsection{Resistor Value Detection Model}
 As discussed in \autoref{sec:resistor-value-detection}, the resistor value detection model is a standard YOLOn model trained on images produced by running inference on all resistor images with the component detection model and then cropping the bounding boxes. This meant that there were only 259 images in the dataset, which was then split 80-20 for training and validation; a test set was not used as the dataset was too small. This left only 208 images for training, and 51 images for validation.
@@ -248,7 +241,7 @@ This is a very small amount of pixels, and it is clear that the model is struggl
   \label{fig:resistor-value-confusion-matrix}
 \end{figure}
 
-For completeness, the confusion matrix of the resistor detection model was shown in \autoref{fig:resistor-value-confusion-matrix},and shows a strong diagonal but with many false negatives; multiple bands not being identified at all, as shown by the row on the bottom. There is also severe class imbalance, with 91 total brown bands across the test set but only 2 gray and 5 blue.
+For completeness, the confusion matrix of the resistor detection model was shown in \autoref{fig:resistor-value-confusion-matrix}, and shows a strong diagonal but with many false negatives; multiple bands are not being identified at all, as shown by the row on the bottom. There is also severe class imbalance, with 91 total brown bands across the test set but only 2 are gray and 5 are blue.
 
 Objectively, the model is performing well given the constraints of the dataset, and is able to classify resistor values with a high degree of accuracy. However, the performance of the model is not adequate enough to be deployed in the system as of the time of writing, and further work is needed to improve the model's to an acceptable standard.
 
@@ -307,5 +300,3 @@ onnx_file_path: ./src/vision/models/final/classifier.onnx  batch_size: 1...
 \end{minipage}
 
 The DeepSparse library \cite{deepsparse} takes an ONNX model and uses its own engine to perform infernece at higher speeds. Using the library, the model is able to perform inference at 619ms, which translates to ~1.62FPS on the Pi, an improvement of 55.2\% over the standard Onnxruntime model, and an improvement of 203.8\% over the standard YOLO model. This is a significant improvement, and the model is now able to perform inference at a speed that is suitable for real-time object detection.
-
-With these results, the Computer Vision system has met the requirements of the project, and is able to classify components in real-time. The system is able to detect components with a high degree of accuracy, and is able to classify them correctly.
