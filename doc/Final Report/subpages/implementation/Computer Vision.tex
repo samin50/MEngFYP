@@ -192,6 +192,7 @@ While the YOLOv8-obb model can identify components, it cannot determine the valu
 Originally, the plan was to use the YOLO-OBB model to properly orient the component so that they could be passed into another model for value identification. For regular components, like ceramic capacitors, the value is printed on the component in a standard format, which can be read using OCR (Optical Character Recognition) models and some image preprocessing. However, for resistors, the value is encoded in the colour bands on the resistor, which are relatively small. For this reason, a regular YOLO model was trained to detect and classify colour bands on resistors, and then programmatically determine the value of the resistor, as done in the resistor band data annotation tool discussed in \autoref{fig:resistorannotate}.
 
 \subsubsection{Resistor Value Detection}
+\label{sec:resistor-value-detection}
 In order to generate the images for the resistor value detection model, the model from the previous section was used to detect the resistors in the images. The generated bounding boxes were then used to crop the images and generate a dataset of resistor images, which were already labelled with the resistor values as explained in \autoref{sec:dataset-collection}.
 
 \begin{figure}[H]

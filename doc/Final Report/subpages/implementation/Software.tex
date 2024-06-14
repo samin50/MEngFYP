@@ -61,9 +61,7 @@ The Pi uses Git \cite{git} for version control, and the repository is hosted on 
 \subsubsection{User Interface}
 The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. 
 
-Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
-
-\todo{include the profiler evaluation}
+Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:electronics-and-software-evaluation}
 
 \begin{figure}[H]
     \hfill
@@ -91,7 +89,7 @@ On the right side of the screen is information relating to the vision system, fo
 
 As explained \autoref{sec:software}, the Pi is connected to a more powerful machine with SSH to facilitate faster development. For this reason, a Wi-Fi button is present on the UI to allow it to attempt to reconnect in the event of connection issues. The user interface also supports streaming frames to the machine where inference can be done much quicker, due to the presence of a GPU. This is done by toggling the "Offload Inference?" button. The "Const. Inference?" button means the Vision system is constantly processing frames rather than only when a beam break is detected. The "Inference Once" button allows the user to manually trigger inference, and performs inference on the current frame. 
 
-\todo{explain connection to laptop}
+This was achieved using Python's \texttt{sockets}, \texttt{pickle} and \texttt{multiprocessing} library to facilitate the connection and data transfer between the two devices, and is discussed in more detail in \autoref{sec:concurrency}.
 
 Additionally, during the development of the system, the WS2812B needed to be calibrated as explained in \autoref{sec:ws2812b-led-strip}. Due to this, there are HSV sliders for the user to adjust the colour of the LED strip, allowing for easy calibration of the LED strip. There is also a "Reset Strip" button to reinitialise the LED strip and display the LED start up sequence as shown in \autoref{fig:ledreset}.
 
@@ -328,6 +326,7 @@ As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor be
 \subsubsection{Concurrency and Optimisation}
 \label{sec:concurrency}
 
+\todo{socket stuff}
 \todo{talk about mulitprocessing}
 \todo{event driven}
 \todo{using minimal environment, custom startx session to reduce overhead}
