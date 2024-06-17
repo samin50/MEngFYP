@@ -9,8 +9,11 @@ import numpy
 import cv2
 import pygame
 import pygame.camera as pycam
-import pyautogui
-import pygetwindow
+try:
+    import pyautogui
+    import pygetwindow
+except:
+    print("Running on Pi, skipping VNC capture")
 from src.pi4.display_feed_pygame import CameraFeed
 from src.pi4.multiprocessinghandlers import *
 from src.common.helper_functions import start_ui

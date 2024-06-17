@@ -44,19 +44,19 @@ class Sweeper_Controller:
         self.homingLock = multiprocessing.Lock()
         self.stepLock = multiprocessing.Lock()
         # Limit switch interrupt
-        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.FALLING, callback=self.limit_switch_interrupt)
+        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.FALLING, callback=self.limit_switch_interrupt, bouncetime=50)
         self.sort.start()
 
     def limit_switch_interrupt(self) -> None:
         """
         Limit switch interrupt
         """
+        # Also stop the motor
+        self.stop()
         with self.homingLock:
             self.isHomed = True
         with self.stepLock:
             self.steps = 0
-        # Also stop the motor
-        self.stop()
 
     def stop(self) -> None:
         """
@@ -394,4 +394,4 @@ class System_Controller:
         self.leds.set_status_light('ready')
 
 if __name__ == "__main__":
-    leds = WS2812B_Controller(speed=5)
+    leds = System_Controller(None)
