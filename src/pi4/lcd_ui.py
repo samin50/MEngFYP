@@ -10,7 +10,7 @@ import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
-from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, COLOURS
+from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, COLOURS, MOVE_INCREMENT, MAX_POSITION
 from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.vision_handler import Vision_Handler
@@ -391,6 +391,14 @@ class LCD_UI:
             )
             self.UIElements["kinematic_status"].text_colour = pygame.Color(COLOURS["yellow"])
             self.UIElements["kinematic_status"].rebuild()
+            # Movement slider
+            self.UIElements["move_slider"] = UIHorizontalSlider(
+                relative_rect=pygame.Rect((xOffset+sliderWidth+WIDGET_PADDING, LCD_RESOLUTION[1]-sliderHeight-WIDGET_PADDING), (sliderWidth, sliderHeight)),
+                value_range=(0, MAX_POSITION),
+                start_value=0,
+                click_increment=MOVE_INCREMENT,
+                manager=self.manager
+            )
             self.UIElements["home_button"] = UIButton(
                 relative_rect=pygame.Rect((xOffset+2*sliderWidth+2*WIDGET_PADDING-(2*sliderModifier), LCD_RESOLUTION[1]-buttonHeight-WIDGET_PADDING), (sliderWidth, buttonHeight)),
                 text="Home",

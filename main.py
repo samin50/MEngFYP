@@ -32,6 +32,8 @@ class Component_Sorter:
             "colour_callback" : self.systemController.leds.change_colour,
             "strip_reset_callback" : self.systemController.leds.reset,
             "conveyor_speed_callback" : self.systemController.conveyor.start,
+            "change_position_callback" : self.systemController.change_rel_position,
+            "home_position_callback" : self.systemController.home_position,
         }
         self.clk = pygame.time.Clock()
         self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG, forceImage=forceImage)
@@ -89,9 +91,9 @@ def run(trainingMode:bool=False, enableInference:bool=True, forceImage:bool=Fals
 
 if __name__ == "__main__":
     TRAINING_MODE = False
-    FORCE_IMAGE = True
+    FORCE_IMAGE = False
     PROFILER = False
-    INFERENCE = True
+    INFERENCE = False
     # Run and optionally profile the application
     if PROFILER:
         import cProfile
