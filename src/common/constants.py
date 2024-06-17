@@ -51,5 +51,8 @@ SPEED_MULTIPLIER = 80
 LIGHT_COLOUR = (255, 218, 145)
 BIN_THRESHOLD = 5
 SWEEPER_MM_PER_STEP = 0.5
+# Sweeper Parameters
+MAX_POSITION = 100
+MOVE_INCREMENT = 5
 # Vision
 CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"

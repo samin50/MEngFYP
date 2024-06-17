@@ -1,6 +1,7 @@
 """
 Main entry point for the application.
 """
+from viztracer import log_sparse
 import traceback
 import pygame
 # Allow development on non-Raspberry Pi devices
@@ -19,7 +20,7 @@ class Component_Sorter:
     """
     Component Sorter class
     """
-    def __init__(self, trainingMode:bool=False, enableInference:bool=True) -> None:
+    def __init__(self, trainingMode:bool=False, enableInference:bool=True, forceImage:bool=False) -> None:
         self.lcdUI = None
         GPIO.cleanup()
         # GPIO Setup
@@ -31,9 +32,11 @@ class Component_Sorter:
             "colour_callback" : self.systemController.leds.change_colour,
             "strip_reset_callback" : self.systemController.leds.reset,
             "conveyor_speed_callback" : self.systemController.conveyor.start,
+            "change_position_callback" : self.systemController.change_rel_position,
+            "home_position_callback" : self.systemController.home_position,
         }
         self.clk = pygame.time.Clock()
-        self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG)
+        self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG, forceImage=forceImage)
         self.systemController.set_lcd_handle(self.lcdUI)
 
     def close(self) -> None:
@@ -44,7 +47,8 @@ class Component_Sorter:
         self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
-def run(trainingMode:bool, enableInference:bool=True) -> None:
+@log_sparse
+def run(trainingMode:bool=False, enableInference:bool=True, forceImage:bool=False) -> None:
     """
     Run the main application
     """
@@ -52,7 +56,7 @@ def run(trainingMode:bool, enableInference:bool=True) -> None:
     pygame.init()
     while keepRunning:
         try:
-            systemObj = Component_Sorter(trainingMode, enableInference)
+            systemObj = Component_Sorter(trainingMode, enableInference, forceImage)
             start_ui(
                 loopConditionFunc=systemObj.lcdUI.is_running,
                 loopFunction=[systemObj.lcdUI.draw],
@@ -87,18 +91,17 @@ def run(trainingMode:bool, enableInference:bool=True) -> None:
 
 if __name__ == "__main__":
     TRAINING_MODE = False
+    FORCE_IMAGE = False
     PROFILER = False
-    SNAKEVIZ = True
-    INFERENCE = True
+    INFERENCE = False
     # Run and optionally profile the application
     if PROFILER:
         import cProfile
         import subprocess
         profiler = cProfile.Profile()
         profiler.enable()
-        profiler.run('run(TRAINING_MODE)')
+        profiler.run('run(TRAINING_MODE, INFERENCE, FORCE_IMAGE)')
         profiler.dump_stats('./profiles/profile.prof')
-        if SNAKEVIZ:
-            subprocess.Popen("snakeviz ./profiles/profile.prof", shell=True)
+        subprocess.Popen("snakeviz ./profiles/profile.prof", shell=True)
     else:
-        run(TRAINING_MODE, INFERENCE)
+        run(TRAINING_MODE, INFERENCE, FORCE_IMAGE)

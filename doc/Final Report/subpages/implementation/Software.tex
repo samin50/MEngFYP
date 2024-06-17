@@ -61,9 +61,7 @@ The Pi uses Git \cite{git} for version control, and the repository is hosted on 
 \subsubsection{User Interface}
 The user interface allows the user to view and command the state of the system by interacting with the touchscreen on the DFRobot 7" display. 
 
-Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:evaluation}.
-
-\todo{include the profiler evaluation}
+Written in pygame \cite{pygamedoc} and pygame\_gui \cite{pygamegui}, the user interface is controlled by the \texttt{LCD UI} class, which is responsible for drawing the various elements of the user interface, such as the camera feed, the buttons, and the text. The system operates at 30Hz, allow for responsiveness without overloading the system. A profiler was used to determine the performance of the system, and it was found that the system was able to run at 30Hz without any issues as discussed in \autoref{sec:electronics-and-software-evaluation}
 
 \begin{figure}[H]
     \hfill
@@ -91,7 +89,7 @@ On the right side of the screen is information relating to the vision system, fo
 
 As explained \autoref{sec:software}, the Pi is connected to a more powerful machine with SSH to facilitate faster development. For this reason, a Wi-Fi button is present on the UI to allow it to attempt to reconnect in the event of connection issues. The user interface also supports streaming frames to the machine where inference can be done much quicker, due to the presence of a GPU. This is done by toggling the "Offload Inference?" button. The "Const. Inference?" button means the Vision system is constantly processing frames rather than only when a beam break is detected. The "Inference Once" button allows the user to manually trigger inference, and performs inference on the current frame. 
 
-\todo{explain connection to laptop}
+This was achieved using Python's \texttt{sockets}, \texttt{pickle} and \texttt{multiprocessing} library to facilitate the connection and data transfer between the two devices, and is discussed in more detail in \autoref{sec:concurrency}.
 
 Additionally, during the development of the system, the WS2812B needed to be calibrated as explained in \autoref{sec:ws2812b-led-strip}. Due to this, there are HSV sliders for the user to adjust the colour of the LED strip, allowing for easy calibration of the LED strip. There is also a "Reset Strip" button to reinitialise the LED strip and display the LED start up sequence as shown in \autoref{fig:ledreset}.
 
@@ -109,7 +107,6 @@ The user interface also supports a "training mode" as discussed in \autoref{sec:
 The LCD UI class is also capable of gracefully handling errors that may occur during the operation of the system, and the handling of these errors is delegated to the specific subsystem that caused the error. If a much more catastrophic error occurs, the system will still gracefully display an error screen, and allow the system to be restarted as shown in \autoref{fig:crash}. This facilitates not only the development process, but also prevents the system from having downtime in real-world applications as it prevents the need for a system restart. This is implemented by making use of Python's exception handling mechanism, and then switching to the error screen if an exception is raised.
 
 The camera feed in the top left is controlled by the Vision Handler, which is responsible for delivering frames to the user interface. The Vision Handler is discussed in more detail in \autoref{sec:vision-handler}. 
-\todo{Complete section after fully implementing the user interface}
 
 \subsubsection{Vision Handler}
 \label{sec:vision-handler}
@@ -136,17 +133,17 @@ The Vision Handler is responsible for managing the camera feed, and performs the
 
 \subsubsection{System Controller}
 \label{sec:system-controller}
-\todo{diagram of interupt/data flow?}
 The System Controller heavily leverages Python's \texttt{Multiprocessing} library to allow for the system to run multiple processes concurrently, allowing for the system to be more responsive while displaying the \texttt{LCD UI}. The System Controller is responsible for the following tasks:
 
 \begin{mylist}
-    \item Detecting a beam break and triggering procedure to sort the component
-    \item Coordinating the movement of the \texttt{Sweeper Controller} to sort the component
-    \item Relaying information back to the \texttt{LCD UI} to display the current state of the system
-    \item Handling the event of the beam break sensor being triggered while the system is in the process of sorting a component
+    \item Detecting a beam break and triggering procedure to sort the component.
+    \item Coordinating the movement of the \texttt{Sweeper Controller} to sort the component.
+    \item Relaying information back to the \texttt{LCD UI} to display the current state of the system.
+    \item Handling the event of the beam break sensor being triggered while the system is in the process of sorting a component.
+    \item Handling the event of the endstop being triggered when it is not supposed to be.
 \end{mylist}
 
-\todo{finish section}
+For the system to reactively sort components, the System Controller uses a beam break sensor to detect when a component is in the sorting area. When the beam break sensor is triggered, the System Controller triggers the \texttt{Sweeper Controller} to sort the component. This is handled using an interrupt, which is a signal that is sent to the CPU to indicate that a system event has occurred, and the CPU should take immediate action. Likewise, the endstop used to detect the sweeper arm's position is also handled using an interrupt to allow it to react in time to prevent damage to the system from the motors. The concurrency of the system is discussed in more detail in \autoref{sec:concurrency}.
 
 \subsubsection{Dataset Collection}
 \label{sec:dataset-collection}
@@ -289,7 +286,7 @@ In \autoref{fig:captured}, the user has successfully captured the camera feed, a
 
 The user can also draw the OBB by clicking and dragging the mouse, and can cancel the OBB by clicking the middle mouse button. The tool automatically connects the first and last points to form the OBB, showing a gray dotted line so the user can verify the OBB is correct. The user can then save the image by pressing the \texttt{Enter} key, or return to the component selection screen by pressing the \texttt{Escape} key.
 
-Originally, it was thought that the OBB model learns the correct left-right orientation of objects by the order of which the vertexes are joined, and this is represented in the tool with two orange arrows, showing the desired right-side up orientation of the resistor. However, this was found to be incorrect, and the OBB model only learns the bounding box of the object, and not the orientation of the object. This was discovered during the training of the OBB model, as discussed in \autoref{sec:computer-vision}
+Originally, it was thought that the OBB model learns the correct left-right orientation of objects by the order of which the vertexes are joined, and this is represented in the tool with two orange arrows, showing the desired right-side up orientation of the resistor. However, this was found to be incorrect, and the OBB model only learns the bounding box of the object, and not the orientation of the object. This is discussed more in \autoref{sec:implementation-problems-and-changes}.
 
 \begin{figure}[H]
     \hfill
@@ -323,12 +320,71 @@ In addition to regular component identification using the YOLO-OBB model, a sepa
     \end{minipage}
 \end{figure}
 
-As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor being annotated, with the bands being drawn on the resistor. The user only has to click on the location of the bands, and does not need to manually annotate what band the user is clicking on; the information of the order of the bands in encoded in the filename as discussed earlier, so the tool can automatically determine what band the user is clicking on. The user only needs to indicate where the 'stem' of the resistor is, indicated by the yellow box, enabling the tool to identify the orientation of the resistor, and then allowing the resistor value model to be trained. Clicking on the resistor automatically draws a bounding box centered at the band location with the current band colour, and then saves the image and label in the same way in the YOLO format (not the YOLO-OBB format as the component identification model will always produce resistors upright). The format is discussed in more detail in \autoref{sec:computer-vision}. 
+As shown in \autoref{fig:resistorannotate}, the tool clearly shows a resistor being annotated, with the bands being drawn on the resistor. The user only has to click on the location of the bands, and does not need to manually annotate what band the user is clicking on; the information of the order of the bands in encoded in the filename as discussed earlier, so the tool can automatically determine what band the user is clicking on. The user only needs to indicate where the 'stem' of the resistor is, indicated by the yellow box, enabling the tool to identify the orientation of the resistor, and then allowing the resistor value model to be trained. Clicking on the resistor automatically draws a bounding box centered at the band location with the current band colour, and then saves the image and label in the same way in the YOLO format (not the YOLO-OBB format as only AABB are needed as we care more for classification accuracy). The format is discussed in more detail in \autoref{sec:computer-vision}. 
 
 \subsubsection{Concurrency and Optimisation}
 \label{sec:concurrency}
+To ensure that the system is responsive and can handle multiple tasks concurrently, the system makes use of Python's \texttt{multiprocessing} library to run multiple processes concurrently. The system is divided into three main processes: the main process, the vision process, and the system controller process.
 
-\todo{talk about mulitprocessing}
-\todo{event driven}
-\todo{using minimal environment, custom startx session to reduce overhead}
+The main process is responsible for running the user interface, and it has the highest priority as it is responsible for displaying the state of the system to the user and must be responsive to user input. This is achieved by using an event loop to handle user input, and then updating the user interface accordingly, and also ensuring that no blocking operations are performed in the main process. A blocking process is an operation that pauses the execution of code until it is complete, and would prevent the event loop from executing and would "freeze" the user interface. To prevent this, all blocking operations are delegated to other processes, and the main process only waits for the results of these operations.
+
+Pygame \cite{pygamedoc} and Pygamegui \cite{pygamegui} make event handling easy, as they provide an event queue that allows the system to consume events as they occur, and then update the user interface accordingly. This allows the system to be responsive and handle multiple tasks concurrently. 
+
+The vision process is responsible for capturing frames from the camera, and then passing these frames to the computer vision model for inference. Inference must be run on a separate process due to the fact that inference is computationally expensive, making it a blocking operation as the system must wait for the inference to complete before it can continue. This has been achieved by using Python's \texttt{multiprocessing} library to run the vision process concurrently with the main process, allowing the system to capture frames and perform inference at the same time.
+
+% Code block
+\begin{minipage}[H]{\textwidth}
+    \centering
+    \begin{minipage}[H]{\textwidth}
+    \centering
+    \begin{minted}[linenos, fontsize=\scriptsize, breaklines, bgcolor=bg]{python}
+model = YOLO(modelPath)
+print("Loaded YOLO model!")
+while True:
+    print("Waiting for frame")
+    frame = frameQueue.get()
+    start = time.time()
+    print("Got frame")
+    # Inference
+    prediction = model.predict(frame)
+    results = draw_results(frame, prediction)
+    resultQueue.put(results)
+    busyInference.clear()
+    print(f"Inference took {time.time()-start:.2f}s")
+    \end{minted}
+\end{minipage}
+\begin{minipage}[H]{\textwidth}
+    \centering
+\begin{minted}[linenos, fontsize=\scriptsize, breaklines, bgcolor=bg]{python}
+# Consume the result
+if not self.resultQueue.empty():
+    results = self.resultQueue.get()
+    endTime = time.time()
+    # Update the LCD
+    ...
+# Produce a frame
+if (self.doInference.is_set() or self.constInference.is_set()) and not self.busyInference.is_set():
+    self.busyInference.set()
+    if self.frameQueue.empty():
+        self.startTime = time.time()
+        self.frameQueue.put(pygame.surfarray.array3d(frame).swapaxes(0,1))
+        self.doInference.clear()
+        \end{minted}
+    \captionof{listing}{Producer and Consumer mechanism for the Vision Handler}
+    \label{code:producer-consumer}
+    \end{minipage}
+\end{minipage}
+
+In \autoref{code:producer-consumer}, the vision process is shown to be a producer-consumer mechanism, where the inference process (top) is the producer, and the main process (bottom) is the consumer. The mechanism makes use of multiprocessing queues and events which are multiprocessing synchronisation primitives that allow for the communication between processes without the need for locks to ensure data integrity. If the same data is accessed by multiple processes at the same time, it can lead to data corruption, or race conditions, which can cause the system to behave unpredictably. The queues and events ensure that the data is accessed in a multiprocessing-safe manner, and that the processes are able to communicate effectively.
+
+In this mechanism, the main process ensures that the frame queue is empty before putting a frame into the queue, and then sets the \texttt{doInference} event, which signals to the vision process that a frame is ready for inference. This check is necessary as the "put" operation is blocking, and will wait until the queue is empty before putting the frame into the queue, as its maximum length was set to 1. The vision process then waits for the \texttt{doInference} event to be set, and then performs inference on the frame, and then puts the result into the result queue. The main process then consumes the result from the result queue, checking if the result queue is empty for the same reason, before consuming the result. This mechanism successfully allows the vision process to perform inference concurrently with the main process, and ensures that the system is responsive and can handle multiple tasks concurrently.
+
+Note that Python's \texttt{threading} library cannot be used for this purpose, as Python's Global Interpreter Lock (GIL) prevents multiple threads from executing Python code concurrently, and only allows one thread to execute Python code at a time. This makes it useful for I/O-bound tasks, but not for CPU-bound tasks, as the GIL would prevent the inference from taking place while the main process is running.
+
+For offloaded inference to a more powerful machine, the system uses Python's \texttt{sockets} library to establish a connection between the Pi and the machine, and then uses Python's \texttt{pickle} library to serialise the frame and send it over the network. As the Pi is connected to the machine via its own Wi-Fi hotspot, a connection is easily established and frames can be sent over the network. The machine then deserialises the frame, performs inference, and then sends the results back to the Pi, which then displays the results on the user interface. This operation is I/O-bound, and could be threaded using Python's \texttt{threading} library, but as the system is already using \texttt{multiprocessing} and supports toggling between offloaded and on-device inference, it was decided to keep using \texttt{multiprocessing} for development simplicity.
+
+For the system controller, the system controller process is responsible for detecting a beam break, and then triggering the system to sort the component. The beam-break is detected by the system controller using an interrupt using Python's \texttt{RPi.GPIO}, and then the system controller triggers a process to begin sorting the component.
+
+Additionally, to ensure that the system has all the computational resources it needs to run effectively, the system runs off a minimal environment, with no desktop environment. To display the user interface, the system uses a custom "startx" session that only starts the necessary processes, and reduces the overhead of running a full desktop environment. "startx" is a program that starts the X Window System server and the X Window System, allowing GUI applications to be run on the system. Pygame has the capability to display to a minimal X server, and this helped to influence the design choice of picking Pygame as the user interface library.
+
 

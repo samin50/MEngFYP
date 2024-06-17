@@ -1,2 +1,29 @@
-\section{Testing}
-\label{sec:testing}
+\section{Evaluation}
+\label{sec:evaluation}
+It is important to evaluate the system to determine if it meets the requirements set out in \autoref{sec:project-specification} from a high level, and to determine if the individual components meet their requirements. 
+
+\subsection{Mechanical System}
+As discussed in \autoref{sec:mechanical-design-evaluation}, the mechanical design enables the system to move components into designated bins for sorting. The system is able to move components from the conveyor belt into the bins, and the bins are able to be removed and replaced with ease. It is also easily maintained and cleaned. Standard parts were used so the system remains cost-effective and easy to repair. 
+
+The main mechanical system is the conveyor belt, and the sweeper and bin system. The conveyor's function requirements outlined in \autoref{sec:conveyor-design} were met, as the conveyor is able to move components from the input to the sweeper, and provide mechanisms for tensioning and detaching the conveyor belt. It allows the rollers to turn freely though the use of bearings, facilitating smooth operation.
+
+Likewise, the sweeper and bin system design allows the system to move components from the conveyor to the bins, and the bins are able to be removed and replaced with ease. The sweeper is able to move components off the conveyor belt and into the bins, meeting the functional requirements of needing a sorting system for the components.
+
+However, it is important to note that the system can only sort one component at a time, which is a limitation of the system. This is due to the fact that the sorting arm requires the movement of the conveyor belt to move the components off the belt, rather than removing components from the conveyor belt directly. This is a limitation of the system but a difficult problem to solve, as the system would require a more complex mechanism to remove components from the conveyor belt directly, such as a vacuum system which may not be feasible, as outlined in \autoref{sec:sweeper-design}.
+
+The mechanical system is also not fully autonomous --- it requires a human operator to place components on the conveyor belt. This is a limitation of the system, as the system was designed to be a proof of concept, and not a fully autonomous system. However, the system could be made autonomous with the addition of a feeder system, as discussed in \autoref{sec:background}, which would allow the system to feed components into the system one by one for sorting. This is an incredibly difficult design and engineering challenge, as it requires a system that can successfully detangle and feed the components into the system, and this was not feasible to implement in the time frame of this project.
+
+Overall, for the mechanical system, the system meets the functional requirements set out in \autoref{sec:project-specification}, with the exception of the system being fully autonomous.
+
+\subsection{Software}
+As explored and thoroghly discussed in \autoref{sec:electronics-and-software-evaluation}, the software system is able to operate without significant lag to the user regardless of the load on the system; it successfully utilises Python's \texttt{multiprocessing} library to run the computer vision system and the conveyor system concurrently, and supports an extensive range of features for easy debugging and maintenance.
+
+The system is also able to gracefully handle errors and exceptions, and provides a user-friendly interface for the user to interact with the system, fulfilling the requirements set out in \autoref{sec:project-specification}.
+
+\subsection{Computer Vision}
+As discussed in \autoref{sec:computer-vision-evaluation}, the computer vision system is able to identify components with a high degree of accuracy, with an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\%, with a low inference time on the Pi of 619ms per image, allowing the system to identify components in real-time. The system is also able to identify components in a variety of orientations, which meets the requirements set out in \autoref{sec:project-specification}.
+
+While the computer vision system is able to identify components with a high degree of accuracy, it does not currently have the ability to perform value identification on components as of the time of writing due to time constraints.
+
+Due to this limitation, in its current state it cannot be a drop-in replacement for the manual sorting of components that the technicians currently perform. The system exists as a proof of concept, and not a fully autonomous system, but provides a strong foundation for future work to build upon. 
+

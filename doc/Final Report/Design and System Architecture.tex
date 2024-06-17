@@ -7,7 +7,7 @@ This chapter will discuss the design and system architecture of the project. The
 \subsection{System Architecture}
 \label{sec:system-architecture}
 
-The project's design is underpinned by a modular design philosophy; each subsystem is designed to be as independent as possible, allowing for easier debugging and maintenance, and expose only high level interfaces to other subsystems. This not only simplifies the development process but also allows for easier integration of new features in the future.
+The project's design is underpinned by a modular design philosophy; each subsystem is designed to be as independent as possible, allowing for easier debugging and maintenance, and exposes only high level interfaces to other subsystems. This not only simplifies the development process but also allows for easier integration of new features in the future.
 
 \begin{figure}[H]
     \begin{minipage}[h]{\textwidth}
@@ -118,7 +118,6 @@ Stepper motors possess the ability to move in precise increments, making them id
 \end{figure}
 
 For driving the motors, TMC2209s were selected due to their silent operation, and microstepping features, although not required for the system, a method of allowing the motors to achieve higher precision and more silent operation. Due to their popularity in FDM printing and the ease of use, they have a large amount of support and documentation. They are also capable of driving the NEMA17 series of stepper motors, and are compatible with the Raspberry Pi. Originally, the DRV8825 was considered \cite{drv8825}, however they added significant noise to the system and were unpleasant to use.
-\todo{include nema17 and tmc2209 specs}
 \subsubsection{Break Beam Sensor}
 \label{sec:break-beam-sensor}
 
@@ -185,7 +184,7 @@ The DFRobot and Camera is powered directly from the Pi, however it is necessary 
 The XL4015 High Power Step Down Convertor was chosen as it is capable of handling the current draw of the components, and is adjustable, allowing for fine-tuning of the output voltage. It is able to draw up to 75W, which is more than enough for the two 5V and 12V systems.
 
 \subsubsection{2020 Aluminium Extrusion}
-To provide a sturdy frame for the system, 2020 aluminium extrusion was chosen as it is lightweight, strong, and cost-effective. It is also easy to work with, as it can be easily cut to size and assembled using standard M3 screws and T-nuts and FDM printed parts. The 2020 aluminium extrusion is used to provide a frame for the conveyor system, which every system attaches to.
+To provide a sturdy frame for the system, 2020 aluminium extrusion was chosen as it is lightweight, strong, and cost-effective. It is also easy to work with, as it can be easily cut to size and assembled using standard M3 screws and T-nuts and FDM printed parts. The 2020 aluminium extrusion is used to provide a frame for the conveyor system.
 
 \begin{figure}[H]
     \begin{minipage}[h]{\textwidth}
@@ -269,7 +268,6 @@ To identify and classify components on the conveyor belt, a Computer Vision syst
 
 \subsubsection{Image Processing}
 \label{sec:image-processing}
-\todo{talk about camera distortion correction}
 
 YOLOv8's training framework \cite{yolov8} allows image augmentation to be applied to the dataset in-flight, which can be used to artificially increase the size of the dataset and improve the model's performance. This can be used to apply transformations to the images such as rotation, scaling, and flipping, as well as more complex transformations such as perspective warping. This can be used to artificially increase the size of the dataset and improve the model's performance.
 
@@ -314,7 +312,7 @@ For the task of component identification, the following augmentations were selec
 
 \subsubsection{Real-time Object Detection}
 \label{sec:real-time-object-detection}
-To perform real-time object detection, it is necessary to deploy a model with low inference latency, especially for the Raspberry Pi where computational resources are scarce. As discussed in the Background (\autoref{sec:background}), the YOLOv8 object detection model was initially chosen due to the ability to be optimised by optimisation libraries DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} to run on the Raspberry Pi. Pretrained 'sparsified' models are available for the YOLOv8 model, which have been pruned and quantised to reduce the number of parameters and the amount of computation required to run the model, preventing the need to 'sparsify' the model manually. In the event that the model could not be successfully deployed using these libraries, the model could have been run normally at a reduced frame rate, or could have been hosted on the cloud and accessed via an API --- though this would have introduced latency and would have required an internet connection. However, during the implementation phase, the typical YOLOv8 model not found to be suitable for the task.
+To perform real-time object detection, it is necessary to deploy a model with low inference latency, especially for the Raspberry Pi where computational resources are scarce. As discussed in the Background (\autoref{sec:background}), the YOLOv8 object detection model was initially chosen due to the ability to be optimised by optimisation libraries DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} to run on the Raspberry Pi. Pretrained 'sparsified' models are available for the YOLOv8 model, which have been pruned and quantised to reduce the number of parameters and the amount of computation required to run the model, preventing the need to 'sparsify' the model manually. In the event that the model could not be successfully deployed using these libraries, the model could have been run normally at a reduced frame rate, or could have been hosted on the cloud and accessed via an API --- though this may introduce latency and would require an internet connection. However, during more research, the standard YOLOv8 model was not found to be suitable for the task.
 
 \begin{figure}[H]
     \begin{minipage}[h]{\textwidth}
@@ -333,7 +331,7 @@ Common Computer Vision architectures typically draw AABBs (Axis Aligned Bounding
     {\fontsize{10pt}{12pt}\selectfont
     \begin{tabular}{|l|l|l|l|l|l|}
         \hline
-        \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{Speed CPU ONNX (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\
+        \textbf{Model} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{Latency (CPU ONNX) (ms)} & \textbf{Params (M)} & \textbf{FLOPs (B)} \\
         \hline
         YOLOv8n-obb & 78.0 & 204.77 & 3.1 & 23.3 \\
         \hline
@@ -351,9 +349,9 @@ Common Computer Vision architectures typically draw AABBs (Axis Aligned Bounding
     \label{tab:yoloperformanceobb}
 \end{table}
 
-The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which contains 15 classes of objects, including components. Pretrained models are useful as they have already learnt useful features from a large dataset, and can be fine-tuned on a smaller dataset to improve performance \cite{pretrainedmodels}. The performance of the different sized YOLOv8-obb models is shown in \autoref{tab:yoloperformanceobb}. The most crucial parameters to take into consideration is the mAP (mean average precision, explained in \autoref{sec:background-computer-vision}) and the CPU ONNX (inference latency). 
+The OBB models come pretrained on the DOTOv1 dataset \cite{9560031}, which contains 15 classes of objects, including components. Pretrained models are useful as they have already learnt useful features from a large dataset, and can be fine-tuned on a smaller dataset to improve performance \cite{pretrainedmodels}. The performance of the different sized YOLOv8-obb models is shown in \autoref{tab:yoloperformanceobb}. The most crucial parameters to take into consideration is the mAP (mean average precision, explained in \autoref{sec:background-computer-vision}) and the inference latency.
 
-From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 81.36 and a CPU ONNX of 1759.10ms. The YOLOv8n-obb model has the worst performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 78.0 and a CPU ONNX of 204.77ms. However, the Pi is likely significantly slower than the CPU used in the benchmarks, so the actual inference latency will be higher, making the ~0.5 FPS of the YOLOv8x-obb model infeasible, but the ~5 FPS of the YOLOv8n-obb model more promising, a 9x improvement in speed for only a 3.1\% decrease in mAP\raisebox{-1pt}{\textsuperscript{50}}. 
+From \autoref{tab:yoloperformanceobb}, the YOLOv8x-obb model has the best performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 81.36 and a latency of 1759.10ms. The YOLOv8n-obb model has the worst performance, with a mAP\raisebox{-1pt}{\textsuperscript{50}} of 78.0 and a latency of 204.77ms. However, the Pi is likely significantly slower than the CPU used in the benchmarks, so the actual inference latency will be higher, making the ~0.5 FPS of the YOLOv8x-obb model infeasible, but the ~5 FPS of the YOLOv8n-obb model more promising, a 9x improvement in speed for only a 3.1\% decrease in mAP\raisebox{-1pt}{\textsuperscript{50}}. 
 
 As mentioned in \autoref{sec:break-beam-sensor}, the system will use a break beam sensor to detect the presence of objects on the conveyor belt, reducing the potential of the Vision Handler to be a bottleneck due to constant inference. With the promising performance increase of using the DeepSparse \cite{deepsparse} and SparseML \cite{sparseml} libraries to optimise the model for the Raspberry Pi, the YOLOv8n-obb model will be used for the project.
 

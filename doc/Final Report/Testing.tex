@@ -3,8 +3,72 @@
 This chapter will focus on the results of the project, and the testing that was carried out to evaluate the performance of the different subsystems of the project. The chapter will be divided into three sections: Mechanical Design, Electronics and Software, and Computer Vision.
 
 \subsection{Mechanical Design}
+\label{sec:mechanical-design-evaluation}
+The mechanical design was tested for stability, durability, and ease of use. During its design, it was kept in mind what components would be under stress and how they would be used in the system. Several tweaks were made to some designs to increase their stability and durability, so that they are fit for purpose, as described in \autoref{sec:implementation-problems-and-changes}. 
+
+The system was observed while in operation and did not exhibit any signs of instability or wobbling, and the system was able to sort components effectively. Where points of failure were identified, they would be replaced with a more robust design, such as the LCD cover, which was braced to prevent wobbling, and increases in thickness were made to certain parts to resist mechanical stress. For example all mounts that attach to aluminium extrusion were increased in thickness from 3mm to 5mm to prevent them from cracking when a screw was tightened on top of them, a common failure from previous iterations.
+
+Additionally, mechanical failure was prevented by using parts such as bearings to facilitate the movement of the rollers and prevent friction from wearing down the FDM printed parts. Screws and heat-set inserts were used to attach parts to other parts, preventing threads from being stripped with repeated use. The system was also designed to be easily assembled and disassembled, with the use of T-slot nuts and bolts to attach parts to the aluminium extrusion, and screws to attach parts to other parts. This allows for easy maintenance and repair of the system, as parts can be easily replaced if they fail. The mechanical design of the system was successful in achieving its goals, and provides a strong foundation for the rest of the system.
+
+During testing, it was found that the movement of the system could keep up with the vision system, which requires frequent pauses to take clear pictures and perform inference. The system is bottlenecked by this speed.
 
 \subsection{Electronics and Software}
+\label{sec:electronics-and-software-evaluation}
+As mentioned in \autoref{sec:design-and-system-architecture}, the system is designed to be modular to facilitate easy development and debugging, with each system being able to be tested independently. Each part of the software, the System Controller, LCD UI, Vision Handler, Camera Feed, etc are all able to be run independently by simply running the Python script that contains the code for that part of the system.
+
+This allows for easy debugging and development of the system, as each part can be tested independently, and any issues can be isolated to a single part of the system. This makes it easier to identify and fix issues, as the issue is likely to be in the part of the system that is being tested. The system was tested by running each part of the system independently, and then running the system as a whole to ensure that all parts of the system work together.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=8cm]{imgs/software/pygamecamera.jpg}
+  \caption{Camera Feed in Pygame running standalone}
+  \label{fig:pygame-camera}
+\end{figure}
+
+For example, the Camera Feed is shown in \autoref{fig:pygame-camera}, where the camera feed is displayed in a Pygame window completely on its own without any other parts of the system running. It is responsible for handling when the camera disconnects, so that no other part of the system is affected. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/software/visionhandler.jpg}
+  \caption{Vision Handler running standalone}
+  \label{fig:pygame-camera}
+\end{figure}
+
+Likewise, the Vision Handler is shown in \autoref{fig:pygame-camera}, where the Vision Handler is running standalone, and is responsible for handling the inference of the component detection model. It is able to operate without the LCD UI, and is able to handle the inference of the model without any other parts of the system running. The Vision Handler detects that it is being run standalone, and enables keypresses for controlling it, which are detailed in the following table:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|X|X|}
+    \hline
+    \textbf{Key} & \textbf{Action} \\
+    \hline
+    i & Inference once \\
+    \hline
+    c & Toggle continuous inference \\
+    \hline
+    f & Toggle force image \\
+    \hline
+    v & Toggle capture VNC \\
+    \hline
+    r & Select random file \\
+    \hline
+  \end{tabularx}
+  \caption{Vision Handler standalone keypresses}
+  \label{tab:vision-handler-keypresses}
+\end{table}
+
+Unit testing of all parts of the system was carried out to ensure that each part of the system works as expected as shown in the above examples. To test the system as a whole, a profiler was used to examine the system's performance, and to identify any bottlenecks in the system.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/software/profiler.jpg}
+  \caption{Profiler output for the main process}
+  \label{fig:profiler}
+\end{figure}
+
+SnakeViz \cite{snakeviz} and cProfiler were used to profile the main process of the system, and the output is shown in \autoref{fig:profiler}. Highlighted in purple is the \texttt{Pygame.time.Clock tick} function, which is used to control the frame rate of the system. This function simply waits until the next frame is ready to be displayed, and the fact that it takes up 86\% of the time in the main process is a good indication that the LCD UI is responsive, as it is not being held up by other parts of the system.
+
+The other parts of the system are shown in green, and take up a small amount of time in the main process, which is a good indication that the system is running efficiently. The second and third largest functions are the \texttt{pygame.display.flip} function and \texttt{pygame\_gui}'s \texttt{ui\_manager.update} function, both of which are necessary for \texttt{pygame} to display the UI, and are expected to take up a large amount of time in the main process. The largest function that is not responsible for the UI is the Vision Handler's \texttt{get\_frame} function, which takes a miniscule 1.32\% of the time in the main process, a good indication that the Vision Handler is running efficiently and using multiprocessing effectively to perform inference.
 
 \subsection{Computer Vision}
 \label{sec:computer-vision-evaluation}
@@ -20,7 +84,7 @@ The Component Detection model was trained on a dataset of 1076 images, split int
     \label{fig:iou}
   \end{figure}
   
-As discussed in \autoref{sec:real-time-object-detection}, mAP\raisebox{-1pt}{\textsuperscript{50}} is a standard metric used to evaluate object detection models. mAP\raisebox{-1pt}{\textsuperscript{50-95}} is a more rigorous metric that aggregates the mean average precision across all classes at different Intersection over Union (IoU) thresholds; in mAP\raisebox{-1pt}{\textsuperscript{50}}, an object is considered as detected if the IoU is greater than 0.5 (the predicted bounding box overlaps the ground truth bounding box by at least 50\%), whereas in mAP\raisebox{-1pt}{\textsuperscript{50-95}}, the mAP score is aggregated across different IoU thresholds from 0.5 to 0.95 in steps of 0.05. This can be seen more clearly \autoref{fig:iou}.
+As discussed in \autoref{sec:real-time-object-detection}, mAP\raisebox{-1pt}{\textsuperscript{50}} is a standard metric used to evaluate object detection models. mAP\raisebox{-1pt}{\textsuperscript{50-95}} is a more rigorous metric that aggregates the mean average precision across all classes at different Intersection over Union (IoU) thresholds; in mAP\raisebox{-1pt}{\textsuperscript{50}}, an object is considered as detected if the IoU is greater than 0.5 (the predicted bounding box overlaps the ground truth bounding box by at least 50\%), whereas in mAP\raisebox{-1pt}{\textsuperscript{50-95}}, the mAP score is aggregated across different IoU thresholds from 0.5 to 0.95 in steps of 0.05. This can be seen more clearly \autoref{fig:iou}, where the second bounding box would be detected in mAP\raisebox{-1pt}{\textsuperscript{50}}, but not in mAP\raisebox{-1pt}{\textsuperscript{75}}.
   
 \begin{figure}[H]
   \centering
@@ -47,9 +111,9 @@ In \autoref{fig:metrics}, the mAP\raisebox{-1pt}{\textsuperscript{50-95}} is sho
   \label{fig:final-model-metrics}
 \end{figure}
 
-As shown in \autoref{fig:final-model-metrics}, the final YOLO-OBB model (blue) achieved an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\% and an incredibly high mAP\raisebox{-1pt}{\textsuperscript{50}} of 99.5\%. This is an extremely impressive score given the relatively small size of the dataset (and made even smaller due to the need of the test set), which is truly a testament to YOLOv8's capabilities. An experiment was run to see how the model would perform if the model was \textbf{not} pretrained on DOTOv1 \cite{9560031} given the low training time to see how much of an impact the pretraining had on the model's performance. 
+As shown in \autoref{fig:final-model-metrics}, the final YOLO-OBB model (blue) achieved an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\% and an incredibly high mAP\raisebox{-1pt}{\textsuperscript{50}} of 99.5\%. This is an extremely impressive score given the relatively small size of the dataset (and made even smaller due to the need of the test set), which is truly a testament to YOLOv8's capabilities.
 
-The model, shown in orange, clearly takes much longer to converge; where the original model reaches 99.5\% mAP\raisebox{-1pt}{\textsuperscript{50}} for the first time in 18 epochs, the non-pretrained model had an mAP\raisebox{-1pt}{\textsuperscript{50}} of 82.5\%, and takes 40 epochs to reach 98\%. By the time the pretrained model achieves an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of at least 80\% on epoch 26, the non-pretrained model has an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 67.4\%. This is a substantial difference, and it is clear that pretraining on a large dataset is crucial to the model's performance and training time. When the model is pretrained on a large dataset, the model is able to learn generalisable, basic features such as edge and corner detection, which are common in most images. When the model is now trained on a new dataset, it does not need to relearn these basic features, and can instead focus on learning the more complex features of the new dataset. This is known as transfer learning, and it is a common technique used in deep learning to improve the performance of models on new datasets.
+An experiment was run to see how the model would perform if the model was \textbf{not} pretrained on DOTOv1 \cite{9560031} given the low training time to see how much of an impact the pretraining had on the model's performance. The model, shown in orange, clearly takes much longer to converge; where the original model reaches 99.5\% mAP\raisebox{-1pt}{\textsuperscript{50}} for the first time in 18 epochs, the non-pretrained model had an mAP\raisebox{-1pt}{\textsuperscript{50}} of 82.5\%, and takes 40 epochs to reach 98\%. By the time the pretrained model achieves an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of at least 80\% on epoch 26, the non-pretrained model has an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 67.4\%. This is a substantial difference, and it is clear that pretraining on a large dataset is crucial to the model's performance and training time. When the model is pretrained on a large dataset, the model is able to learn generalisable, basic features such as edge and corner detection, which are common in most images. When the model is now trained on a new dataset, it does not need to relearn these basic features, and can instead focus on learning the more complex features of the new dataset. This is known as transfer learning, and it is a common technique used in deep learning to improve the performance of models on new datasets.
 
 \begin{figure}[H]
   \centering
@@ -69,7 +133,7 @@ To properly evaluate a model's performance, it is important to consider the mode
   \label{fig:true-confusion-matrix}
 \end{figure}
 
-In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is shown, with only diagonal entries, which shows 100\% accuracy on the test set. This is a very good sign, however it is important to remember that the dataset is very small, so the validation and test set has then been used to evaluate the model, as shown in \autoref{fig:final-model-confusion-matrix}. Although the model does not learn on the validation set, it still has seen the validation set during training which may cause the model to learn features that are specific to the validation set, which is why the test set is used to evaluate the model's performance. However, showing the confusion matrix for the validation and test set will be useful in this context to show the model's performance.
+In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is shown, with only diagonal entries, which shows 100\% accuracy on the test set. This is a very good sign, however it is important to remember that the dataset is very small, so the validation and test set has then been used to evaluate the model, as shown in \autoref{fig:final-model-confusion-matrix}. Although the model does not learn on the validation set, it still has seen the validation set during training which may cause the model to learn features that are specific to the validation set, which is why the test set is used to evaluate the model's performance. However, showing the confusion matrix for the validation and test set will still be useful to gauge the model's real-world performance.
 
 \begin{figure}[H]
   \centering
@@ -80,18 +144,159 @@ In \autoref{fig:true-confusion-matrix}, the unnormalised confusion matrix is sho
 
 This again is an exceptional result with no false positives or false negatives, and an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 82.8\%. The model is able to detect all components in the test set, and is able to classify them correctly. The model is able to generalise well to the test set, and is able to detect components that it has not seen before. In terms of the requirements of the project, the model is able to classify components with a high degree of accuracy.
 
-  
-  \todo{talk about tensor board}
-  \todo{show metrics}
-  
-On the GTX 3080 Ti, 
-  
-Interestingly, if Class Loss is set to 1.0, Box Loss is set to 4.0, and DFL is set to 1.5, the model converges in around ~15 epochs, taking only ~2 minutes to train. However, the model's performance is slightly impacted, calculating metrics on the test set yields an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 77.8\%, but it was decided that the time savings were not worth it given it was only a few minutes of training time. The model was therefore trained with the parameters shown in \autoref{tab:training-parameters}.
+A mosaic of inferences on the test set is shown in Appendix \autoref{app:mosaic} for a visual representation of the model's performance. 
 
-\todo{show pictures of model in action}
+\subsubsection{Resistor Value Detection Model}
+As discussed in \autoref{sec:resistor-value-detection}, the resistor value detection model is a standard YOLOn model trained on images produced by running inference on all resistor images with the component detection model and then cropping the bounding boxes. This meant that there were only 259 images in the dataset, which was then split 80-20 for training and validation; a test set was not used as the dataset was too small. This left only 208 images for training, and 51 images for validation.
 
-\subsubsection{Resistor Value Classification Model}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/graphs/pixel_distrib.png}
+  \caption{Distribution of image widths and heights}
+  \label{fig:pixel-distrib}
+\end{figure}
 
-\todo{add power consumption measurements from usb for complete power - implementation maybe?}
+As the images are generated from the component detection model, the image size is no longer fixed, but instead varies based on the size of the bounding box. The distribution of image sizes is shown in \autoref{fig:pixel-distrib}, where the image sizes vary from 32x65 to 53x98. Due to this, a training parameter was set that would resize all images to a larger size of 128x128, to ensure that the model always works with the same size images.
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|X|X|X|X|X|X|X|}
+    \hline
+    \textbf{Class} & \textbf{Images} & \textbf{Instances} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50}}} & \textbf{mAP\raisebox{-1pt}{\textsuperscript{50-95}}}\\
+    \hline
+    all & 51 & 326 & 0.731 & 0.774 & 0.837 & 0.457\\
+    \hline
+    black & 51 & 61 & 0.839 & 0.967 & 0.956 & 0.488\\
+    \hline
+    brown & 47 & 91 & 0.886 & 0.989 & 0.981 & 0.53\\
+    \hline
+    red & 31 & 31 & 0.859 & 0.968 & 0.98 & 0.577\\
+    \hline
+    orange & 17 & 17 & 0.64 & 0.882 & 0.837 & 0.454\\
+    \hline
+    yellow & 19 & 19 & 0.919 & 1 & 0.993 & 0.599\\
+    \hline
+    green & 12 & 12 & 0.852 & 0.75 & 0.903 & 0.417\\
+    \hline
+    blue & 5 & 5 & 0.577 & 0.4 & 0.567 & 0.275\\
+    \hline
+    violet & 8 & 8 & 0.769 & 1 & 0.995 & 0.654\\
+    \hline
+    grey & 2 & 2 & 0 & 0 & 0.199 & 0.0562\\
+    \hline
+    white & 10 & 10 & 0.527 & 0.9 & 0.81 & 0.348\\
+    \hline
+    gold & 13 & 13 & 0.87 & 0.769 & 0.779 & 0.382\\
+    \hline
+    silver & 6 & 6 & 1 & 0.43 & 0.885 & 0.593\\
+    \hline
+    stem & 51 & 51 & 0.763 & 1 & 0.995 & 0.572\\
+    \hline
+
+  \end{tabularx}
+  \caption{Resistor value detection model metrics}
+  \label{tab:resistor-value-metrics}
+\end{table}
+
+
+However, due to the small image sizes and the small dataset, the model only achieved an mAP\raisebox{-1pt}{\textsuperscript{50-95}} of 45.7\% and an mAP\raisebox{-1pt}{\textsuperscript{50}} of 83.7\% as shown in \autoref{tab:resistor-value-metrics}. As we are more concerned about classifiying the resistor values correctly rather than the exact bounding box location, the mAP\raisebox{-1pt}{\textsuperscript{50}} is more important in this context. The model is able to classify some bands with high accuracy, such as brown, yellow, and violet, but struggles with others, such as blue and grey. After observing these results, the generated dataset was inspected more closely.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/cv/obb_resistor_grey_orange_black_silver_brown_red_830E-2-1_11.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/cv/obb_resistor_orange_white_black_brown_brown_390E1-1_21.png}
+  \end{minipage}
+  \par\medskip
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[height=8cm]{imgs/cv/banddetectbad.jpg}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+      \centering
+      \includegraphics[height=8cm]{imgs/cv/banddetect.jpg}
+  \end{minipage}
+  \caption{Smallest and largest images in the resistor value dataset with inference results}
+  \label{fig:resistor-value-dataset-sizes}
+\end{figure}
+
+In \autoref{fig:resistor-value-dataset-sizes}, the smallest image in the dataset is on the left and the largest on the right. The resolution difference is obvious with the left images exhibiting more pixelation. For the low resolution image, the model was able to identify the red, brown, black and orange band as well as the stem, but fails to correctly determine the silver and grey bands. To human eye, the silver band actually seems white, and the grey band is hardly visible (it is at the top of the resistor). This shows that maybe the dataset itself is not very good, and the model is not at fault --- observing a full 640x480 image of the resistor as seen in \autoref{fig:full-resistor}, the resistor is very small and in terms of pixels, only takes up 0.74\% of the pixels in the original image.\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/cv/fullresistor.png}
+  \caption{Raw image from camera of the smallest resistor in the dataset}
+  \label{fig:full-resistor}
+\end{figure}
+
+This is a very small amount of pixels, and it is clear that the model is struggling to classify the bands due to the low resolution of the image, and clearly performs better on the larger image. This would be fixed by moving the camera closer to the belt to increase the relative size of the components of the image at the cost of a smaller field of view, and then a new dataset would have to be generated. Due to time constraints, this is not possible at the time of the report being written, but the model itself is performing well given the constraints of the dataset.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imgs/graphs/confusion_matrix_bands.png}
+  \caption{Confusion matrix for the resistor value detection model}
+  \label{fig:resistor-value-confusion-matrix}
+\end{figure}
+
+For completeness, the confusion matrix of the resistor detection model was shown in \autoref{fig:resistor-value-confusion-matrix}, and shows a strong diagonal but with many false negatives; multiple bands are not being identified at all, as shown by the row on the bottom. There is also severe class imbalance, with 91 total brown bands across the test set but only 2 are gray and 5 are blue.
+
+Objectively, the model is performing well given the constraints of the dataset, and is able to classify resistor values with a high degree of accuracy. However, the performance of the model is not adequate enough to be deployed in the system as of the time of writing, and further work is needed to improve the model's to an acceptable standard.
 
 \subsubsection{Inference Latency}
+\label{sec:inference-latency-evaluation}
+The inference latency of the model is crucial to the system's performance, as the system must be able to classify components in real-time. The Ultralytics and DeepSparse Python libraries come with their own benchmarking capabilities, and they were used to measure the model's performance. The benchmarks were performed on the Raspberry Pi 4, as this is the intended deployment platform for the system. The benchmarks were performed on the YOLO-OBB model, as it more complex than the standard YOLO model used for the resistor value classification model, and thus should be on the lower end of the performance spectrum.
+
+ % Code block
+\begin{minipage}[H]{\textwidth}
+  \centering
+  \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{bash}
+YOLOv8n-obb summary (fused): 187 layers, 3079364 parameters, 0 gradients, 8.3 GFLOPs
+val: Scanning /home/dietpi/MEngFYP/datasets/full/current/labels/test.cache... 98 images, 7 backgrounds, 0 corrupt: 100%|----------| 105/105 [00:00<?, ?i
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|%|----------| 105/105 [03:10<00:00,  1.81s/it]
+                   all        105         98      0.971          1      0.995      0.793
+       {0: 'resistor'}         25         25      0.989          1      0.995      0.819
+      {1: 'capacitor'}         17         17      0.983          1      0.995       0.85
+    {2: 'ceramic_cap'}         27         27      0.957          1      0.995      0.784
+      {3: 'inductors'}          7          7      0.975          1      0.995      0.882
+           {7: 'leds'}         13         13      0.981          1      0.995      0.882
+           {8: 'wire'}          2          2      0.966          1      0.995      0.499
+      {10: 'film_cap'}          7          7      0.949          1      0.995      0.837
+Speed: 5.5ms preprocess, 1762.0ms inference, 0.0ms loss, 5.3ms postprocess per image
+Results saved to runs/obb/val6
+  \end{minted}
+  \captionof{listing}{YOLO model inference latency on Raspberry Pi 4}
+  \label{code:inference-latency}
+\end{minipage}
+
+As shown in \autoref{code:inference-latency}, the standard YOLO model takes 1762ms to performance inference; this translates to ~0.53FPS on the Pi, which is not suitable for real-time object detection. 
+
+% Code block
+\begin{minipage}[H]{\textwidth}
+  \centering
+  \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{bash}
+'engine': "ORTEngine
+onnx_file_path: ./src/vision/models/final/classifier.onnx  batch_size: 1...
+'benchmark_result': {'scenario': 'singlestream', 'items_per_sec': 0.9651499692166781, 'seconds_ran': 60.094287778999956, 'iterations': 58, 'median': 727.9371934999972, 'mean': 1036.078450206897, 'std': 592.0563771426215, '25.0%': 552.4718009999958, '50.0%': 727.9371934999972, '75.0%': 1564.6943927500274, '90.0%': 2038.2221947999483, '95.0%': 2091.3465085999687, '99.0%': 2292.9438349999714, '99.9%': 2342.975698999978}, 'fraction_of_supported_ops': None
+  \end{minted}
+  \captionof{listing}{Onnxruntime model inference latency on Raspberry Pi 4}
+  \label{code:onnx-inference-latency}
+\end{minipage}
+
+\autoref{code:onnx-inference-latency} shows the inference latency of the model using the Onnxruntime library \cite{onnxruntime}, which is a popular library for running ONNX models. ONNX (Open Neural Network Exchange) is an open-source format for AI models, and is supported by a wide range of libraries and frameworks. The model takes 1036ms to perform inference, which translates to ~0.96FPS on the Pi, an improvement of 81.1\% over the standard YOLO model. This is a significant improvement, however it is still not suitable for real-time object detection.
+
+% Code block
+\begin{minipage}[H]{\textwidth}
+  \centering
+  \begin{minted}[linenos, fontsize=\footnotesize, breaklines, bgcolor=bg]{bash}
+    'engine': 'deepsparse.engine.Engine:
+    onnx_file_path: ./src/vision/models/final/classifier.onnx batch_size: 1...
+    'benchmark_result': {'scenario': 'singlestream', 'items_per_sec': 1.6153408297780283, 'seconds_ran': 60.04924670499986, 'iterations': 97, 'median': 414.9715189998915, 'mean': 619.0319354845434, 'std': 360.0698332691641, '25.0%': 404.8420740000438, '50.0%': 414.9715189998915, '75.0%': 714.750333000211, '90.0%': 1199.7598698000731, '95.0%': 1420.3843886001316, '99.0%': 1713.9762652400166, '99.9%': 1744.4832248240787}, 'fraction_of_supported_ops': 0.9926
+  \end{minted}
+  \captionof{listing}{Inference latency of the model using the DeepSparse library}
+  \label{code:deepsparse-inference-latency}
+\end{minipage}
+
+The DeepSparse library \cite{deepsparse} takes an ONNX model and uses its own engine to perform infernece at higher speeds. Using the library, the model is able to perform inference at 619ms, which translates to ~1.62FPS on the Pi, an improvement of 55.2\% over the standard Onnxruntime model, and an improvement of 203.8\% over the standard YOLO model. This is a significant improvement, and the model is now able to perform inference at a speed that is suitable for real-time object detection.

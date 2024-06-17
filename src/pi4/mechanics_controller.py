@@ -122,11 +122,6 @@ class Sweeper_Controller:
         """
         with self.speedLock:
             self.speed = speed
-        # self.motor.ChangeFrequency(SPEED_MULTIPLIER * abs(speed))
-        # if speed == 0:
-        #     self.motor.ChangeDutyCycle(0)
-        # else:
-        #     self.motor.ChangeDutyCycle(50)
 
     def get_speed(self) -> int:
         """
@@ -237,6 +232,7 @@ class Conveyor_Controller:
         """
         with self.speedLock:
             return self.speed
+
 class WS2812B_Controller:
     """
     WS2812B controller class
