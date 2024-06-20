@@ -32,7 +32,7 @@ TOGGLE_FALSE_COLOUR = "#F84F31"
 TOGGLE_HOVER_COLOUR = "#AEAEAE"
 # GPIO Parameters
 GPIO_PINS = {
-    "CONVEYOR_DIRECTION_PIN" : 27,
+    "CONVEYOR_DIRECTION_PIN" : 17,
     # Need PWM pin for conveyor speed control
     "CONVEYOR_STEP_PIN" : 18,
     # LED pin
@@ -43,7 +43,7 @@ GPIO_PINS = {
     # IR Beam break sensor
     "IR_SENSOR_PIN" : 7,
     # Limit switch
-    "LIMIT_SWITCH_PIN" : 5
+    "LIMIT_SWITCH_PIN" : 26
 }
 # Conveyor Parameters
 DEFAULT_SPEED = 5
@@ -52,7 +52,10 @@ LIGHT_COLOUR = (255, 218, 145)
 BIN_THRESHOLD = 5
 SWEEPER_MM_PER_STEP = 0.5
 # Sweeper Parameters
-MAX_POSITION = 100
-MOVE_INCREMENT = 5
+SWEEPER_PERIOD = 0.1
+BOUNCETIME = 50
+SWEEPER_MULT = 100
+MAX_POSITION = 100*SWEEPER_MULT
+MOVE_INCREMENT = 10*SWEEPER_MULT
 # Vision
 CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"

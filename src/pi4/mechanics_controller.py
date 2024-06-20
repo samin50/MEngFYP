@@ -1,7 +1,7 @@
 """
 Mechanics controller
 """
-from multiprocessing import Queue
+# pylint:disable=unnecessary-lambda, unnecessary-lambda-assignment, using-constant-test, multiple-statements
 import time
 import multiprocessing
 import colorsys
@@ -14,7 +14,7 @@ except ImportError:
     from src.common.simulate import GPIO
     from src.common.simulate import PixelStrip, Color
     print("Simulating missing hardware!")
-from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LIGHT_COLOUR, DEFAULT_SPEED, BIN_THRESHOLD, SWEEPER_MM_PER_STEP
+from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LIGHT_COLOUR, DEFAULT_SPEED, BOUNCETIME, MAX_POSITION
 from src.pi4.vision_handler import Vision_Handler
 from src.pi4.lcd_ui import LCD_UI
 
@@ -23,126 +23,126 @@ class Sweeper_Controller:
     Sweeper Controller - controls NEMA stepper motor and moves
     it to bin locations
     """
-    def __init__(self) -> None:
+    def __init__(self, callbacks:dict={}) -> None:
         # Setup GPIO pins
         GPIO.setup(GPIO_PINS["SWEEPER_DIRECTION_PIN"], GPIO.OUT)
         GPIO.setup(GPIO_PINS["SWEEPER_STEP_PIN"], GPIO.OUT)
-        GPIO.setup(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        # self.motor = GPIO.PWM(GPIO_PINS['SWEEPER_STEP_PIN'], 1)
-        # self.motor.start(0)
-        # Sorting variables
-        self.speed = 0
-        self.running = True
-        self.isHomed = False
-        self.sort = multiprocessing.Process(target=self.sort_process, daemon=True)
-        self.steps = 0
-        self.queue = Queue()
-        self.map = dict()
-        # Locks and events
-        self.busyEvent = multiprocessing.Event()
-        self.speedLock = multiprocessing.Lock()
-        self.homingLock = multiprocessing.Lock()
-        self.stepLock = multiprocessing.Lock()
-        # Limit switch interrupt
-        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.FALLING, callback=self.limit_switch_interrupt, bouncetime=50)
-        self.sort.start()
+        GPIO.setup(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # Interrupts
+        self.callbacks = callbacks
+        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.RISING, callback=self.__limit_switch, bouncetime=BOUNCETIME)
+        # Variables
+        self.homed = False
+        manager = multiprocessing.Manager()
+        self.distance = manager.Value('i', 0) # Distance moved by the sweeper
+        # Locks
+        self.expectHitEvent = multiprocessing.Event()
+        self.expectHomeEvent = multiprocessing.Event()
+        self.movingEvent = multiprocessing.Event()
+        self.stopEvent = multiprocessing.Event()
+        self.distanceLock = multiprocessing.Lock()
 
-    def limit_switch_interrupt(self) -> None:
+    def set_callbacks(self, callbacks:dict) -> None:
         """
-        Limit switch interrupt
+        Set callback dict
         """
-        # Also stop the motor
-        self.stop()
-        with self.homingLock:
-            self.isHomed = True
-        with self.stepLock:
-            self.steps = 0
+        self.callbacks = callbacks
 
-    def stop(self) -> None:
+    def __limit_switch(self, channel) -> bool:
         """
-        Stop the sweeper
+        Limit switch function - called when the limit switch is hit
         """
-        GPIO.output(GPIO_PINS['SWEEPER_DIRECTION_PIN'], GPIO.LOW)
-        # self.motor.ChangeDutyCycle(0)
-        self.running = False
-        self.sort.join()
+        if GPIO.input(channel) == GPIO.HIGH:
+            return
+        if self.expectHitEvent.is_set():
+            self.expectHitEvent.clear()
+            return
+        self.stopEvent.set()
+        self.movingEvent.clear()
+        if self.expectHomeEvent.is_set():
+            self.expectHomeEvent.clear()
+            self.callbacks.get('write_lcd', lambda x: print(x))("Home")
+            self.homed = True
+            return True
+        else:
+            self.callbacks.get('write_lcd', lambda x: print(x))("Emergency")
+            self.homed = False
+            return False
 
-    def set_map(self, newmap:dict) -> None:
+    def __move(self, pulses:int, speed:int=1) -> None:
         """
-        Set the map of bin to classification
+        Move the sweeper to a specific pulse
         """
-        self.map = newmap
+        if self.movingEvent.is_set():
+            print("Sweeper is already moving")
+            return
+        if self.homed:
+            with self.distanceLock:
+                total = self.distance.value + pulses
+                if total > MAX_POSITION:
+                    print(f"Sweeper is at max position: {total}")
+                    return
+                if total < 0:
+                    print(f"Sweeper is at min position: {total}")
+                    return
+                if total == 0:
+                    self.expectHitEvent.set()
+                    return
+        self.movingEvent.set()
+        distance = 0
+        # If its expected that the pulses will lead to the limit switch being hit, expect it
+        GPIO.output(GPIO_PINS["SWEEPER_DIRECTION_PIN"], GPIO.LOW if pulses > 0 else GPIO.HIGH)
+        for _ in range(abs(pulses)):
+            # Check if limit switch is hit
+            if self.stopEvent.is_set():
+                self.stopEvent.clear()
+                self.distance.value = 0
+                self.movingEvent.clear()
+                return
+            GPIO.output(GPIO_PINS["SWEEPER_STEP_PIN"], GPIO.HIGH)
+            for _ in range(speed):
+                if True: pass # add some delay
+            GPIO.output(GPIO_PINS["SWEEPER_STEP_PIN"], GPIO.LOW)
+            for _ in range(speed):
+                if True: pass # add some delay
+            distance += 1
+        # Add to distance
+        with self.distanceLock:
+            self.distance.value += distance * (1 if pulses > 0 else -1)
+            print(f"Distance, distance moved: {self.distance.value}, {distance}")
+        self.movingEvent.clear()
 
-    def add_queue(self, destination:tuple) -> None:
+    def home(self) -> None:
         """
-        Add destination to queue in form of (time added, classification)
+        Home the sweeper
         """
-        self.queue.put(destination)
+        self.expectHomeEvent.set()
+        multiprocessing.Process(target=self.__home).start()
 
-    def sort_process(self) -> None:
+    def __home(self) -> None:
         """
-        Process that manages the sweeper
+        Home the sweeper
         """
-        while self.running:
-            # Block until queue is received
-            cls = self.queue.get(block=True)
-            self.busyEvent.set()
-            binNum = self.map[cls]
-            # Move to bin
-            self.go_bin(binNum)
-            # Finished
-            self.busyEvent.clear()
+        moveProcess = multiprocessing.Process(target=self.__move, args=(20,))
+        moveProcess.start()
+        moveProcess.join()
+        moveProcess = multiprocessing.Process(target=self.__move, args=(-MAX_POSITION,10,))
+        moveProcess.start()
+        moveProcess.join()
 
-    def go_bin(self, binnum:int) -> None:
+    def move(self, pulses:int) -> None:
         """
-        Make the motor move in time to reach the bin
+        Move the sweeper to a specific pulse
         """
-        self.write_speed(DEFAULT_SPEED)
-        # Move until the sweeper is at the bin
-        while abs(self.get_distance() - self.map[binnum]["pos"]) > BIN_THRESHOLD:
-            distToTarget = self.get_distance() - self.map[binnum]["pos"]
-            # Determine from distance how many steps to take
-            steps = int(distToTarget / SWEEPER_MM_PER_STEP)
-            # Set direction
-            GPIO.output(GPIO_PINS['SWEEPER_DIRECTION_PIN'], GPIO.HIGH if distToTarget > 0 else GPIO.LOW)
-            # Move with defined pulses
-            for _ in range(steps):
-                GPIO.output(GPIO_PINS['SWEEPER_STEP_PIN'], GPIO.HIGH)
-                time.sleep(0.005 - self.get_speed() * 0.001)
-                GPIO.output(GPIO_PINS['SWEEPER_STEP_PIN'], GPIO.LOW)
-                time.sleep(0.001 - self.get_speed() * 0.001)
-            # Add to steps
-            self.add_steps(steps)
-        # Reached the bin
-        self.write_speed(0)
+        moveProcess = multiprocessing.Process(target=self.__move, args=(pulses,), daemon=True)
+        moveProcess.start()
+        # self.callbacks.get("write_position", lambda x: print(x))(self.distance.value+pulses)
 
-    def write_speed(self, speed:int) -> None:
+    def absolute_move(self, location:int) -> None:
         """
-        Write the speed of the sweeper
+        Move the sweeper to a specific location
         """
-        with self.speedLock:
-            self.speed = speed
-
-    def get_speed(self) -> int:
-        """
-        Get the speed of the sweeper
-        """
-        with self.speedLock:
-            return self.speed
-
-    def add_steps(self, distance:int) -> None:
-        """
-        Write the distance of the sweeper
-        """
-        with self.stepLock:
-            self.steps += distance
-
-    def get_distance(self) -> int:
-        """
-        Get the distance of the sweeper
-        """
-        with self.stepLock:
-            return self.steps * SWEEPER_MM_PER_STEP
+        self.move(location - self.distance)
 
 class Conveyor_Controller:
     """
@@ -210,6 +210,7 @@ class Conveyor_Controller:
         """
         with self.speedLock:
             self.speed = speed
+            print(speed)
 
     def get_distance(self) -> float:
         """
@@ -345,8 +346,8 @@ class System_Controller:
         self.lcdHandle = None
         self.visionHandler = visionHandler
         # IR Sensor
-        GPIO.setup(GPIO_PINS["IR_SENSOR_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(GPIO_PINS["IR_SENSOR_PIN"], GPIO.FALLING, callback=self.interrupt)
+        # GPIO.setup(GPIO_PINS["IR_SENSOR_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.add_event_detect(GPIO_PINS["IR_SENSOR_PIN"], GPIO.FALLING, callback=self.interrupt)
         # Status light
         self.leds.set_status_light('ready')
 

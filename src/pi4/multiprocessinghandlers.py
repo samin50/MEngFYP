@@ -7,19 +7,19 @@ from src.common.constants import BOUNDING_BOX_COLOR
 from src.vision.vsrc.constants import DATA
 MAP = {k["num_label"] : k["label"] for k in DATA.values()}
 TESTING = False
-try:
-    from ultralytics import YOLO
-    print("Using ultralytics YOLO!")
-except ImportError:
-    from src.common.simulate import YOLO
-    print("Using simulated YOLO!")
-# pylint:disable=all
 
 @log_sparse
-def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiprocessing.Queue, busyInference: multiprocessing.Event, modelPath: str) -> None:
+def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiprocessing.Queue, busyInference: multiprocessing.Event, modelPath: str, offloadInference:multiprocessing.Event) -> None:
     """
     Process to handle inference
     """
+    try:
+        from ultralytics import YOLO
+        print("Using ultralytics YOLO!")
+    except ImportError:
+        from src.common.simulate import YOLO
+    print("Using simulated YOLO!")
+# pylint:disable=all
     model = YOLO(modelPath)
     print("Loaded YOLO model!")
     while True:
@@ -28,7 +28,10 @@ def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiproce
         start = time.time()
         print("Got frame")
         # Inference
-        res = model.predict(frame)
+        if offloadInference.is_set():
+            pass
+        else:
+            res = model.predict(frame)
         result = draw_results(frame, res)
         resultQueue.put(result)
         busyInference.clear()
@@ -87,34 +90,25 @@ def crop_image(frame: numpy.ndarray, box: numpy.ndarray) -> numpy.ndarray:
     """
     # Ensure box is an integer type
     box = box.astype(int)
-    
     # Compute dimensions
     height = int(numpy.linalg.norm(box[0] - box[1]))
     width = int(numpy.linalg.norm(box[1] - box[2]))
-    
     # Compute center
     center = numpy.mean(box, axis=0).astype(int)
-    
     # Compute rotation angle
     angle = numpy.degrees(numpy.arctan2(box[1, 1] - box[0, 1], box[1, 0] - box[0, 0]))
-    rotation_matrix = cv2.getRotationMatrix2D((int(center[0]), int(center[1])), angle, 1.0)
-    
+    rotMatrix = cv2.getRotationMatrix2D((int(center[0]), int(center[1])), angle, 1.0)
     # Apply the rotation to the image
-    rotated_image = cv2.warpAffine(frame, rotation_matrix, (frame.shape[1], frame.shape[0]))
-    
+    rotImage = cv2.warpAffine(frame, rotMatrix, (frame.shape[1], frame.shape[0]))
     # Get the bounding box in the rotated image
     x, y = center - [width // 2, height // 2]
-    
     # Ensure the coordinates are within the bounds of the image
     x = max(0, x)
     y = max(0, y)
-    x_end = min(rotated_image.shape[1], x + width)
-    y_end = min(rotated_image.shape[0], y + height)
-    
+    x_end = min(rotImage.shape[1], x + width)
+    y_end = min(rotImage.shape[0], y + height)
     # Crop the image
-    croppedImage = rotated_image[y:y_end, x:x_end]
-    
+    croppedImage = rotImage[y:y_end, x:x_end]
     # Change image colour
     croppedImage = cv2.cvtColor(croppedImage, cv2.COLOR_RGB2BGR)
-    
     return croppedImage

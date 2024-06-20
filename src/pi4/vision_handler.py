@@ -3,6 +3,8 @@ Responsible for handling the vision system.
 Hooks onto the pygame camera and performs inference.
 """
 # pylint: disable=attribute-defined-outside-init
+import random
+from os import listdir
 import time
 import multiprocessing
 import numpy
@@ -58,12 +60,13 @@ class Vision_Handler:
         self.doInference = multiprocessing.Event()
         self.constInference = multiprocessing.Event()
         self.busyInference = multiprocessing.Event()
+        self.offloadInference = multiprocessing.Event()
         self.frameQueue = multiprocessing.Queue(maxsize=1)
         self.resultQueue = multiprocessing.Queue(maxsize=1)
         modelPath = CLASSIFIER_PATH if self.enableInference else None
         if self.enableInference:
             modelPath = CLASSIFIER_PATH
-            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath), daemon=True)
+            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath, self.offloadInference), daemon=True)
             self.inferenceProcess.start()
         return self
 
@@ -159,6 +162,15 @@ class Vision_Handler:
             self.constInference.set()
         else:
             self.constInference.clear()
+
+    def set_offload_inference(self, offloadInference:bool) -> None:
+        """
+        Set the offload inference flag
+        """
+        if offloadInference:
+            self.offloadInference.set()
+        else:
+            self.offloadInference.clear()
 
     def get_frame(self) -> pygame.Surface:
         """

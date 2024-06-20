@@ -1,9 +1,9 @@
 """
 Main entry point for the application.
 """
-from viztracer import log_sparse
 import traceback
 import pygame
+from viztracer import log_sparse
 # Allow development on non-Raspberry Pi devices
 try:
     import RPi.GPIO as GPIO # type: ignore
@@ -31,13 +31,17 @@ class Component_Sorter:
         callbacks = {
             "colour_callback" : self.systemController.leds.change_colour,
             "strip_reset_callback" : self.systemController.leds.reset,
-            "conveyor_speed_callback" : self.systemController.conveyor.start,
-            "change_position_callback" : self.systemController.change_rel_position,
-            "home_position_callback" : self.systemController.home_position,
+            "system_speed_callback" : self.systemController.conveyor.start,
+            "move_callback" : self.systemController.sweeper.move,
+            "home_callback" : self.systemController.sweeper.home,
         }
         self.clk = pygame.time.Clock()
         self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG, forceImage=forceImage)
         self.systemController.set_lcd_handle(self.lcdUI)
+        self.systemController.sweeper.set_callbacks({
+            "write_lcd" : self.lcdUI.set_sweeper_status,
+            "write_position" : self.lcdUI.set_kinematic_position,
+        })
 
     def close(self) -> None:
         """

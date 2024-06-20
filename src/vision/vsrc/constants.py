@@ -6,6 +6,8 @@ import numpy
 TITLE = "Vision Trainer"
 RESOLUTION = "640x360"
 PADDING = 5
+SERVER_PORT = 49750
+SERVERNAME = "Shaheens-Legion"
 # RPi Dataset Builder
 REALVNC_WINDOW_NAME = "DietPi (DietPi)"
 LOWER_THRESHOLD = numpy.array([148, 250, 250], numpy.uint8)
