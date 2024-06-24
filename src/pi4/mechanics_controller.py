@@ -14,7 +14,7 @@ except ImportError:
     from src.common.simulate import GPIO
     from src.common.simulate import PixelStrip, Color
     print("Simulating missing hardware!")
-from src.common.constants import GPIO_PINS, SPEED_MULTIPLIER, LIGHT_COLOUR, DEFAULT_SPEED, BOUNCETIME, MAX_POSITION
+from src.common.constants import GPIO_PINS, CONV_MULTIPLIER, LIGHT_COLOUR, DEFAULT_SPEED, BOUNCETIME, MAX_POSITION, PATHS
 from src.pi4.vision_handler import Vision_Handler
 from src.pi4.lcd_ui import LCD_UI
 
@@ -173,13 +173,14 @@ class Conveyor_Controller:
             # If the conveyor is moving from 0, start the timer
             if self.speed == 0:
                 self.write_time()
+                self.motor.start(50)
             else:
                 self.write_distance()
                 self.write_time()
             self.write_speed(speed)
-            self.motor.ChangeDutyCycle(50)
             GPIO.output(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.HIGH if speed > 0 else GPIO.LOW)
-            self.motor.ChangeFrequency(SPEED_MULTIPLIER * abs(speed))
+            # print(CONV_MULTIPLIER * abs(speed))
+            self.motor.ChangeFrequency(CONV_MULTIPLIER * abs(speed))
 
     def stop(self) -> None:
         """
@@ -335,6 +336,7 @@ class WS2812B_Controller:
             self.leds.setPixelColor(16, Color(255, 255, 0))
         self.leds.show()
         self.status = status
+
 class System_Controller:
     """
     Top level controller that abstracts the mechanics
@@ -390,5 +392,23 @@ class System_Controller:
         self.sweeper.busyEvent.wait()
         self.leds.set_status_light('ready')
 
+    def inference_and_sort(self) -> None:
+        """
+        Inference and sort function
+        """
+        pass
+
+    def sort(self) -> None:
+        """
+        Sorting function, triggerede when inference is done
+        or when a component is detected
+        """
+
+
+
 if __name__ == "__main__":
-    leds = System_Controller(None)
+    # leds = System_Controller(None)
+    conveyor = Conveyor_Controller()
+    conveyor.start(5)
+    # motor = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 5)
+    # motor.start(50)

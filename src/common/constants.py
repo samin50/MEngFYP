@@ -47,7 +47,7 @@ GPIO_PINS = {
 }
 # Conveyor Parameters
 DEFAULT_SPEED = 5
-SPEED_MULTIPLIER = 80
+CONV_MULTIPLIER = 240
 LIGHT_COLOUR = (255, 218, 145)
 BIN_THRESHOLD = 5
 SWEEPER_MM_PER_STEP = 0.5
@@ -59,3 +59,7 @@ MAX_POSITION = 100*SWEEPER_MULT
 MOVE_INCREMENT = 10*SWEEPER_MULT
 # Vision
 CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"
+# Paths
+PATHS = {
+    
+}

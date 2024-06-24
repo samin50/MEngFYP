@@ -469,7 +469,7 @@ class LCD_UI:
         if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             if event.ui_element == self.UIElements.get("system_speed", None):
                 self.UIElements["system_speed_label"].set_text(str(event.value))
-                self.callbacks.get("system_speed_callback", lambda _: None)(event.value)
+                self.callbacks.get("system_speed_callback", lambda _: None)(-event.value)
             # Colour sliders
             if event.ui_element == self.UIElements.get("hue_slider", None):
                 colour = self.callbacks.get("colour_callback", lambda _: None)
