@@ -143,7 +143,7 @@ class Sweeper_Controller:
         """
         Move the sweeper to a specific location
         """
-        self.move(location - self.distance)
+        self.move(location - self.distance.value)
 
 class Conveyor_Controller:
     """
@@ -417,10 +417,12 @@ class System_Controller:
         Sorting function, triggered when inference is done
         or when a component is detected
         """
-        self.sweeper.move(path)
+        self.sweeper.absolute_move(path)
         start = time.time()
-        self.conveyor.start(-DEFAULT_SPEED)
-        travelTime = float(path)/((DEFAULT_SPEED*CONV_MULTIPLIER))
+        speed = DEFAULT_SPEED
+        self.conveyor.start(-speed)
+        convPath = path + 2000 + 8000 # offset + arm length
+        travelTime = float(convPath)/((speed*CONV_MULTIPLIER))
         print(f"Travel time: {travelTime}, {path}")
         while (time.time() - start) < travelTime:
             time.sleep(0.2)
