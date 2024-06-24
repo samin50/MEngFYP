@@ -46,7 +46,7 @@ GPIO_PINS = {
     "LIMIT_SWITCH_PIN" : 26
 }
 # Conveyor Parameters
-DEFAULT_SPEED = 5
+DEFAULT_SPEED = 2
 CONV_MULTIPLIER = 240
 LIGHT_COLOUR = (255, 218, 145)
 BIN_THRESHOLD = 5
@@ -61,5 +61,5 @@ MOVE_INCREMENT = 10*SWEEPER_MULT
 CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"
 # Paths
 PATHS = {
-    
+    "refuse" : 30*SWEEPER_MULT,
 }

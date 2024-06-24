@@ -4,6 +4,7 @@ Mechanics controller
 # pylint:disable=unnecessary-lambda, unnecessary-lambda-assignment, using-constant-test, multiple-statements
 import time
 import multiprocessing
+import threading
 import colorsys
 try:
     import RPi.GPIO as GPIO # type: ignore
@@ -136,7 +137,7 @@ class Sweeper_Controller:
         """
         moveProcess = multiprocessing.Process(target=self.__move, args=(pulses,), daemon=True)
         moveProcess.start()
-        # self.callbacks.get("write_position", lambda x: print(x))(self.distance.value+pulses)
+        self.callbacks.get("write_position", lambda x: print(x))(self.distance.value+pulses)
 
     def absolute_move(self, location:int) -> None:
         """
@@ -154,14 +155,14 @@ class Conveyor_Controller:
         GPIO.setup(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.OUT)
         GPIO.setup(GPIO_PINS['CONVEYOR_STEP_PIN'], GPIO.OUT)
         self.motor = GPIO.PWM(GPIO_PINS['CONVEYOR_STEP_PIN'], 1)
-        self.speed = 0
-        self.distance = 0
+        self.manager = multiprocessing.Manager()
+        self.speed = self.manager.Value('i', 0)
+        self.distance = self.manager.Value('i', 0)
         self.startTime = time.time()
         # Locks
+        self.speedLock = multiprocessing.Lock()
         self.distanceLock = multiprocessing.Lock()
         self.timeLock = multiprocessing.Lock()
-        self.speedLock = multiprocessing.Lock()
-        self.stop()
 
     def start(self, speed:int=0) -> None:
         """
@@ -171,7 +172,7 @@ class Conveyor_Controller:
             self.stop()
         else:
             # If the conveyor is moving from 0, start the timer
-            if self.speed == 0:
+            if self.speed.value == 0:
                 self.write_time()
                 self.motor.start(50)
             else:
@@ -179,7 +180,6 @@ class Conveyor_Controller:
                 self.write_time()
             self.write_speed(speed)
             GPIO.output(GPIO_PINS['CONVEYOR_DIRECTION_PIN'], GPIO.HIGH if speed > 0 else GPIO.LOW)
-            # print(CONV_MULTIPLIER * abs(speed))
             self.motor.ChangeFrequency(CONV_MULTIPLIER * abs(speed))
 
     def stop(self) -> None:
@@ -203,14 +203,14 @@ class Conveyor_Controller:
         Write the distance travelled by the conveyor belt
         """
         with self.distanceLock:
-            self.distance += (time.time() - self.get_start_time()) * self.get_speed()
+            self.distance.value += (time.time() - self.get_start_time()) * self.get_speed()
 
     def write_speed(self, speed:int) -> None:
         """
         Write the speed of the conveyor belt
         """
         with self.speedLock:
-            self.speed = speed
+            self.speed.value = speed
             print(speed)
 
     def get_distance(self) -> float:
@@ -219,7 +219,7 @@ class Conveyor_Controller:
         """
         with self.distanceLock:
             extraDistance = (time.time() - self.get_start_time()) * self.get_speed()
-            return self.distance + extraDistance
+            return self.distance.value + extraDistance
 
     def get_start_time(self) -> float:
         """
@@ -233,7 +233,7 @@ class Conveyor_Controller:
         Get the speed of the conveyor belt
         """
         with self.speedLock:
-            return self.speed
+            return self.speed.value
 
 class WS2812B_Controller:
     """
@@ -346,6 +346,8 @@ class System_Controller:
         self.conveyor = Conveyor_Controller()
         self.sweeper = Sweeper_Controller()
         self.lcdHandle = None
+        self.conveyorSpeed = 0
+        self.enabled = False
         self.visionHandler = visionHandler
         # IR Sensor
         # GPIO.setup(GPIO_PINS["IR_SENSOR_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -392,19 +394,52 @@ class System_Controller:
         self.sweeper.busyEvent.wait()
         self.leds.set_status_light('ready')
 
-    def inference_and_sort(self) -> None:
+    def sort(self, component:str) -> None:
         """
-        Inference and sort function
-        """
-        pass
-
-    def sort(self) -> None:
-        """
-        Sorting function, triggerede when inference is done
+        Sorting function, triggered when inference is done
         or when a component is detected
         """
+        if not self.enabled:
+            print("System is disabled")
+            self.lcdHandle.set_status("System is disabled", "red")
+            return
+        if not self.sweeper.homed:
+            print("Sweeper is not homed")
+            self.lcdHandle.set_status("Sweeper is not homed", "red")
+            return
+        # Begin sorting
+        self.lcdHandle.set_status(f"Sorting {component}", "yellow")
+        path = PATHS.get(component, PATHS['refuse'])
+        threading.Thread(target=self.__sort, args=(path,), daemon=True).start()
 
+    def __sort(self, path:int) -> None:
+        """
+        Sorting function, triggered when inference is done
+        or when a component is detected
+        """
+        self.sweeper.move(path)
+        start = time.time()
+        self.conveyor.start(-DEFAULT_SPEED)
+        travelTime = float(path)/((DEFAULT_SPEED*CONV_MULTIPLIER))
+        print(f"Travel time: {travelTime}, {path}")
+        while (time.time() - start) < travelTime:
+            time.sleep(0.2)
+        self.conveyor.stop()
+        print(f"Sorting done in {time.time()-start} seconds")
+        self.lcdHandle.set_status("Sorting done", "green")
 
+    def set_conveyor_speed(self, speed:int) -> None:
+        """
+        Set conveyor speed
+        """
+        self.conveyorSpeed = speed
+        self.conveyor.start(speed)
+
+    def set_enabled(self, val:bool) -> None:
+        """
+        Enable system
+        """
+        self.enabled = val
 
 if __name__ == "__main__":
     # leds = System_Controller(None)

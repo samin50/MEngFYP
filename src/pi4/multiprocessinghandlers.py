@@ -1,3 +1,4 @@
+# pylint:disable=all
 import multiprocessing
 from viztracer import log_sparse
 import numpy
@@ -9,7 +10,7 @@ MAP = {k["num_label"] : k["label"] for k in DATA.values()}
 TESTING = False
 
 @log_sparse
-def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiprocessing.Queue, busyInference: multiprocessing.Event, modelPath: str, offloadInference:multiprocessing.Event) -> None:
+def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiprocessing.Queue, busyInference: multiprocessing.Event, modelPath: str, offloadInference:multiprocessing.Event, modelReady:multiprocessing.Event) -> None:
     """
     Process to handle inference
     """
@@ -18,10 +19,10 @@ def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiproce
         print("Using ultralytics YOLO!")
     except ImportError:
         from src.common.simulate import YOLO
-    print("Using simulated YOLO!")
-# pylint:disable=all
+        print("Using simulated YOLO!")
     model = YOLO(modelPath)
     print("Loaded YOLO model!")
+    modelReady.set()
     while True:
         print("Waiting for frame")
         frame = cv2.cvtColor(frameQueue.get(), cv2.COLOR_BGR2RGB)
@@ -29,7 +30,7 @@ def inference_process(frameQueue: multiprocessing.Queue, resultQueue: multiproce
         print("Got frame")
         # Inference
         if offloadInference.is_set():
-            pass
+            res = []
         else:
             res = model.predict(frame)
         result = draw_results(frame, res)

@@ -54,6 +54,8 @@ class LCD_UI:
             "update_inference_time" : self.set_latency,
             "update_confidence" : self.set_confidence,
             "update_class" : self.set_class,
+            "set_status" : self.set_status,
+            "sort" : self.callbacks.get("sort", lambda: None),
         })
         self.set_wifi_status()
 
@@ -98,7 +100,6 @@ class LCD_UI:
         print(f"Setting position to {position}" )
         self.UIElements["kinematic_position"].set_text(f"{position}")
         self.UIElements["kinematic_position"].rebuild()
-        self.UIElements["move_slider"].set_current_value(position)
 
     def set_confidence(self, confidence:float) -> None:
         """
@@ -121,6 +122,14 @@ class LCD_UI:
         Set the class
         """
         self.UIElements["class_label"].set_text(cls)
+
+    def set_status(self, status:str, colour:str) -> None:
+        """
+        Set the status
+        """
+        self.UIElements["status_description"].set_text(status)
+        self.UIElements["status_description"].text_colour = pygame.Color(COLOURS[colour])
+        self.UIElements["status_description"].rebuild()
 
     def is_running(self) -> bool:
         """
@@ -442,12 +451,15 @@ class LCD_UI:
             )
             self.UIElements["kinematic_status"].text_colour = pygame.Color(COLOURS["yellow"])
             self.UIElements["kinematic_status"].rebuild()
-            # Movement slider
-            self.UIElements["move_slider"] = UIHorizontalSlider(
-                relative_rect=pygame.Rect((xOffset+sliderWidth+WIDGET_PADDING, LCD_RESOLUTION[1]-sliderHeight-WIDGET_PADDING), (sliderWidth, sliderHeight)),
-                value_range=(-MAX_POSITION, MAX_POSITION),
-                start_value=0,
-                click_increment=MOVE_INCREMENT,
+            # Movement button
+            self.UIElements["move_left_button"] = UIButton(
+                relative_rect=pygame.Rect((xOffset+sliderWidth+WIDGET_PADDING, LCD_RESOLUTION[1]-sliderHeight-WIDGET_PADDING), (sliderWidth//2, sliderHeight)),
+                text="< L",
+                manager=self.manager
+            )
+            self.UIElements["move_right_button"] = UIButton(
+                relative_rect=pygame.Rect((xOffset+sliderWidth+WIDGET_PADDING+sliderWidth//2, LCD_RESOLUTION[1]-sliderHeight-WIDGET_PADDING), (sliderWidth//2, sliderHeight)),
+                text="R >",
                 manager=self.manager
             )
             self.UIElements["home_button"] = UIButton(
@@ -483,16 +495,6 @@ class LCD_UI:
                 colour = self.callbacks.get("colour_callback", lambda _: None)
                 self.UIElements["value_slider_label"].set_text(f"Value: {event.value}")
                 self.update_colour(colour)
-            # Movement
-            if event.ui_element == self.UIElements.get("move_slider", None):
-                # Colour if not homed
-                if not self.homed:
-                    self.UIElements["kinematic_status"].set_text("Not Homed")
-                    self.UIElements["kinematic_status"].text_colour = pygame.Color(COLOURS["yellow"])
-                    self.UIElements["kinematic_status"].rebuild()
-                val = self.UIElements["move_slider"].get_current_value() - self.prevSweeperPos
-                self.prevSweeperPos = self.UIElements["move_slider"].get_current_value()
-                self.callbacks.get("move_callback", lambda _: None)(val)
         # Update the system stats
         if event.type == self.statUpdateEvent:
             cpuUsage = psutil.cpu_percent()
@@ -528,8 +530,9 @@ class LCD_UI:
             if event.ui_element == self.UIElements.get("enable_button", None):
                 self.UIElements["enable_button"].toggle()
                 # If FORCE_IMAGE is enabled, allow a random photo
+                enable = self.UIElements["enable_button"].get_value()
+                self.callbacks.get("enable_callback", lambda _: None)(enable)
                 if self.forceImage:
-                    enable = self.UIElements["enable_button"].get_value()
                     if enable:
                         self.visionHandler.force_image()
                     else:
@@ -546,7 +549,8 @@ class LCD_UI:
                 wifi_restart()
                 self.set_wifi_status()
             if event.ui_element == self.UIElements.get("strip_reset_button", None):
-                self.callbacks.get("strip_reset_callback", lambda: None)
+                self.callbacks.get("sort", lambda _: None)("resistor")
+                # self.callbacks.get("strip_reset_callback", lambda: None)()
                 # If FORCE_IMAGE is enabled, allow a random photo
                 if self.forceImage and self.UIElements["enable_button"].get_value():
                     path = "datasets/full/current/images/test"
@@ -562,6 +566,11 @@ class LCD_UI:
             if event.ui_element == self.UIElements.get("home_button", None):
                 self.set_sweeper_status("Homing")
                 self.callbacks.get("home_callback", lambda: None)()
+            # Movement
+            if event.ui_element == self.UIElements.get("move_left_button", None):
+                self.callbacks.get("move_callback", lambda _: None)(MOVE_INCREMENT)
+            if event.ui_element == self.UIElements.get("move_right_button", None):
+                self.callbacks.get("move_callback", lambda _: None)(-MOVE_INCREMENT)
 
     def draw(self) -> None:
         """

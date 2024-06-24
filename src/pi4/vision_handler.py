@@ -25,6 +25,7 @@ class Vision_Handler:
     def __init__(self, enableInference:bool=True):
         self.enableInference = enableInference
         self.lcdCallbacks = {}
+        self.ready = False
 
     def init(self, cameraDisplay:pygame.display, componentDisplay:pygame.display, trainingMode:bool=False, captureVNC:bool=False, enableKeyboard:bool=False) -> None:
         """
@@ -61,12 +62,14 @@ class Vision_Handler:
         self.constInference = multiprocessing.Event()
         self.busyInference = multiprocessing.Event()
         self.offloadInference = multiprocessing.Event()
+        self.modelReady =  multiprocessing.Event()
         self.frameQueue = multiprocessing.Queue(maxsize=1)
         self.resultQueue = multiprocessing.Queue(maxsize=1)
         modelPath = CLASSIFIER_PATH if self.enableInference else None
         if self.enableInference:
             modelPath = CLASSIFIER_PATH
-            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, self.busyInference, modelPath, self.offloadInference), daemon=True)
+            self.inferenceProcess = multiprocessing.Process(target=inference_process, args=(self.frameQueue, self.resultQueue, \
+                                                                                            self.busyInference, modelPath, self.offloadInference, self.modelReady), daemon=True)
             self.inferenceProcess.start()
         return self
 
@@ -185,14 +188,19 @@ class Vision_Handler:
             frame = self.cameraFeed.get_frame()
         # Perform inference
         if self.enableInference:
+            # If model ready
+            if not self.ready and self.modelReady.is_set():
+                self.lcdCallbacks.get("set_status", lambda _, __: None)("Model ready", "green")
+                self.ready = True
             # Consume the result
             if not self.resultQueue.empty():
-                dis, croppedImage, conf, cls = self.resultQueue.get()
+                dis, croppedImage, conf, component = self.resultQueue.get()
                 endTime = time.time()
                 # Update the inference time
                 self.lcdCallbacks.get("update_inference_time", lambda _: None)(endTime-self.startTime)
                 self.lcdCallbacks.get("update_confidence", lambda _: None)(conf)
-                self.lcdCallbacks.get("update_class", lambda _: None)(cls)
+                self.lcdCallbacks.get("update_class", lambda _: None)(component)
+                self.lcdCallbacks.get("sort", lambda _: None)(component)
                 self.obbDisplay = pygame.surfarray.make_surface(dis)
                 self.obbDisplay.set_colorkey((0, 0, 0))
                 if croppedImage is not None:
@@ -206,6 +214,11 @@ class Vision_Handler:
                     self.startTime = time.time()
                     self.frameQueue.put(pygame.surfarray.array3d(frame).swapaxes(0,1))
                     self.doInference.clear()
+        else:
+            if (self.doInference.is_set() or self.constInference.is_set()):
+                self.lcdCallbacks.get("set_status", lambda _, __: None)("Inference not enabled", "red")
+                # use proper lambda
+                self.doInference.clear()
         return frame
 
     def capture_vnc(self) -> None:
