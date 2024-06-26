@@ -28,10 +28,8 @@ class Sweeper_Controller:
         # Setup GPIO pins
         GPIO.setup(GPIO_PINS["SWEEPER_DIRECTION_PIN"], GPIO.OUT)
         GPIO.setup(GPIO_PINS["SWEEPER_STEP_PIN"], GPIO.OUT)
-        GPIO.setup(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
         # Interrupts
         self.callbacks = callbacks
-        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.RISING, callback=self.__limit_switch, bouncetime=BOUNCETIME)
         # Variables
         self.homed = False
         manager = multiprocessing.Manager()
@@ -49,19 +47,16 @@ class Sweeper_Controller:
         """
         self.callbacks = callbacks
 
-    def __limit_switch(self, channel) -> bool:
+    def limit_switch(self, _) -> bool:
         """
         Limit switch function - called when the limit switch is hit
         """
-        if GPIO.input(channel) == GPIO.HIGH:
-            return
         if self.expectHitEvent.is_set():
             self.expectHitEvent.clear()
             return
         self.stopEvent.set()
         self.movingEvent.clear()
         if self.expectHomeEvent.is_set():
-            self.expectHomeEvent.clear()
             self.callbacks.get('write_lcd', lambda x: print(x))("Home")
             self.homed = True
             return True
@@ -124,7 +119,7 @@ class Sweeper_Controller:
         """
         Home the sweeper
         """
-        moveProcess = multiprocessing.Process(target=self.__move, args=(20,))
+        moveProcess = multiprocessing.Process(target=self.__move, args=(500,5))
         moveProcess.start()
         moveProcess.join()
         moveProcess = multiprocessing.Process(target=self.__move, args=(-MAX_POSITION,10,))
@@ -337,6 +332,28 @@ class WS2812B_Controller:
         self.leds.show()
         self.status = status
 
+    def flash(self, colour: tuple, duration: float) -> None:
+        """
+        Flash the LED strip
+        """
+        multiprocessing.Process(target=self.flash_process, args=(colour, duration,)).start()
+
+    def flash_process(self, colour: tuple, duration: float) -> None:
+        """
+        Flash the LED strip
+        """
+        for _ in range(2):
+            for i in range(self.leds.numPixels()):
+                self.leds.setPixelColor(i, Color(colour[0], colour[1], colour[2]))
+            self.leds.show()
+            time.sleep(duration)
+            for i in range(self.leds.numPixels()):
+                self.leds.setPixelColor(i, Color(0, 0, 0))
+            self.leds.show()
+            time.sleep(duration)
+        for i in range(self.leds.numPixels()):
+            self.leds.setPixelColor(i, Color(*LIGHT_COLOUR))
+        self.leds.show()
 class System_Controller:
     """
     Top level controller that abstracts the mechanics
@@ -349,11 +366,23 @@ class System_Controller:
         self.conveyorSpeed = 0
         self.enabled = False
         self.visionHandler = visionHandler
-        # IR Sensor
-        # GPIO.setup(GPIO_PINS["IR_SENSOR_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        # GPIO.add_event_detect(GPIO_PINS["IR_SENSOR_PIN"], GPIO.FALLING, callback=self.interrupt)
+        GPIO.setup(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(GPIO_PINS["LIMIT_SWITCH_PIN"], GPIO.RISING, callback=self.__limit_switch, bouncetime=BOUNCETIME)
         # Status light
         self.leds.set_status_light('ready')
+
+    def __limit_switch(self, channel) -> None:
+        """
+        Limit switch function - called when the limit switch is hit
+        """
+        if GPIO.input(channel) == GPIO.HIGH:
+            return
+        self.sweeper.limit_switch(channel)
+        if not self.sweeper.expectHomeEvent.is_set():
+            self.conveyor.stop()
+            self.leds.flash((255, 0, 0), 0.2)
+        else:
+            self.sweeper.expectHomeEvent.clear()
 
     def set_lcd_handle(self, lcdHandle:LCD_UI) -> None:
         """
@@ -406,6 +435,10 @@ class System_Controller:
         if not self.sweeper.homed:
             print("Sweeper is not homed")
             self.lcdHandle.set_status("Sweeper is not homed", "red")
+            return
+        if component == "":
+            print("No component detected")
+            self.lcdHandle.set_status("No component detected", "red")
             return
         # Begin sorting
         self.lcdHandle.set_status(f"Sorting {component}", "yellow")

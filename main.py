@@ -36,6 +36,7 @@ class Component_Sorter:
             "home_callback" : self.systemController.sweeper.home,
             "enable_callback" : self.systemController.set_enabled,
             "sort" : self.systemController.sort,
+            "cleanup" : GPIO.cleanup
         }
         self.clk = pygame.time.Clock()
         self.lcdUI = LCD_UI(self.clk, self.visionHandler, callbacks, trainingMode, RESIZEFLAG, forceImage=forceImage)
@@ -49,8 +50,6 @@ class Component_Sorter:
         """
         Close all the resources
         """
-        self.conveyorMotor.stop()
-        self.lcdUI.cameraFeed.vision.destroy()
         GPIO.cleanup()
 
 @log_sparse

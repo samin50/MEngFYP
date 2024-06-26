@@ -61,8 +61,8 @@ MOVE_INCREMENT = 10*SWEEPER_MULT
 CLASSIFIER_PATH = "./src/vision/models/final/classifier.pt"
 # Paths
 PATHS = {
-    "film_capacitor" : 10*SWEEPER_MULT,
-    "resistor" : 40*SWEEPER_MULT,
-    "ceramic_capacitor" : 60*SWEEPER_MULT,
+    "film_capacitor" : 4*SWEEPER_MULT,
+    "resistor" : 20*SWEEPER_MULT,
+    "ceramic_capacitor" : 50*SWEEPER_MULT,
     "refuse" : 80*SWEEPER_MULT,
 }

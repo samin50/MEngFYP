@@ -12,7 +12,7 @@ import pygame_gui
 from pygame_gui.core import ObjectID
 from pygame_gui.elements import UIHorizontalSlider, UILabel, UIButton
 from src.common.constants import LCD_RESOLUTION, CAMERA_DISPLAY_SIZE, WIDGET_PADDING, STAT_REFRESH_INTERVAL, BG_COLOUR, \
-    THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, COLOURS, MOVE_INCREMENT, MAX_POSITION
+    THEMEJSON, SHOW_CURSOR, TRAINING_MODE_CAMERA_SIZE, COLOURS, MOVE_INCREMENT
 from src.common.helper_functions import start_ui, wifi_restart
 from src.common.custom_pygame_widgets import CustomToggleButton
 from src.pi4.vision_handler import Vision_Handler
@@ -527,6 +527,7 @@ class LCD_UI:
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.UIElements.get("exit_button", None):
                 self.running = False
+                self.callbacks.get("cleanup", lambda _: None)()
             if event.ui_element == self.UIElements.get("enable_button", None):
                 self.UIElements["enable_button"].toggle()
                 # If FORCE_IMAGE is enabled, allow a random photo
@@ -549,8 +550,8 @@ class LCD_UI:
                 wifi_restart()
                 self.set_wifi_status()
             if event.ui_element == self.UIElements.get("strip_reset_button", None):
-                self.callbacks.get("sort", lambda _: None)("resistor")
-                # self.callbacks.get("strip_reset_callback", lambda: None)()
+                # self.callbacks.get("sort", lambda _: None)("resistor")
+                self.callbacks.get("strip_reset_callback", lambda: None)()
                 # If FORCE_IMAGE is enabled, allow a random photo
                 if self.forceImage and self.UIElements["enable_button"].get_value():
                     path = "datasets/full/current/images/test"

@@ -62,7 +62,7 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
         # Crop the image
         croppedImage = crop_image(frame, box).swapaxes(0, 1)
         # Draw the polygon
-        frame = cv2.polylines(blackBackground, [box], isClosed=True, color=BOUNDING_BOX_COLOR, thickness=3)
+        blackBackground = cv2.polylines(blackBackground, [box], isClosed=True, color=BOUNDING_BOX_COLOR, thickness=3)
         # Draw the class
         fontScale = 1.5
         fontThickness = 2
@@ -83,7 +83,7 @@ def draw_results(frame: numpy.ndarray, results) -> numpy.ndarray:
         cv2.putText(blackBackground, label, (topLeftCorner[0], topLeftCorner[1] + labelSize[1]), cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255, 255, 255), fontThickness)
         print(f"{conf:.2f} {cls}")
         conf = float(f"{conf:.2f}")*100
-    return (frame.swapaxes(0, 1), croppedImage, conf, cls)
+    return (blackBackground.swapaxes(0, 1), croppedImage, conf, cls)
 
 def crop_image(frame: numpy.ndarray, box: numpy.ndarray) -> numpy.ndarray:
     """
